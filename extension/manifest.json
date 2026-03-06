@@ -14,9 +14,12 @@
       "matches": [
         "*://chatgpt.com/*",
         "*://claude.ai/*",
-        "*://kimi.moonshot.cn/*"
+        "*://kimi.moonshot.cn/*",
+        "*://www.kimi.com/*"
       ],
-      "js": ["content.js"]
+      "js": [
+        "content.js"
+      ]
     }
   ],
   "permissions": [
@@ -27,6 +30,7 @@
   "host_permissions": [
     "*://chatgpt.com/*",
     "*://claude.ai/*",
-    "*://kimi.moonshot.cn/*"
+    "*://kimi.moonshot.cn/*",
+    "*://www.kimi.com/*"
   ]
 }

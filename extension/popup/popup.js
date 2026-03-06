@@ -127,3 +127,10 @@ style.textContent = `
   }
 `;
 document.head.appendChild(style);
+
+// DEBUG HIDDEN FEATURE / SYNC BUTTON: 
+// Double click the ticker header to trigger the Claude API Background Fetch
+document.querySelector('.ticker-header').addEventListener('dblclick', () => {
+    tickerText.innerHTML = `SYNCING CLAUDE USAGE API...`;
+    chrome.runtime.sendMessage({ type: 'FORCE_SYNC_CLAUDE' });
+});
