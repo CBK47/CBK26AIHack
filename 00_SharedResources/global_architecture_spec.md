@@ -1,49 +1,46 @@
-# 🌐 Global Architecture Spec: The "Jog & Hack" Initiative
+# Global Architecture Spec: CBK26AIHack
 
-> **Status:** Active (Hackathon)  
-> **Core Constraint:** 100% Mobile Voice-first "Vibe Coding" while running three marathons.  
-> **Last Updated:** 2026-03-06
+Status: Active
+Last updated: 2026-03-06
 
-This is the overarching Multi-Project Management Spec. It defines the experimental architecture, communication protocols, and the active portfolio of projects.
+This document defines the shared system topology across all projects in this repository.
 
----
+## 1. Portfolio Topology
 
-## 🏗️ The Multi-Model Orchestration Framework (Hardware & Topologies)
-
-A critical component of this Hackathon is establishing a truly conversational, zero-latency pipeline for voice coding. This is accomplished via a tiered multi-model topology:
-
-### Tier 1: The Orchestrator (Local-First)
-- **Host:** Apple Silicon Mac `[Primary Device]`.
-- **Model:** Small parameter routing models (e.g., Llama 3 8B, Qwen 1.5 7B) running locally via Ollama.
-- **Responsibility:** Instant back-and-forth speech (~500ms latency), basic query parsing, and determining if a request needs to be routed to higher tiers.
-
-### Tier 2: The Rapid APIs
-- **Host:** Cloud API.
-- **Model:** High-speed, massive-context reasoning models (Gemini Flash, Claude Sonnet).
-- **Responsibility:** The workhorse for the majority of coding conversation. Provides deep context understanding at high speed.
-
-### Tier 3: The Heavy Lifters
-- **Host:** Cloud API / Enterprise Compute.
-- **Model:** Bleeding-edge agents (Claude 3.5 Opus) / Nvidia GX10 Superchip cluster ("GX10 superchip").
-- **Responsibility:** Massive architectural reviews, raw capability coding tasks, and final sanity checks. Invoked manually (e.g., "Ask Opus to review this") or intelligently scaled by Tier 1.
-
----
-
-## 🚀 Active Project Portfolio
-
-Every project within this workspace maintains its own individual `spec.md` file. This document simply orchestrates the portfolio.
-
-| Dir | Project Name | Description | Status |
+| Directory | Project | Purpose | Status |
 |---|---|---|---|
-| `Project1_MissionControl` | **AI Mission Control** | Chrome extension for tracking AI usage tokens across Claude/ChatGPT/Kimi using a Cyber-Luxury visual aesthetic. | **In Progress** |
-| `Project2_JogAndHack` | **Jog & Hack Voice UI** | The core two-way voice-to-text platform using local Whisper models, AppleScript injection, and Multi-Model VAD pipelines. | **In Progress** |
-| `Project3_TBD` | **[Placeholder]** | TBD while marathon pacing. | Ideation |
-| `Project4_TBD` | **[Placeholder]** | TBD while marathon pacing. | Ideation |
+| `Project1_MissionControl` | AI Mission Control | Browser extension for AI usage telemetry and dashboard UX | In progress |
+| `Project2_JogAndHack` | Jog and Hack Voice UI | Voice-first interaction loop for coding while mobile | In progress |
+| `Project3_TBD` | TBD | Reserved slot for future project | Ideation |
+| `Project4_TBD` | TBD | Reserved slot for future project | Ideation |
 
----
+## 2. Model Orchestration Topology
 
-## 🏃‍♂️ Communication Protocols (The "Vibe Coding" Principle)
+| Tier | Role | Typical models | Runtime |
+|---|---|---|---|
+| Tier 1 | Low-latency orchestrator | Small local models | Local (Mac/GX10 via Ollama) |
+| Tier 2 | Fast coding/reasoning worker | Claude Sonnet / Gemini Flash class | Cloud API |
+| Tier 3 | Deep review and complex architecture | Opus class / large open-weight coders | Cloud API or high-end local compute |
 
-1. **AI Output MUST be spoken**: `say "message"` is the required prefix for all system feedback. Reading text on a screen while running a marathon is impossible; therefore the AI must summarize its actions out loud.
-2. **Autonomous Tooling**: The AI agent is expected to be highly proactive, handling all file creation, terminal execution, GUI interactions (via AppleScript), and Git workflows entirely out of sight.
-3. **Escalation**: If a problem is beyond Tier 1/2's capabilities, wait until the user pauses pacing to request Tier 3 intervention.
+## 3. Shared Documentation Contract
+
+| Document | Canonical purpose |
+|---|---|
+| `global_architecture_spec.md` | Portfolio boundaries, topology, and cross-project operating model |
+| `task_registry.md` | Active tasks and ownership across all projects |
+| `handover.md` | Transition packet for the next agent/model/human |
+| `debrief.md` | Session summary and decisions log |
+
+Rule: architecture changes go here first, then project specs, then task updates.
+
+## 4. Source-of-Truth Rules
+
+1. Project-specific implementation details live in each project's `spec.md` and source files.
+2. Cross-project changes must be reflected in this file and `task_registry.md`.
+3. Volatile runtime details (ports, one-off commands, temporary host state) belong in handover/debrief, not in architecture spec.
+
+## 5. Current Architectural Notes
+
+- Project 1 and Project 2 are active and share the same repository.
+- Shared planning and transition docs live under `00_SharedResources/`.
+- Current execution queue is tracked in `00_SharedResources/task_registry.md`.

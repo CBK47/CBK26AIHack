@@ -1,27 +1,23 @@
 # AI Mission Control POC - User Guide
 
-Welcome to the AI Mission Control Proof of Concept (POC)! This extension transforms your AI usage tracking into a cinematic data visualization experience.
+This guide covers local installation and testing for Project 1.
 
-## Installation Instructions
+## Install (Developer Mode)
 
-1. **Open Extensions in Chrome**: Open Google Chrome and navigate to `chrome://extensions/`.
-2. **Enable Developer Mode**: In the top right corner of the Extensions page, toggle "Developer mode" to **ON**.
-3. **Load Unpacked**: Click the **Load unpacked** button in the top left.
-4. **Select the Folder**: Navigate to the provided project directory and select the `extension` folder (e.g., `/Users/cbk/Code/CBK26AIHack/extension`).
-5. **Pin the Extension**: For easy access, click the puzzle piece icon next to your URL bar and click the pin icon next to "AI Mission Control".
+1. Open `chrome://extensions/` in Chrome.
+2. Enable Developer Mode.
+3. Click Load unpacked.
+4. Select: `/Users/cbk/Code/CBK26AIHack/Project1_MissionControl/extension`
+5. Pin the extension in the Chrome toolbar.
 
-## How to Test the POC
+## Basic Test Flow
 
-The POC currently tracks estimated token usage on ChatGPT, Claude, and Kimi.
+1. Open the extension popup.
+2. Visit one of:
+   - `https://chatgpt.com`
+   - `https://claude.ai`
+   - `https://kimi.moonshot.cn`
+3. Send a prompt on one platform.
+4. Reopen popup and confirm gauge + token estimate changed.
 
-1. **Open The Theatre (Popup)**: Click the **AI Mission Control icon** in your toolbar. You will see the Cyber-Luxury minimalist UI, complete with 3 liquid gauges representing ChatGPT, Claude, and Kimi usages.
-2. **Generate Telemetry Data**: 
-   - Open a new tab and go to [chatgpt.com](https://chatgpt.com), [claude.ai](https://claude.ai), or [kimi.moonshot.cn](https://kimi.moonshot.cn).
-   - Type a prompt and hit **Enter** (or click the send button).
-3. **Watch the Magic**: 
-   - Open the extension popup again to see the data update! 
-   - The relevant gauge's liquid fill level will rise.
-   - The token counters will animate upwards smoothly.
-   - Gauge fill levels update based on tracked usage vs limits.
-
-*Note: For this POC, token counts are rough estimations based on character lengths. Prompt-count and cost-metric features are currently archived.*
+Note: Current token values are heuristic estimates, not guaranteed provider-reported totals.
