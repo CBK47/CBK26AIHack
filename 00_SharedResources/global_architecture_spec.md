@@ -22,6 +22,18 @@ This document defines the shared system topology across all projects in this rep
 | Tier 2 | Fast coding/reasoning worker | Claude Sonnet / Gemini Flash class | Cloud API |
 | Tier 3 | Deep review and complex architecture | Opus class / large open-weight coders | Cloud API or high-end local compute |
 
+## 2.1 Agent Role Map
+
+| Agent | Primary role | Secondary role | Guardrails |
+|---|---|---|---|
+| Codex | Mission Control and GitHub system integrity | Cross-project planning and merge hygiene | Owns task routing, branch sanity, commit quality, and shared doc consistency |
+| Claude | Architecture and code review | Complex refactors and reasoning-heavy implementation | Used for deep design decisions and risk checks before major merges |
+| Gemini | High-throughput implementation | Large-context synthesis and rapid first drafts | Used for broad implementation bursts, then reviewed before merge |
+| Kimi | Fast utility coding and research summaries | Alternate implementation path for parallel runs | Best for focused sub-tasks with tight scopes |
+| Antigravity | Voice pipeline specialist for Project 2 | Runtime integration and environment validation | Owns speech loop milestones and local voice workflow reliability |
+
+Routing rule: assign one owner per task in `task_registry.md`; Codex validates outputs before merge to `main`.
+
 ## 3. Shared Documentation Contract
 
 | Document | Canonical purpose |

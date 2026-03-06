@@ -23,6 +23,7 @@ This top-level README is the workspace index. It explains what each folder is fo
 | `00_SharedResources/task_registry.md` | Actionable multi-agent task list split by project and priority | Update whenever tasks are added, reassigned, started, or completed |
 | `00_SharedResources/handover.md` | Model-to-model or human-to-model transition state | Update at every meaningful handoff |
 | `00_SharedResources/debrief.md` | Session outcomes, decisions, and follow-ups | Append after each focused work session |
+| `00_SharedResources/agent_roles.md` | Agent role ownership and GitHub control model | Update when role split or control rules change |
 | `00_SharedResources/autonomous_agents_strategy.md` | Strategy notes for running multiple autonomous agents in parallel | Update when automation strategy changes |
 | `00_SharedResources/user_guide.md` | End-user setup/test instructions for Project 1 extension | Update when installation/run steps change |
 
