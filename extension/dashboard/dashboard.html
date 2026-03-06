@@ -9,9 +9,6 @@
 </head>
 
 <body>
-    <div class="noise-overlay"></div>
-    <div class="hologram-mesh"></div>
-
     <div class="dashboard">
         <!-- Top Bar -->
         <header class="top-bar">
@@ -23,6 +20,12 @@
                 <div class="live-dot"></div>
                 <span class="status-text" id="status-text">SYSTEMS ONLINE</span>
             </div>
+            <div class="theme-bar-inline">
+                <div class="theme-swatch light active" data-theme="light" title="Light"></div>
+                <div class="theme-swatch dark" data-theme="dark" title="Dark"></div>
+                <div class="theme-swatch peak" data-theme="peak" title="Peak"></div>
+                <div class="theme-swatch redlight" data-theme="redlight" title="Red Light"></div>
+            </div>
             <nav class="top-nav">
                 <button class="nav-btn active" data-tab="overview">Overview</button>
                 <button class="nav-btn" data-tab="settings">Settings</button>
@@ -32,7 +35,7 @@
         <!-- Main Content -->
         <main class="main-content" id="tab-overview">
             <!-- Left Panel: Life Signs -->
-            <section class="panel life-signs glass-card">
+            <section class="panel life-signs card">
                 <h2 class="panel-title">Life Signs</h2>
 
                 <div class="life-sign-row">
@@ -42,7 +45,7 @@
                         <span class="platform-status online">Online</span>
                     </div>
                     <div class="pulse-line" id="pulse-claude">
-                        <canvas class="pulse-canvas" width="200" height="40"></canvas>
+                        <canvas class="pulse-canvas" width="200" height="36"></canvas>
                     </div>
                 </div>
 
@@ -53,7 +56,7 @@
                         <span class="platform-status online">Online</span>
                     </div>
                     <div class="pulse-line" id="pulse-chatgpt">
-                        <canvas class="pulse-canvas" width="200" height="40"></canvas>
+                        <canvas class="pulse-canvas" width="200" height="36"></canvas>
                     </div>
                 </div>
 
@@ -64,16 +67,15 @@
                         <span class="platform-status online">Online</span>
                     </div>
                     <div class="pulse-line" id="pulse-kimi">
-                        <canvas class="pulse-canvas" width="200" height="40"></canvas>
+                        <canvas class="pulse-canvas" width="200" height="36"></canvas>
                     </div>
                 </div>
             </section>
 
             <!-- Center Panel: Usage Overview -->
             <section class="panel center-panel">
-                <!-- Gauge Cards -->
                 <div class="gauge-grid">
-                    <div class="gauge-big glass-card">
+                    <div class="gauge-big card">
                         <img src="../assets/claude.png" class="gauge-logo" alt="Claude">
                         <h3>Claude</h3>
                         <div class="liquid-gauge claude-theme">
@@ -92,7 +94,7 @@
                         </div>
                     </div>
 
-                    <div class="gauge-big glass-card">
+                    <div class="gauge-big card">
                         <img src="../assets/chatgpt.png" class="gauge-logo" alt="ChatGPT">
                         <h3>ChatGPT</h3>
                         <div class="liquid-gauge chatgpt-theme">
@@ -111,7 +113,7 @@
                         </div>
                     </div>
 
-                    <div class="gauge-big glass-card">
+                    <div class="gauge-big card">
                         <img src="../assets/kimi.png" class="gauge-logo" alt="Kimi">
                         <h3>Kimi</h3>
                         <div class="liquid-gauge kimi-theme">
@@ -131,27 +133,26 @@
                     </div>
                 </div>
 
-                <!-- Heatmap placeholder -->
-                <div class="heatmap-section glass-card">
+                <div class="heatmap-section card">
                     <h2 class="panel-title">Usage Heatmap</h2>
                     <div class="heatmap-grid" id="heatmap"></div>
                 </div>
             </section>
 
             <!-- Right Panel: The Ledger -->
-            <section class="panel ledger glass-card">
+            <section class="panel ledger card">
                 <h2 class="panel-title">The Ledger</h2>
                 <div class="ledger-item">
                     <span class="ledger-label">Claude Subscription</span>
-                    <span class="ledger-value holographic">Pro</span>
+                    <span class="ledger-value accent-text">Pro</span>
                 </div>
                 <div class="ledger-item">
                     <span class="ledger-label">ChatGPT Subscription</span>
-                    <span class="ledger-value holographic">Plus</span>
+                    <span class="ledger-value accent-text">Plus</span>
                 </div>
                 <div class="ledger-item">
                     <span class="ledger-label">Kimi Subscription</span>
-                    <span class="ledger-value holographic">Free</span>
+                    <span class="ledger-value accent-text">Free</span>
                 </div>
                 <hr class="divider">
                 <div class="ledger-item">
@@ -165,9 +166,9 @@
             </section>
         </main>
 
-        <!-- Settings Tab (hidden by default) -->
+        <!-- Settings Tab -->
         <main class="main-content settings-content hidden" id="tab-settings">
-            <section class="panel settings-panel glass-card">
+            <section class="panel settings-panel card">
                 <h2 class="panel-title">Configuration</h2>
 
                 <div class="setting-group">

@@ -8,21 +8,18 @@
 </head>
 
 <body>
-  <div class="noise-overlay"></div>
-  <div class="hologram-mesh"></div>
-
   <div class="container">
-    <header class="ticker-header glass-card">
+    <header class="ticker-header card">
       <div class="live-dot"></div>
-      <div class="ticker-content" id="ticker-text">MONITORING CLAUDE.AI • ONLINE</div>
+      <div class="ticker-content" id="ticker-text">MONITORING AI PLATFORMS • ONLINE</div>
     </header>
 
     <main class="center-stage">
       <!-- ChatGPT Gauge -->
-      <div class="gauge-card glass-card">
+      <div class="gauge-card card">
         <div class="gauge-branding">
           <img src="../assets/chatgpt.png" class="brand-logo" alt="ChatGPT">
-          <div class="gauge-title">ChatGPT</div>
+          <div class="gauge-title">GPT</div>
         </div>
         <div class="liquid-gauge">
           <div class="liquid-fill" id="fill-chatgpt" style="--fill-level: 5%;">
@@ -35,13 +32,13 @@
           </div>
         </div>
         <div class="stats-row">
-          <span>Prompts:</span>
+          <span>Prompts</span>
           <span id="prompts-chatgpt">0</span>
         </div>
       </div>
 
       <!-- Claude Gauge -->
-      <div class="gauge-card glass-card">
+      <div class="gauge-card card">
         <div class="gauge-branding">
           <img src="../assets/claude.png" class="brand-logo" alt="Claude">
           <div class="gauge-title">Claude</div>
@@ -57,13 +54,13 @@
           </div>
         </div>
         <div class="stats-row">
-          <span>Prompts:</span>
+          <span>Prompts</span>
           <span id="prompts-claude">0</span>
         </div>
       </div>
 
       <!-- Kimi Gauge -->
-      <div class="gauge-card glass-card">
+      <div class="gauge-card card">
         <div class="gauge-branding">
           <img src="../assets/kimi.png" class="brand-logo" alt="Kimi">
           <div class="gauge-title">Kimi</div>
@@ -79,13 +76,23 @@
           </div>
         </div>
         <div class="stats-row">
-          <span>Prompts:</span>
+          <span>Prompts</span>
           <span id="prompts-kimi">0</span>
         </div>
       </div>
     </main>
 
+    <!-- Theme Swatches -->
+    <div class="theme-bar">
+      <div class="theme-swatch light active" data-theme="light" title="Light"></div>
+      <div class="theme-swatch dark" data-theme="dark" title="Dark"></div>
+      <div class="theme-swatch peak" data-theme="peak" title="Peak"></div>
+      <div class="theme-swatch redlight" data-theme="redlight" title="Red Light"></div>
+    </div>
 
+    <button class="dashboard-btn" id="open-dashboard">
+      ⬡ OPEN OBSERVATORY
+    </button>
   </div>
 
   <script src="popup.js"></script>

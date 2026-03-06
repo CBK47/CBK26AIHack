@@ -1,5 +1,28 @@
 // dashboard.js — The Observatory Logic
 
+const DEFAULT_SETTINGS = { claude: true, chatgpt: true, kimi: true, history: true, github: false };
+
+// Theme management
+function applyTheme(theme) {
+    const root = document.documentElement;
+    root.classList.remove('dark', 'peak', 'redlight');
+    if (theme === 'dark') root.classList.add('dark');
+    else if (theme === 'peak') root.classList.add('peak');
+    else if (theme === 'redlight') root.classList.add('redlight');
+
+    document.querySelectorAll('.theme-swatch').forEach(s => {
+        s.classList.toggle('active', s.dataset.theme === theme);
+    });
+}
+
+document.querySelectorAll('.theme-swatch').forEach(swatch => {
+    swatch.addEventListener('click', () => {
+        const theme = swatch.dataset.theme;
+        applyTheme(theme);
+        chrome.storage.local.set({ uiTheme: theme });
+    });
+});
+
 // DOM references
 const uis = {
     chatgpt: {
@@ -22,10 +45,8 @@ const uis = {
 const totalPromptsEl = document.getElementById('total-prompts');
 const totalTokensEl = document.getElementById('total-tokens');
 
-// Format numbers
 const formatNum = (num) => num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
 
-// Animate values
 function animateValue(el, start, end, duration) {
     let startTs = null;
     const step = (ts) => {
@@ -39,12 +60,26 @@ function animateValue(el, start, end, duration) {
     requestAnimationFrame(step);
 }
 
+// Apply platform visibility across the dashboard
+function applyVisibility(settings) {
+    ['claude', 'chatgpt', 'kimi'].forEach(platform => {
+        const enabled = settings[platform] !== false;
+        // Gauge cards
+        const gaugeCard = document.querySelector(`.gauge-big .gauge-logo[alt="${platform === 'chatgpt' ? 'ChatGPT' : platform === 'claude' ? 'Claude' : 'Kimi'}"]`);
+        if (gaugeCard) gaugeCard.closest('.gauge-big').style.display = enabled ? '' : 'none';
+        // Life sign rows
+        const lifeIcon = document.querySelector(`.life-sign-row .platform-icon[alt="${platform === 'chatgpt' ? 'ChatGPT' : platform === 'claude' ? 'Claude' : 'Kimi'}"]`);
+        if (lifeIcon) lifeIcon.closest('.life-sign-row').style.display = enabled ? '' : 'none';
+    });
+}
+
 // Render data
-function renderData(aiUsage, animate = false) {
+function renderData(aiUsage, settings, animate = false) {
     const limits = { chatgpt: 100000, claude: 100000, kimi: 100000 };
     let totalP = 0, totalT = 0;
 
     ['chatgpt', 'claude', 'kimi'].forEach(platform => {
+        if (settings[platform] === false) return; // Skip disabled
         if (aiUsage[platform] && uis[platform]) {
             const data = aiUsage[platform];
             let pct = Math.max(5, Math.min(95, (data.estimatedTokens / limits[platform]) * 100));
@@ -70,15 +105,41 @@ function renderData(aiUsage, animate = false) {
 }
 
 // Initial load
-chrome.storage.local.get(['aiUsage'], (result) => {
-    if (result.aiUsage) renderData(result.aiUsage, false);
+chrome.storage.local.get(['aiUsage', 'platformSettings'], (result) => {
+    const settings = result.platformSettings || DEFAULT_SETTINGS;
+    applyVisibility(settings);
+    // Set toggle states from storage
+    document.querySelectorAll('.toggle-input[data-platform]').forEach(toggle => {
+        toggle.checked = settings[toggle.dataset.platform] !== false;
+    });
+    document.querySelectorAll('.toggle-input[data-feature]').forEach(toggle => {
+        toggle.checked = settings[toggle.dataset.feature] !== false;
+    });
+    if (result.aiUsage) renderData(result.aiUsage, settings, false);
 });
 
 // Live updates
 chrome.storage.onChanged.addListener((changes, ns) => {
-    if (ns === 'local' && changes.aiUsage) {
-        renderData(changes.aiUsage.newValue, true);
+    if (ns === 'local') {
+        chrome.storage.local.get(['aiUsage', 'platformSettings'], (result) => {
+            const settings = result.platformSettings || DEFAULT_SETTINGS;
+            applyVisibility(settings);
+            if (changes.aiUsage) renderData(changes.aiUsage.newValue, settings, true);
+        });
     }
+});
+
+// Settings toggles — save to storage on change
+document.querySelectorAll('.toggle-input').forEach(toggle => {
+    toggle.addEventListener('change', () => {
+        chrome.storage.local.get(['platformSettings'], (result) => {
+            const settings = result.platformSettings || { ...DEFAULT_SETTINGS };
+            const key = toggle.dataset.platform || toggle.dataset.feature;
+            settings[key] = toggle.checked;
+            chrome.storage.local.set({ platformSettings: settings });
+            applyVisibility(settings);
+        });
+    });
 });
 
 // Tab navigation
@@ -97,14 +158,13 @@ const heatmapGrid = document.getElementById('heatmap');
 for (let i = 0; i < 28; i++) {
     const cell = document.createElement('div');
     cell.className = 'heatmap-cell';
-    // Random intensity for demo
     const intensity = Math.random();
     if (intensity > 0.7) cell.style.background = `rgba(0, 240, 255, ${intensity * 0.6})`;
     else if (intensity > 0.4) cell.style.background = `rgba(0, 240, 255, 0.15)`;
     heatmapGrid.appendChild(cell);
 }
 
-// Pulse line animation (simple sine wave on canvas)
+// Pulse line animation
 function drawPulse(canvasEl, color, speed) {
     const ctx = canvasEl.getContext('2d');
     const w = canvasEl.width;
@@ -131,7 +191,6 @@ function drawPulse(canvasEl, color, speed) {
     draw();
 }
 
-// Start pulse animations
 const canvases = document.querySelectorAll('.pulse-canvas');
 const colors = ['#d97757', '#10a37f', '#6366f1'];
 canvases.forEach((c, i) => drawPulse(c, colors[i], 1 + i * 0.5));
