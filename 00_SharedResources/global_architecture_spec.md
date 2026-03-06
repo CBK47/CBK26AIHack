@@ -42,6 +42,8 @@ Execution method source of truth: `00_SharedResources/project_methodology.md`.
 | Document | Canonical purpose |
 |---|---|
 | `global_architecture_spec.md` | Portfolio boundaries, topology, and cross-project operating model |
+| `project_methodology.md` | Hackathon execution policy and decision thresholds |
+| `runtime_registry.md` | Canonical codename map for model/location/tool deployments |
 | `task_registry.md` | Active tasks and ownership across all projects |
 | `handover.md` | Transition packet for the next agent/model/human |
 | `debrief.md` | Session summary and decisions log |
