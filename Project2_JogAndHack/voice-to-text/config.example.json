@@ -1,0 +1,7 @@
+{
+  "model": "base",
+  "model_path": ".models",
+  "device": "cpu",
+  "compute_type": "int8",
+  "port": 5001
+}

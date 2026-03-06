@@ -1,0 +1,29 @@
+# Models (downloaded on first run)
+.models/
+
+# Database
+vtt_stats.db
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.egg-info/
+dist/
+build/
+venv/
+.venv/
+
+# Config (contains user-specific paths)
+config.json
+
+# OS
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
