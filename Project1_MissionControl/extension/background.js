@@ -143,6 +143,37 @@ function findClaudeTokenStats(root) {
   return best ? { used: best.used, limit: best.limit } : null;
 }
 
+function parseClaudeUsagePercentagesFromHtml(html) {
+  const parsePercent = (matchValue) => {
+    const value = Number.parseInt(matchValue, 10);
+    if (!Number.isFinite(value)) return null;
+    return Math.max(0, Math.min(100, value));
+  };
+
+  const sessionMatch = html.match(/Current session[\s\S]{0,500}?(\d{1,3})%\s*used/i);
+  const weeklyMatch = html.match(/Weekly limits[\s\S]{0,1200}?All models[\s\S]{0,1200}?(\d{1,3})%\s*used/i);
+  const genericMatches = [...html.matchAll(/(\d{1,3})%\s*used/gi)];
+
+  const sessionPercent = sessionMatch ? parsePercent(sessionMatch[1]) : null;
+  const weeklyPercent = weeklyMatch ? parsePercent(weeklyMatch[1]) : null;
+
+  let fallbackPercent = null;
+  if (genericMatches.length > 0) {
+    const values = genericMatches
+      .map((m) => parsePercent(m[1]))
+      .filter((v) => v !== null);
+    if (values.length > 0) {
+      fallbackPercent = Math.max(...values);
+    }
+  }
+
+  return {
+    sessionPercent,
+    weeklyPercent,
+    fallbackPercent
+  };
+}
+
 async function syncClaudeUsage() {
   console.log('Claude sync: fetching settings usage page');
   try {
@@ -155,6 +186,7 @@ async function syncClaudeUsage() {
     const html = await res.text();
     const nextDataMatch = html.match(/<script id="__NEXT_DATA__" type="application\/json">([^<]+)<\/script>/);
     let parsedStats = null;
+    const percentStats = parseClaudeUsagePercentagesFromHtml(html);
     let syncNote = 'Claude sync fetched HTML but no __NEXT_DATA__ blob found.';
 
     if (nextDataMatch) {
@@ -174,12 +206,28 @@ async function syncClaudeUsage() {
 
     chrome.storage.local.get(['aiUsage'], (result) => {
       const usage = normalizeUsageState(result.aiUsage);
+      let updatedFromPercentFallback = false;
+
       if (parsedStats?.used !== null && isNumeric(parsedStats.used)) {
         usage.claude.estimatedTokens = parsedStats.used;
       }
       if (parsedStats?.limit !== null && isNumeric(parsedStats.limit) && parsedStats.limit > 0) {
         usage.claude.tokenLimit = parsedStats.limit;
       }
+
+      if (!parsedStats?.used && !parsedStats?.limit) {
+        const bestPercent = percentStats.weeklyPercent ?? percentStats.sessionPercent ?? percentStats.fallbackPercent;
+        if (Number.isFinite(bestPercent)) {
+          const effectiveLimit = usage.claude.tokenLimit || DEFAULT_TOKEN_LIMITS.claude;
+          usage.claude.estimatedTokens = Math.round((bestPercent / 100) * effectiveLimit);
+          updatedFromPercentFallback = true;
+        }
+      }
+
+      if (updatedFromPercentFallback) {
+        syncNote = `Claude sync used usage-page percentage fallback (weekly=${percentStats.weeklyPercent ?? 'n/a'}%, session=${percentStats.sessionPercent ?? 'n/a'}%).`;
+      }
+
       usage.claude.rawData = syncNote;
       usage.claude.lastSyncAt = new Date().toISOString();
       chrome.storage.local.set({ aiUsage: usage });
