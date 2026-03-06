@@ -12,7 +12,7 @@ Welcome to the AI Mission Control Proof of Concept (POC)! This extension transfo
 
 ## How to Test the POC
 
-The POC currently monitors prompts sent on ChatGPT, Claude, and Kimi.
+The POC currently tracks estimated token usage on ChatGPT, Claude, and Kimi.
 
 1. **Open The Theatre (Popup)**: Click the **AI Mission Control icon** in your toolbar. You will see the Cyber-Luxury minimalist UI, complete with 3 liquid gauges representing ChatGPT, Claude, and Kimi usages.
 2. **Generate Telemetry Data**: 
@@ -21,7 +21,7 @@ The POC currently monitors prompts sent on ChatGPT, Claude, and Kimi.
 3. **Watch the Magic**: 
    - Open the extension popup again to see the data update! 
    - The relevant gauge's liquid fill level will rise.
-   - The token counter and prompt count will animate upwards smoothly.
-   - The total estimated cost in the footer will automatically tick upwards.
+   - The token counters will animate upwards smoothly.
+   - Gauge fill levels update based on tracked usage vs limits.
 
-*Note: For this POC, token counts are rough estimations based on character lengths, and costs are simulated based on these estimations.*
+*Note: For this POC, token counts are rough estimations based on character lengths. Prompt-count and cost-metric features are currently archived.*

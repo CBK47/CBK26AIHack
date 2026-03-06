@@ -46,21 +46,20 @@ const uis = {
     chatgpt: {
         fill: document.getElementById('fill-chatgpt'),
         val: document.getElementById('val-chatgpt'),
-        prompts: document.getElementById('prompts-chatgpt')
+        limit: document.getElementById('limit-chatgpt')
     },
     claude: {
         fill: document.getElementById('fill-claude'),
         val: document.getElementById('val-claude'),
-        prompts: document.getElementById('prompts-claude')
+        limit: document.getElementById('limit-claude')
     },
     kimi: {
         fill: document.getElementById('fill-kimi'),
         val: document.getElementById('val-kimi'),
-        prompts: document.getElementById('prompts-kimi')
+        limit: document.getElementById('limit-kimi')
     }
 };
 
-const totalPromptsEl = document.getElementById('total-prompts');
 const totalTokensEl = document.getElementById('total-tokens');
 
 const formatNum = (num) => num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
@@ -92,32 +91,31 @@ function applyVisibility(settings) {
 
 // Render data
 function renderData(aiUsage, settings, animate = false) {
-    const limits = { chatgpt: 100000, claude: 100000, kimi: 100000 };
-    let totalP = 0, totalT = 0;
+    const fallbackLimits = { chatgpt: 100000, claude: 100000, kimi: 100000 };
+    let totalT = 0;
 
     ['chatgpt', 'claude', 'kimi'].forEach(platform => {
         if (settings[platform] === false) return;
         if (aiUsage[platform] && uis[platform]) {
             const data = aiUsage[platform];
-            let pct = Math.max(5, Math.min(95, (data.estimatedTokens / limits[platform]) * 100));
+            const tokenLimit = Number.isFinite(data.tokenLimit) && data.tokenLimit > 0
+                ? data.tokenLimit
+                : fallbackLimits[platform];
+            let pct = Math.max(5, Math.min(95, (data.estimatedTokens / tokenLimit) * 100));
             uis[platform].fill.style.setProperty('--fill-level', `${pct}%`);
+            uis[platform].limit.innerHTML = formatNum(tokenLimit);
 
             if (animate) {
                 const curT = parseInt(uis[platform].val.innerHTML.replace(/,/g, '')) || 0;
-                const curP = parseInt(uis[platform].prompts.innerHTML.replace(/,/g, '')) || 0;
                 animateValue(uis[platform].val, curT, data.estimatedTokens, 1000);
-                animateValue(uis[platform].prompts, curP, data.prompts, 1000);
             } else {
                 uis[platform].val.innerHTML = formatNum(data.estimatedTokens);
-                uis[platform].prompts.innerHTML = formatNum(data.prompts);
             }
 
-            totalP += data.prompts;
             totalT += data.estimatedTokens;
         }
     });
 
-    totalPromptsEl.innerHTML = formatNum(totalP);
     totalTokensEl.innerHTML = formatNum(totalT);
 }
 
@@ -180,7 +178,7 @@ for (let i = 0; i < 28; i++) {
     const cell = document.createElement('div');
     cell.className = 'heatmap-cell';
     const intensity = Math.random();
-    if (intensity > 0.7) cell.style.background = `rgba(var(--accent), ${intensity * 0.6})`;
+    if (intensity > 0.7) cell.style.background = `var(--accent-hover)`;
     else if (intensity > 0.4) cell.style.background = `var(--accent-soft)`;
     heatmapGrid.appendChild(cell);
 }
@@ -191,8 +189,10 @@ function drawPulse(canvasEl, color, speed) {
     const w = canvasEl.width;
     const h = canvasEl.height;
     let offset = 0;
+    let rafId = null;
+    let running = false;
 
-    function draw() {
+    function drawFrame() {
         ctx.clearRect(0, 0, w, h);
         ctx.beginPath();
         ctx.strokeStyle = color;
@@ -207,11 +207,55 @@ function drawPulse(canvasEl, color, speed) {
         }
         ctx.stroke();
         offset += speed;
-        requestAnimationFrame(draw);
+        if (running) {
+            rafId = requestAnimationFrame(drawFrame);
+        }
     }
-    draw();
+
+    return {
+        start() {
+            if (running) return;
+            running = true;
+            drawFrame();
+        },
+        stop() {
+            running = false;
+            if (rafId !== null) {
+                cancelAnimationFrame(rafId);
+                rafId = null;
+            }
+        }
+    };
 }
 
 const canvases = document.querySelectorAll('.pulse-canvas');
 const colors = ['#d97757', '#10a37f', '#6366f1'];
-canvases.forEach((c, i) => drawPulse(c, colors[i], 1 + i * 0.5));
+const pulseControllers = Array.from(canvases).map((c, i) => drawPulse(c, colors[i], 1 + i * 0.5));
+const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
+
+function shouldAnimatePulse() {
+    const overviewVisible = !document.getElementById('tab-overview').classList.contains('hidden');
+    return !document.hidden && !reducedMotion.matches && overviewVisible;
+}
+
+function updatePulseAnimationState() {
+    const active = shouldAnimatePulse();
+    pulseControllers.forEach((controller) => {
+        if (active) controller.start();
+        else controller.stop();
+    });
+}
+
+document.addEventListener('visibilitychange', updatePulseAnimationState);
+if (typeof reducedMotion.addEventListener === 'function') {
+    reducedMotion.addEventListener('change', updatePulseAnimationState);
+}
+
+const navButtons = document.querySelectorAll('.nav-btn');
+navButtons.forEach((btn) => {
+    btn.addEventListener('click', () => {
+        updatePulseAnimationState();
+    });
+});
+
+updatePulseAnimationState();

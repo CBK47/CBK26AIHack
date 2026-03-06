@@ -27,7 +27,7 @@ Three AI platforms tracked: **Claude** · **ChatGPT** · **Kimi**
 extension/
 ├── manifest.json          # MV3 config — permissions, host_permissions, content scripts
 ├── background.js          # Service worker: data hub, Claude API sync
-├── content.js             # Injected into AI sites: detects prompt submissions
+├── content.js             # Injected into AI sites: detects usage submissions for token estimation
 ├── tokens.css             # Shared design tokens (colours, spacing, shadows)
 ├── popup/
 │   ├── popup.html         # Extension popup (The Theatre)
@@ -51,21 +51,21 @@ Supporting docs:
 
 **This is critical to understand before extending the project.**
 
-There are currently **two separate mechanisms**, neither of which gives real token counts yet:
+There are currently **two separate mechanisms** for usage telemetry:
 
 ---
 
-### Mechanism 1 — Content Script (Live Keystroke Detection)
+### Mechanism 1 — Content Script (Usage Event Detection)
 
 **File:** `extension/content.js`
 **Runs in:** Page context of `claude.ai`, `chatgpt.com`, `kimi.moonshot.cn`, `www.kimi.com`
 
 What it does:
 1. Identifies the platform from `window.location.hostname`
-2. Captures prompt text via `document.addEventListener('input')` on textareas/contenteditable elements
-3. Detects prompt submission via:
+2. Captures composer text via `document.addEventListener('input')` on textareas/contenteditable elements
+3. Detects submission via:
    - `Enter` keydown (non-Shift) on a textarea/contenteditable
-   - Click on any `<button>` with an `aria-label` containing "send", or that contains an SVG (heuristic)
+   - Click on likely send/submit buttons using explicit attributes and labels
 4. Sends a message to the background worker:
    ```js
    chrome.runtime.sendMessage({ type: 'PROMPT_SENT', payload: { platform, textLength } })
@@ -74,21 +74,21 @@ What it does:
 **Token estimation:** `Math.ceil(textLength / 4)` — naive character-count approximation, not real tokens.
 
 **Known limitations:**
-- May double-count (Enter key AND send button both fire)
-- May miss submissions if platform DOM changes (React re-renders, etc.)
-- Does not read actual token counts from the AI response
+- Still heuristic and can drift when platform DOMs change
+- Uses estimated token math from text length
+- Does not yet read true model token usage from every provider
 
 ---
 
-### Mechanism 2 — Background API Sync (Claude only, POC stub)
+### Mechanism 2 — Background API Sync (Claude only, heuristic parser)
 
 **File:** `extension/background.js` → `syncClaudeUsage()`
 **Trigger:** Double-click the header in the popup, or `FORCE_SYNC_CLAUDE` message
 
-What it currently does (POC):
+What it currently does:
 1. `fetch('https://claude.ai/settings/usage')` — works because `host_permissions` includes `*://claude.ai/*`, so session cookies are sent automatically
 2. Checks if the HTML response contains `<script id="__NEXT_DATA__">` (Next.js embedded JSON)
-3. **Does not yet parse the JSON** — just confirms it's there and adds +1000 tokens as visual proof
+3. Parses `__NEXT_DATA__` with heuristic token-field matching and updates stored usage/limit when matching fields are found
 
 What it needs to do (Phase 2):
 ```
@@ -112,9 +112,9 @@ content.js  ──(PROMPT_SENT message)──▶  background.js
                                     chrome.storage.local
                                     key: 'aiUsage'
                                     {
-                                      claude:  { prompts, estimatedTokens, rawData },
-                                      chatgpt: { prompts, estimatedTokens },
-                                      kimi:    { prompts, estimatedTokens }
+                                      claude:  { estimatedTokens, tokenLimit, rawData, lastSyncAt },
+                                      chatgpt: { estimatedTokens, tokenLimit, rawData, lastSyncAt },
+                                      kimi:    { estimatedTokens, tokenLimit, rawData, lastSyncAt }
                                     }
                                               │
                         ┌─────────────────────┘
@@ -128,7 +128,7 @@ content.js  ──(PROMPT_SENT message)──▶  background.js
             │                       │
      Gauge fill level         Gauge fill level
      Token count display      Token count display
-     Prompt count display     Total prompts/tokens
+     Limit display            Total tokens
                               Pulse canvas animation
 ```
 
@@ -145,7 +145,7 @@ These limits are hardcoded at 100,000 tokens — **not real subscription limits*
 
 | Key | Type | Description |
 |---|---|---|
-| `aiUsage` | Object | Core metrics: `{ claude, chatgpt, kimi }` each with `prompts`, `estimatedTokens`, `rawData` |
+| `aiUsage` | Object | Core metrics: `{ claude, chatgpt, kimi }` each with `estimatedTokens`, `tokenLimit`, `rawData`, `lastSyncAt` |
 | `platformSettings` | Object | Visibility + feature toggles: `{ claude, chatgpt, kimi, history, github }` |
 | `uiDarkMode` | Boolean | Dark mode state |
 | `uiColorScheme` | String | `'blue'` \| `'peak'` \| `'red'` |
@@ -160,7 +160,7 @@ These limits are hardcoded at 100,000 tokens — **not real subscription limits*
 |---|---|---|
 | Gauge fill level | `fill-{platform}` | `--fill-level` CSS property |
 | Token count | `val-{platform}` | `aiUsage[platform].estimatedTokens` |
-| Prompt count | `prompts-{platform}` | `aiUsage[platform].prompts` |
+| Token limit | `limit-{platform}` | `aiUsage[platform].tokenLimit` |
 | Status ticker | `ticker-text` | Updated on storage change |
 | Theme toggle | `theme-toggle` | Writes `uiDarkMode` to storage |
 | Colour selector | `color-selector` | Writes `uiColorScheme` to storage |
@@ -172,8 +172,7 @@ These limits are hardcoded at 100,000 tokens — **not real subscription limits*
 
 | Element | ID/Selector | Driven By |
 |---|---|---|
-| Big gauges | `fill-{platform}`, `val-{platform}`, `prompts-{platform}` | Same as popup |
-| Total prompts | `total-prompts` | Sum of all enabled platforms |
+| Big gauges | `fill-{platform}`, `val-{platform}`, `limit-{platform}` | Same as popup |
 | Total tokens | `total-tokens` | Sum of all enabled platforms |
 | Heatmap | `heatmap` | **Random placeholder data** — not real history |
 | Pulse lines | `.pulse-canvas` | CSS sine wave animation, not data-driven |
@@ -234,7 +233,7 @@ Font: **Inter** (Google Fonts, 400–900 weights)
 
 ### 📋 Phase 3 — Enhancements
 - [ ] Usage history: persist daily snapshots, display 4-week heatmap
-- [ ] Cost calculations (estimated $/token rates)
+- [ ] Archived modules reassessment (`extension/archvied/`)
 - [ ] GitHub integration toggle
 - [ ] Rate-limit API sync (once/hour max, cache between openings)
 - [ ] Intersection Observer on pulse canvases (pause when off-screen)
@@ -246,10 +245,11 @@ Font: **Inter** (Google Fonts, 400–900 weights)
 - **No real token counts yet** — all numbers are estimates based on input character length
 - **No authentication handling** — relies on the user being logged in; session cookies are passed automatically via `host_permissions`
 - **No rate limiting** on API sync — must be added before Phase 2 ships
-- **Hardcoded token limits** — 100,000 per platform in both `popup.js:91` and `dashboard.js:90`
+- **Default token limits** fallback to 100,000 when provider limits are unavailable
 - **Heatmap is fake** — `dashboard.js:174-181` generates random cells
 - **Pulse lines are decorative** — sine wave animation, not data-driven
 - **`rawData` field** on Claude storage is a debug string, not structured data
+- **Prompt count and cost features are archived** in `extension/archvied/`
 
 ---
 

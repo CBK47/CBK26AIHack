@@ -5,17 +5,17 @@ const uis = {
     chatgpt: {
         fill: document.getElementById('fill-chatgpt'),
         val: document.getElementById('val-chatgpt'),
-        prompts: document.getElementById('prompts-chatgpt')
+        limit: document.getElementById('limit-chatgpt')
     },
     claude: {
         fill: document.getElementById('fill-claude'),
         val: document.getElementById('val-claude'),
-        prompts: document.getElementById('prompts-claude')
+        limit: document.getElementById('limit-claude')
     },
     kimi: {
         fill: document.getElementById('fill-kimi'),
         val: document.getElementById('val-kimi'),
-        prompts: document.getElementById('prompts-kimi')
+        limit: document.getElementById('limit-kimi')
     }
 };
 
@@ -87,22 +87,23 @@ function animateValue(obj, start, end, duration) {
 
 // Render data
 function renderData(aiUsage, animate = false) {
-    const limits = { chatgpt: 100000, claude: 100000, kimi: 100000 };
+    const fallbackLimits = { chatgpt: 100000, claude: 100000, kimi: 100000 };
 
     ['chatgpt', 'claude', 'kimi'].forEach(platform => {
         if (aiUsage[platform] && uis[platform]) {
             const data = aiUsage[platform];
-            let percent = Math.max(5, Math.min(95, (data.estimatedTokens / limits[platform]) * 100));
+            const tokenLimit = Number.isFinite(data.tokenLimit) && data.tokenLimit > 0
+                ? data.tokenLimit
+                : fallbackLimits[platform];
+            let percent = Math.max(5, Math.min(95, (data.estimatedTokens / tokenLimit) * 100));
             uis[platform].fill.style.setProperty('--fill-level', `${percent}%`);
+            uis[platform].limit.innerHTML = formatNum(tokenLimit);
 
             if (animate) {
                 const currentTokens = parseInt(uis[platform].val.innerHTML.replace(/,/g, '')) || 0;
-                const currentPrompts = parseInt(uis[platform].prompts.innerHTML.replace(/,/g, '')) || 0;
                 animateValue(uis[platform].val, currentTokens, data.estimatedTokens, 1000);
-                animateValue(uis[platform].prompts, currentPrompts, data.prompts, 1000);
             } else {
                 uis[platform].val.innerHTML = formatNum(data.estimatedTokens);
-                uis[platform].prompts.innerHTML = formatNum(data.prompts);
             }
         }
     });

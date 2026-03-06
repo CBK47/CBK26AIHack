@@ -7,62 +7,106 @@ let platform = 'unknown';
 const hostname = window.location.hostname;
 if (hostname.includes('chatgpt.com')) platform = 'chatgpt';
 else if (hostname.includes('claude.ai')) platform = 'claude';
-else if (hostname.includes('kimi.moonshot.cn')) platform = 'kimi';
+else if (hostname.includes('kimi.moonshot.cn') || hostname.includes('www.kimi.com')) platform = 'kimi';
 
-// For the POC, we'll use a simple heuristic:
-// Listen for 'Enter' keydowns on textareas or editable divs, and button clicks
-// Note: This is a basic implementation and might need refinement for each specific platform's DOM structure.
+if (platform === 'unknown') {
+    console.warn('AI Mission Control: unknown platform host, tracker disabled for this page');
+}
 
-let lastPromptText = '';
+const composerSelectors = [
+    'textarea',
+    '[contenteditable="true"]',
+    '[role="textbox"]'
+];
 
-// Capture text as user types
-document.addEventListener('input', (e) => {
-    const target = e.target;
-    if (target.tagName === 'TEXTAREA' || target.isContentEditable) {
-        lastPromptText = target.value || target.innerText || '';
+let lastKnownInputText = '';
+let lastSubmission = { signature: '', at: 0 };
+
+function readElementText(el) {
+    if (!el) return '';
+    if (typeof el.value === 'string') return el.value;
+    return el.innerText || el.textContent || '';
+}
+
+function findActiveComposer(fromTarget) {
+    if (fromTarget && (fromTarget.tagName === 'TEXTAREA' || fromTarget.isContentEditable || fromTarget.getAttribute('role') === 'textbox')) {
+        return fromTarget;
     }
-});
 
-// Detect submission via Enter key
-document.addEventListener('keydown', (e) => {
-    if (e.key === 'Enter' && !e.shiftKey) {
-        const target = e.target;
-        // Check if it's likely a chat input
-        if (target.tagName === 'TEXTAREA' || target.isContentEditable) {
-            // Small delay to ensure text wasn't cleared by default behavior before we grabbed it
-            setTimeout(() => recordPromptAndSend(lastPromptText), 10);
-            lastPromptText = ''; // Reset
-        }
+    const active = document.activeElement;
+    if (active && (active.tagName === 'TEXTAREA' || active.isContentEditable || active.getAttribute('role') === 'textbox')) {
+        return active;
     }
-});
 
-// Detect submission via button click (heuristic: buttons with aria-label containing 'send' or similar svg icons)
-document.addEventListener('click', (e) => {
-    const target = e.target.closest('button');
-    if (target) {
-        // Basic check for send buttons - very platform dependent in reality, but good enough for POC
-        const isSendButton = target.getAttribute('aria-label')?.toLowerCase().includes('send') ||
-            target.innerHTML.includes('send') ||
-            target.querySelector('svg');
+    return document.querySelector(composerSelectors.join(', '));
+}
 
-        if (isSendButton && lastPromptText.trim().length > 0) {
-            recordPromptAndSend(lastPromptText);
-            lastPromptText = ''; // Reset
-        }
+function isLikelySendButton(button) {
+    if (!button) return false;
+    const attrs = [
+        button.getAttribute('aria-label') || '',
+        button.getAttribute('title') || '',
+        button.getAttribute('data-testid') || '',
+        button.getAttribute('name') || '',
+        button.getAttribute('id') || '',
+        button.textContent || ''
+    ].join(' ').toLowerCase();
+
+    const explicitSubmit = (button.getAttribute('type') || '').toLowerCase() === 'submit';
+    const hasSendKeyword = /(send|submit|enter|arrow-up|paper-plane)/.test(attrs);
+    return explicitSubmit || hasSendKeyword;
+}
+
+function shouldDedupe(signature) {
+    const now = Date.now();
+    if (lastSubmission.signature === signature && (now - lastSubmission.at) < 1500) {
+        return true;
     }
-});
+    lastSubmission = { signature, at: now };
+    return false;
+}
 
 function recordPromptAndSend(text) {
-    const trimmedText = text.trim();
+    if (platform === 'unknown') return;
+    const trimmedText = (text || '').trim();
     if (trimmedText.length === 0) return;
 
-    console.log(`AI Mission Control: Detected prompt submission on ${platform}. Length: ${trimmedText.length}`);
+    const signature = `${platform}:${trimmedText.length}:${trimmedText.slice(0, 80)}`;
+    if (shouldDedupe(signature)) return;
 
+    console.log(`AI Mission Control: Detected prompt submission on ${platform}. Length: ${trimmedText.length}`);
     chrome.runtime.sendMessage({
         type: 'PROMPT_SENT',
         payload: {
-            platform: platform,
+            platform,
             textLength: trimmedText.length
         }
     });
 }
+
+document.addEventListener('input', (e) => {
+    const composer = findActiveComposer(e.target);
+    if (!composer) return;
+    lastKnownInputText = readElementText(composer);
+});
+
+document.addEventListener('keydown', (e) => {
+    if (e.key !== 'Enter' || e.shiftKey || e.isComposing) return;
+    const composer = findActiveComposer(e.target);
+    if (!composer) return;
+    setTimeout(() => {
+        const text = lastKnownInputText || readElementText(composer);
+        recordPromptAndSend(text);
+        lastKnownInputText = '';
+    }, 0);
+});
+
+document.addEventListener('click', (e) => {
+    const button = e.target.closest('button');
+    if (!isLikelySendButton(button)) return;
+
+    const composer = findActiveComposer(button);
+    const text = lastKnownInputText || readElementText(composer);
+    recordPromptAndSend(text);
+    lastKnownInputText = '';
+});
