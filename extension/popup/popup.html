@@ -1,14 +1,16 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <title>AI Mission Control</title>
   <link rel="stylesheet" href="popup.css">
 </head>
+
 <body>
   <div class="noise-overlay"></div>
   <div class="hologram-mesh"></div>
-  
+
   <div class="container">
     <header class="ticker-header glass-card">
       <div class="live-dot"></div>
@@ -18,7 +20,10 @@
     <main class="center-stage">
       <!-- ChatGPT Gauge -->
       <div class="gauge-card glass-card">
-        <div class="gauge-title">ChatGPT</div>
+        <div class="gauge-branding">
+          <img src="https://www.google.com/s2/favicons?domain=chatgpt.com&sz=64" class="brand-logo" alt="ChatGPT">
+          <div class="gauge-title">ChatGPT</div>
+        </div>
         <div class="liquid-gauge">
           <div class="liquid-fill" id="fill-chatgpt" style="--fill-level: 5%;">
             <div class="wave"></div>
@@ -37,7 +42,10 @@
 
       <!-- Claude Gauge -->
       <div class="gauge-card glass-card">
-        <div class="gauge-title">Claude</div>
+        <div class="gauge-branding">
+          <img src="https://www.google.com/s2/favicons?domain=claude.ai&sz=64" class="brand-logo" alt="Claude">
+          <div class="gauge-title">Claude</div>
+        </div>
         <div class="liquid-gauge claude-theme">
           <div class="liquid-fill" id="fill-claude" style="--fill-level: 5%;">
             <div class="wave"></div>
@@ -56,7 +64,10 @@
 
       <!-- Kimi Gauge -->
       <div class="gauge-card glass-card">
-        <div class="gauge-title">Kimi</div>
+        <div class="gauge-branding">
+          <img src="https://www.google.com/s2/favicons?domain=kimi.moonshot.cn&sz=64" class="brand-logo" alt="Kimi">
+          <div class="gauge-title">Kimi</div>
+        </div>
         <div class="liquid-gauge kimi-theme">
           <div class="liquid-fill" id="fill-kimi" style="--fill-level: 5%;">
             <div class="wave"></div>
@@ -87,4 +98,5 @@
 
   <script src="popup.js"></script>
 </body>
+
 </html>
