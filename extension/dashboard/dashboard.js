@@ -105,9 +105,10 @@ function renderData(aiUsage, settings, animate = false) {
 }
 
 // Initial load
-chrome.storage.local.get(['aiUsage', 'platformSettings'], (result) => {
+chrome.storage.local.get(['aiUsage', 'platformSettings', 'uiTheme'], (result) => {
     const settings = result.platformSettings || DEFAULT_SETTINGS;
     applyVisibility(settings);
+    applyTheme(result.uiTheme || 'light');
     // Set toggle states from storage
     document.querySelectorAll('.toggle-input[data-platform]').forEach(toggle => {
         toggle.checked = settings[toggle.dataset.platform] !== false;
@@ -121,6 +122,7 @@ chrome.storage.local.get(['aiUsage', 'platformSettings'], (result) => {
 // Live updates
 chrome.storage.onChanged.addListener((changes, ns) => {
     if (ns === 'local') {
+        if (changes.uiTheme) applyTheme(changes.uiTheme.newValue);
         chrome.storage.local.get(['aiUsage', 'platformSettings'], (result) => {
             const settings = result.platformSettings || DEFAULT_SETTINGS;
             applyVisibility(settings);
