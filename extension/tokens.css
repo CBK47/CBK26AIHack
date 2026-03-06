@@ -1,25 +1,49 @@
 /* tokens.css — Shared Design Token System */
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;900&family=Fira+Code:wght@400;500;600;700&display=swap');
+
+/* ── Liquid Glass Properties (Shared) ── */
+:root {
+    --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    --font-mono: 'Fira Code', ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+
+    /* FLUID ANIMATIONS (400-600ms) */
+    --transition-fluid: all 500ms cubic-bezier(0.34, 1.56, 0.64, 1);
+    --transition-smooth: all 250ms cubic-bezier(0.4, 0, 0.2, 1);
+
+    /* GLASSMORPHISM */
+    --glass-blur: blur(16px);
+
+    /* CORE GEOMETRY */
+    --radius-sm: 8px;
+    --radius-md: 12px;
+    --radius-lg: 16px;
+}
 
 /* ── Light Mode (Default) ── */
 :root {
     --bg-primary: #f5f6fa;
     --bg-secondary: #ffffff;
     --bg-tertiary: #eef0f4;
+    --glass-bg: rgba(255, 255, 255, 0.85);
+
     --text-primary: #1a1a2e;
     --text-secondary: #4a4a6a;
     --text-muted: #8888a0;
+
     --border-color: #e2e4ea;
     --border-subtle: #eff0f3;
+    --glass-border: rgba(226, 228, 234, 0.5);
+
     --accent: #3b82f6;
+    /* Blue base */
     --accent-soft: rgba(59, 130, 246, 0.08);
-    --accent-hover: rgba(59, 130, 246, 0.12);
+    /* 8% opacity */
+    --accent-hover: rgba(59, 130, 246, 0.16);
+    /* 16% opacity */
+
     --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.04);
     --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.06);
-    --shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.08);
-    --radius-sm: 8px;
-    --radius-md: 12px;
-    --radius-lg: 16px;
+    --shadow-lg: 0 12px 32px rgba(0, 0, 0, 0.08);
 }
 
 /* ── Dark Mode ── */
@@ -27,41 +51,74 @@
     --bg-primary: #0f1117;
     --bg-secondary: #1a1c25;
     --bg-tertiary: #23262f;
+    --glass-bg: rgba(26, 28, 37, 0.75);
+
     --text-primary: #f0f0f5;
     --text-secondary: #b0b0c8;
     --text-muted: #6a6a88;
+
     --border-color: #2a2d38;
     --border-subtle: #1f2230;
+    --glass-border: rgba(42, 45, 56, 0.5);
+
     --accent: #60a5fa;
+    /* Sky base */
     --accent-soft: rgba(96, 165, 250, 0.08);
-    --accent-hover: rgba(96, 165, 250, 0.14);
+    --accent-hover: rgba(96, 165, 250, 0.16);
+
     --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.2);
     --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.3);
-    --shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.4);
+    --shadow-lg: 0 12px 32px rgba(0, 0, 0, 0.5);
 }
 
-/* ── Color Scheme: Peak ── */
+/* ── Color Scheme: Peak (Gold) ── */
 :root[data-color="peak"],
 [data-theme="dark"][data-color="peak"] {
-    --accent: #e5a800;
-    --accent-soft: rgba(229, 168, 0, 0.08);
-    --accent-hover: rgba(229, 168, 0, 0.14);
+    --accent: #d4af37;
+    /* Luxury Gold */
+    --accent-soft: rgba(212, 175, 55, 0.08);
+    --accent-hover: rgba(212, 175, 55, 0.16);
 }
 
-/* ── Color Scheme: Red Light ── */
-:root[data-color="red"],
+/* ── Color Scheme: Red Light (Light Mode) ── */
+:root[data-color="red"] {
+    --bg-primary: #fef2f2;
+    --bg-secondary: #ffffff;
+    --bg-tertiary: #fee2e2;
+    --glass-bg: rgba(255, 255, 255, 0.85);
+
+    --text-primary: #450a0a;
+    --text-secondary: #7f1d1d;
+    --text-muted: #991b1b;
+
+    --border-color: #fca5a5;
+    --border-subtle: #fecaca;
+    --glass-border: rgba(252, 165, 165, 0.5);
+
+    --accent: #ef4444;
+    --accent-soft: rgba(239, 68, 68, 0.08);
+    --accent-hover: rgba(239, 68, 68, 0.16);
+}
+
+/* ── Color Scheme: Red Light (Dark Mode) ── */
 [data-theme="dark"][data-color="red"] {
     --bg-primary: #0a0000;
     --bg-secondary: #1a0505;
     --bg-tertiary: #250808;
+    --glass-bg: rgba(26, 5, 5, 0.85);
+
     --text-primary: #ffd4d4;
     --text-secondary: #cc8888;
     --text-muted: #884444;
+
     --border-color: #3d1111;
     --border-subtle: #2a0a0a;
+    --glass-border: rgba(61, 17, 17, 0.5);
+
     --accent: #ef4444;
+    /* Crimson base */
     --accent-soft: rgba(239, 68, 68, 0.08);
-    --accent-hover: rgba(239, 68, 68, 0.14);
+    --accent-hover: rgba(239, 68, 68, 0.16);
 }
 
 /* ── Global Resets ── */
@@ -74,12 +131,20 @@
 }
 
 body {
-    font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    font-family: var(--font-sans);
     background: var(--bg-primary);
     color: var(--text-primary);
     line-height: 1.6;
     -webkit-font-smoothing: antialiased;
-    transition: background-color 0.3s ease, color 0.3s ease;
+    transition: var(--transition-smooth);
+}
+
+/* ── Glass Components ── */
+.glass-panel {
+    background: var(--glass-bg);
+    backdrop-filter: var(--glass-blur);
+    -webkit-backdrop-filter: var(--glass-blur);
+    border: 1px solid var(--glass-border);
 }
 
 /* ── Card Primitive ── */
@@ -89,12 +154,14 @@ body {
     padding: 28px;
     border: 1px solid var(--border-color);
     box-shadow: var(--shadow-sm);
-    transition: transform 0.2s ease, box-shadow 0.2s ease, background-color 0.3s ease, border-color 0.3s ease;
+    transition: var(--transition-smooth);
 }
 
 .card:hover {
     transform: translateY(-2px);
-    box-shadow: var(--shadow-md);
+    box-shadow: var(--shadow-lg);
+    border-color: var(--border-color);
+    /* No border color change on hover to prevent layout/visual shift */
 }
 
 /* ── Inset Stat Block ── */
@@ -103,7 +170,7 @@ body {
     background: var(--bg-tertiary);
     border-radius: var(--radius-md);
     margin-bottom: 10px;
-    transition: background-color 0.3s ease;
+    transition: var(--transition-smooth);
 }
 
 .stat-block:last-child {
@@ -124,12 +191,14 @@ body {
     flex-shrink: 0;
     position: relative;
     overflow: hidden;
-    transition: border-color 0.2s ease, background-color 0.3s ease;
+    transition: var(--transition-smooth);
 }
 
 .theme-toggle:hover {
-    border-color: var(--accent);
     background: var(--accent-soft);
+    box-shadow: 0 0 0 1px var(--accent) inset;
+    border-color: transparent;
+    /* visually handled by inset shadow to prevent shift */
 }
 
 .theme-toggle .icon-sun,
@@ -137,7 +206,7 @@ body {
     position: absolute;
     pointer-events: none;
     color: var(--text-secondary);
-    transition: opacity 0.3s ease, transform 0.4s ease;
+    transition: var(--transition-smooth);
 }
 
 .theme-toggle .icon-sun {
@@ -171,12 +240,13 @@ body {
     font-family: inherit;
     cursor: pointer;
     outline: none;
-    transition: border-color 0.2s ease, background-color 0.3s ease, color 0.3s ease;
+    transition: var(--transition-smooth);
 }
 
 .select-input:hover,
 .select-input:focus {
     border-color: var(--accent);
+    box-shadow: 0 0 0 1px var(--accent) inset;
 }
 
 /* ── Buttons ── */
@@ -190,13 +260,14 @@ body {
     border: 1px solid var(--border-color);
     background: var(--bg-secondary);
     color: var(--text-secondary);
-    transition: all 0.15s ease;
+    transition: background-color 250ms cubic-bezier(0.4, 0, 0.2, 1), color 250ms cubic-bezier(0.4, 0, 0.2, 1), box-shadow 250ms cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .btn:hover {
-    border-color: var(--accent);
     color: var(--accent);
     background: var(--accent-soft);
+    box-shadow: 0 0 0 1px var(--accent) inset;
+    border-color: transparent;
 }
 
 /* ── Text Utility ── */

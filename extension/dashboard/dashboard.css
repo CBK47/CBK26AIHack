@@ -19,12 +19,14 @@ body {
     align-items: center;
     padding: 12px 28px;
     gap: 16px;
-    border-bottom: 1px solid var(--border-color);
-    background: var(--bg-secondary);
+    border-bottom: 1px solid var(--glass-border);
+    background: var(--glass-bg);
+    backdrop-filter: var(--glass-blur);
+    -webkit-backdrop-filter: var(--glass-blur);
     position: sticky;
     top: 0;
     z-index: 10;
-    transition: background-color 0.3s ease, border-color 0.3s ease;
+    transition: var(--transition-smooth);
 }
 
 .logo-area {
@@ -248,8 +250,9 @@ body {
     border: 2px solid var(--border-color);
     position: relative;
     overflow: hidden;
-    background: var(--bg-tertiary);
-    transition: background-color 0.3s ease, border-color 0.3s ease;
+    background: var(--glass-bg);
+    backdrop-filter: var(--glass-blur);
+    transition: var(--transition-smooth);
 }
 
 .liquid-fill {
@@ -258,7 +261,7 @@ body {
     left: 0;
     width: 100%;
     height: var(--fill-level);
-    transition: height 1s cubic-bezier(0.34, 1.56, 0.64, 1);
+    transition: height var(--transition-fluid);
     z-index: 1;
 }
 
@@ -317,8 +320,10 @@ body {
 }
 
 .tokens-value {
+    font-family: var(--font-mono);
+    /* Technical Realism */
     font-size: 20px;
-    font-weight: 900;
+    font-weight: 700;
     font-variant-numeric: tabular-nums;
     color: var(--text-primary);
 }
@@ -339,7 +344,9 @@ body {
 }
 
 .stat-num {
-    font-weight: 700;
+    font-family: var(--font-mono);
+    /* Technical Realism */
+    font-weight: 600;
     color: var(--text-primary);
     font-variant-numeric: tabular-nums;
 }
@@ -383,8 +390,10 @@ body {
 }
 
 .ledger-value {
+    font-family: var(--font-mono);
+    /* Technical Realism */
     font-size: 13px;
-    font-weight: 700;
+    font-weight: 600;
     color: var(--text-primary);
     font-variant-numeric: tabular-nums;
 }

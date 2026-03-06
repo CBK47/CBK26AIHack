@@ -29,6 +29,11 @@ document.getElementById('theme-toggle').addEventListener('click', () => {
     chrome.storage.local.set({ uiDarkMode: isDark });
 });
 
+// Reload extension
+document.getElementById('reload-extension').addEventListener('click', () => {
+    chrome.runtime.reload();
+});
+
 // Color scheme change
 document.getElementById('color-selector').addEventListener('change', (e) => {
     const color = e.target.value;
