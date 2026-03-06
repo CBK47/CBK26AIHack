@@ -2,25 +2,38 @@
 
 const DEFAULT_SETTINGS = { claude: true, chatgpt: true, kimi: true, history: true, github: false };
 
-// Theme management
-function applyTheme(theme) {
-    const root = document.documentElement;
-    root.classList.remove('dark', 'peak', 'redlight');
-    if (theme === 'dark') root.classList.add('dark');
-    else if (theme === 'peak') root.classList.add('peak');
-    else if (theme === 'redlight') root.classList.add('redlight');
-
-    document.querySelectorAll('.theme-swatch').forEach(s => {
-        s.classList.toggle('active', s.dataset.theme === theme);
-    });
+// Theme: light/dark via data-theme attribute
+function applyTheme(isDark) {
+    if (isDark) {
+        document.documentElement.setAttribute('data-theme', 'dark');
+    } else {
+        document.documentElement.removeAttribute('data-theme');
+    }
 }
 
-document.querySelectorAll('.theme-swatch').forEach(swatch => {
-    swatch.addEventListener('click', () => {
-        const theme = swatch.dataset.theme;
-        applyTheme(theme);
-        chrome.storage.local.set({ uiTheme: theme });
-    });
+// Color scheme via data-color attribute
+function applyColorScheme(color) {
+    const selector = document.getElementById('color-selector');
+    if (color && color !== 'blue') {
+        document.documentElement.setAttribute('data-color', color);
+    } else {
+        document.documentElement.removeAttribute('data-color');
+    }
+    if (selector) selector.value = color || 'blue';
+}
+
+// Theme toggle click
+document.getElementById('theme-toggle').addEventListener('click', () => {
+    const isDark = !document.documentElement.hasAttribute('data-theme');
+    applyTheme(isDark);
+    chrome.storage.local.set({ uiDarkMode: isDark });
+});
+
+// Color scheme change
+document.getElementById('color-selector').addEventListener('change', (e) => {
+    const color = e.target.value;
+    applyColorScheme(color);
+    chrome.storage.local.set({ uiColorScheme: color });
 });
 
 // DOM references
@@ -60,15 +73,14 @@ function animateValue(el, start, end, duration) {
     requestAnimationFrame(step);
 }
 
-// Apply platform visibility across the dashboard
+// Apply platform visibility
 function applyVisibility(settings) {
     ['claude', 'chatgpt', 'kimi'].forEach(platform => {
         const enabled = settings[platform] !== false;
-        // Gauge cards
-        const gaugeCard = document.querySelector(`.gauge-big .gauge-logo[alt="${platform === 'chatgpt' ? 'ChatGPT' : platform === 'claude' ? 'Claude' : 'Kimi'}"]`);
+        const alt = platform === 'chatgpt' ? 'ChatGPT' : platform === 'claude' ? 'Claude' : 'Kimi';
+        const gaugeCard = document.querySelector(`.gauge-big .gauge-logo[alt="${alt}"]`);
         if (gaugeCard) gaugeCard.closest('.gauge-big').style.display = enabled ? '' : 'none';
-        // Life sign rows
-        const lifeIcon = document.querySelector(`.life-sign-row .platform-icon[alt="${platform === 'chatgpt' ? 'ChatGPT' : platform === 'claude' ? 'Claude' : 'Kimi'}"]`);
+        const lifeIcon = document.querySelector(`.life-sign-row .platform-icon[alt="${alt}"]`);
         if (lifeIcon) lifeIcon.closest('.life-sign-row').style.display = enabled ? '' : 'none';
     });
 }
@@ -79,7 +91,7 @@ function renderData(aiUsage, settings, animate = false) {
     let totalP = 0, totalT = 0;
 
     ['chatgpt', 'claude', 'kimi'].forEach(platform => {
-        if (settings[platform] === false) return; // Skip disabled
+        if (settings[platform] === false) return;
         if (aiUsage[platform] && uis[platform]) {
             const data = aiUsage[platform];
             let pct = Math.max(5, Math.min(95, (data.estimatedTokens / limits[platform]) * 100));
@@ -105,11 +117,12 @@ function renderData(aiUsage, settings, animate = false) {
 }
 
 // Initial load
-chrome.storage.local.get(['aiUsage', 'platformSettings', 'uiTheme'], (result) => {
+chrome.storage.local.get(['aiUsage', 'platformSettings', 'uiDarkMode', 'uiColorScheme'], (result) => {
     const settings = result.platformSettings || DEFAULT_SETTINGS;
     applyVisibility(settings);
-    applyTheme(result.uiTheme || 'light');
-    // Set toggle states from storage
+    applyTheme(result.uiDarkMode || false);
+    applyColorScheme(result.uiColorScheme || 'blue');
+
     document.querySelectorAll('.toggle-input[data-platform]').forEach(toggle => {
         toggle.checked = settings[toggle.dataset.platform] !== false;
     });
@@ -122,7 +135,8 @@ chrome.storage.local.get(['aiUsage', 'platformSettings', 'uiTheme'], (result) =>
 // Live updates
 chrome.storage.onChanged.addListener((changes, ns) => {
     if (ns === 'local') {
-        if (changes.uiTheme) applyTheme(changes.uiTheme.newValue);
+        if (changes.uiDarkMode) applyTheme(changes.uiDarkMode.newValue);
+        if (changes.uiColorScheme) applyColorScheme(changes.uiColorScheme.newValue);
         chrome.storage.local.get(['aiUsage', 'platformSettings'], (result) => {
             const settings = result.platformSettings || DEFAULT_SETTINGS;
             applyVisibility(settings);
@@ -131,7 +145,7 @@ chrome.storage.onChanged.addListener((changes, ns) => {
     }
 });
 
-// Settings toggles — save to storage on change
+// Settings toggles
 document.querySelectorAll('.toggle-input').forEach(toggle => {
     toggle.addEventListener('change', () => {
         chrome.storage.local.get(['platformSettings'], (result) => {
@@ -155,14 +169,14 @@ document.querySelectorAll('.nav-btn').forEach(btn => {
     });
 });
 
-// Generate heatmap cells (28 days)
+// Generate heatmap
 const heatmapGrid = document.getElementById('heatmap');
 for (let i = 0; i < 28; i++) {
     const cell = document.createElement('div');
     cell.className = 'heatmap-cell';
     const intensity = Math.random();
-    if (intensity > 0.7) cell.style.background = `rgba(0, 240, 255, ${intensity * 0.6})`;
-    else if (intensity > 0.4) cell.style.background = `rgba(0, 240, 255, 0.15)`;
+    if (intensity > 0.7) cell.style.background = `rgba(var(--accent), ${intensity * 0.6})`;
+    else if (intensity > 0.4) cell.style.background = `var(--accent-soft)`;
     heatmapGrid.appendChild(cell);
 }
 

@@ -21,6 +21,8 @@ const uis = {
 
 const tickerText = document.getElementById('ticker-text');
 const gaugeCards = document.querySelectorAll('.gauge-card');
+const themeToggle = document.getElementById('theme-toggle');
+const colorSelector = document.getElementById('color-selector');
 
 // Platform visibility
 function applyPopupVisibility(settings) {
@@ -32,26 +34,37 @@ function applyPopupVisibility(settings) {
     });
 }
 
-// Theme management
-function applyTheme(theme) {
-    const root = document.documentElement;
-    root.classList.remove('dark', 'peak', 'redlight');
-    if (theme === 'dark') root.classList.add('dark');
-    else if (theme === 'peak') root.classList.add('peak');
-    else if (theme === 'redlight') root.classList.add('redlight');
-
-    document.querySelectorAll('.theme-swatch').forEach(s => {
-        s.classList.toggle('active', s.dataset.theme === theme);
-    });
+// Theme: light/dark via data-theme attribute
+function applyTheme(isDark) {
+    if (isDark) {
+        document.documentElement.setAttribute('data-theme', 'dark');
+    } else {
+        document.documentElement.removeAttribute('data-theme');
+    }
 }
 
-// Theme swatch clicks
-document.querySelectorAll('.theme-swatch').forEach(swatch => {
-    swatch.addEventListener('click', () => {
-        const theme = swatch.dataset.theme;
-        applyTheme(theme);
-        chrome.storage.local.set({ uiTheme: theme });
-    });
+// Color scheme via data-color attribute
+function applyColorScheme(color) {
+    if (color && color !== 'blue') {
+        document.documentElement.setAttribute('data-color', color);
+    } else {
+        document.documentElement.removeAttribute('data-color');
+    }
+    colorSelector.value = color || 'blue';
+}
+
+// Theme toggle click
+themeToggle.addEventListener('click', () => {
+    const isDark = !document.documentElement.hasAttribute('data-theme');
+    applyTheme(isDark);
+    chrome.storage.local.set({ uiDarkMode: isDark });
+});
+
+// Color scheme change
+colorSelector.addEventListener('change', () => {
+    const color = colorSelector.value;
+    applyColorScheme(color);
+    chrome.storage.local.set({ uiColorScheme: color });
 });
 
 // Format numbers
@@ -96,10 +109,11 @@ function renderData(aiUsage, animate = false) {
 }
 
 // Initial Load
-chrome.storage.local.get(['aiUsage', 'platformSettings', 'uiTheme'], (result) => {
+chrome.storage.local.get(['aiUsage', 'platformSettings', 'uiDarkMode', 'uiColorScheme'], (result) => {
     const settings = result.platformSettings || { claude: true, chatgpt: true, kimi: true };
     applyPopupVisibility(settings);
-    applyTheme(result.uiTheme || 'light');
+    applyTheme(result.uiDarkMode || false);
+    applyColorScheme(result.uiColorScheme || 'blue');
     if (result.aiUsage) renderData(result.aiUsage, false);
 });
 
@@ -107,7 +121,8 @@ chrome.storage.local.get(['aiUsage', 'platformSettings', 'uiTheme'], (result) =>
 chrome.storage.onChanged.addListener((changes, namespace) => {
     if (namespace === 'local') {
         if (changes.platformSettings) applyPopupVisibility(changes.platformSettings.newValue);
-        if (changes.uiTheme) applyTheme(changes.uiTheme.newValue);
+        if (changes.uiDarkMode) applyTheme(changes.uiDarkMode.newValue);
+        if (changes.uiColorScheme) applyColorScheme(changes.uiColorScheme.newValue);
         if (changes.aiUsage) {
             renderData(changes.aiUsage.newValue, true);
             tickerText.innerHTML = `DATA SYNC COMPLETE`;

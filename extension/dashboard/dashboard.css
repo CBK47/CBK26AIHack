@@ -8,8 +8,6 @@ body {
 
 /* ── Dashboard Layout ── */
 .dashboard {
-    position: relative;
-    z-index: 1;
     display: flex;
     flex-direction: column;
     min-height: 100vh;
@@ -19,14 +17,14 @@ body {
 .top-bar {
     display: flex;
     align-items: center;
-    padding: 14px 28px;
-    gap: 20px;
-    border-bottom: 1px solid var(--border);
-    background: var(--bg-card);
+    padding: 12px 28px;
+    gap: 16px;
+    border-bottom: 1px solid var(--border-color);
+    background: var(--bg-secondary);
     position: sticky;
     top: 0;
     z-index: 10;
-    transition: var(--transition-theme);
+    transition: background-color 0.3s ease, border-color 0.3s ease;
 }
 
 .logo-area {
@@ -85,6 +83,12 @@ body {
     text-transform: uppercase;
 }
 
+.header-controls {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+}
+
 /* ── Nav Buttons ── */
 .top-nav {
     display: flex;
@@ -93,7 +97,7 @@ body {
 
 .nav-btn {
     background: transparent;
-    border: 1px solid var(--border);
+    border: 1px solid var(--border-color);
     color: var(--text-secondary);
     padding: 7px 16px;
     border-radius: var(--radius-sm);
@@ -101,60 +105,20 @@ body {
     font-size: 12px;
     font-weight: 600;
     letter-spacing: 0.5px;
-    transition: var(--transition-theme);
+    font-family: inherit;
+    transition: all 0.2s ease;
 }
 
 .nav-btn:hover {
     border-color: var(--accent);
-    background: var(--accent-tint);
+    background: var(--accent-soft);
     color: var(--text-primary);
 }
 
 .nav-btn.active {
-    background: var(--accent-tint);
+    background: var(--accent-soft);
     border-color: var(--accent);
     color: var(--accent);
-}
-
-/* ── Theme Swatches in Top Bar ── */
-.theme-bar-inline {
-    display: flex;
-    gap: 4px;
-    margin-left: 12px;
-}
-
-.theme-swatch {
-    width: 16px;
-    height: 16px;
-    border-radius: 50%;
-    border: 2px solid var(--border);
-    cursor: pointer;
-    transition: border-color 0.2s ease, transform 0.2s ease;
-}
-
-.theme-swatch:hover {
-    transform: scale(1.15);
-}
-
-.theme-swatch.active {
-    border-color: var(--accent);
-    box-shadow: 0 0 0 2px var(--accent-tint);
-}
-
-.theme-swatch.light {
-    background: #f0f2f6;
-}
-
-.theme-swatch.dark {
-    background: #0e1117;
-}
-
-.theme-swatch.peak {
-    background: #e8a830;
-}
-
-.theme-swatch.redlight {
-    background: #e53535;
 }
 
 /* ── Main Content ── */
@@ -195,8 +159,8 @@ body {
     align-items: center;
     gap: 10px;
     padding: 10px 0;
-    border-bottom: 1px solid var(--border);
-    transition: var(--transition-theme);
+    border-bottom: 1px solid var(--border-color);
+    transition: border-color 0.3s ease;
 }
 
 .life-sign-row:last-child {
@@ -262,12 +226,6 @@ body {
     flex-direction: column;
     align-items: center;
     gap: 10px;
-    transition: var(--transition-theme), transform 0.2s ease;
-}
-
-.gauge-big:hover {
-    transform: translateY(-2px);
-    box-shadow: var(--shadow-elevated);
 }
 
 .gauge-big h3 {
@@ -282,16 +240,16 @@ body {
     border-radius: 6px;
 }
 
-/* ── Liquid Gauge (shared) ── */
+/* ── Liquid Gauge ── */
 .liquid-gauge {
     width: 100px;
     height: 100px;
     border-radius: 50%;
-    border: 2px solid var(--border);
+    border: 2px solid var(--border-color);
     position: relative;
     overflow: hidden;
-    background: var(--bg-inset);
-    transition: var(--transition-theme);
+    background: var(--bg-tertiary);
+    transition: background-color 0.3s ease, border-color 0.3s ease;
 }
 
 .liquid-fill {
@@ -401,8 +359,8 @@ body {
 .heatmap-cell {
     aspect-ratio: 1;
     border-radius: 3px;
-    background: var(--bg-inset);
-    transition: var(--transition-theme);
+    background: var(--bg-tertiary);
+    transition: background-color 0.3s ease;
 }
 
 /* ── Ledger ── */
@@ -411,8 +369,8 @@ body {
     justify-content: space-between;
     align-items: center;
     padding: 10px 0;
-    border-bottom: 1px solid var(--border);
-    transition: var(--transition-theme);
+    border-bottom: 1px solid var(--border-color);
+    transition: border-color 0.3s ease;
 }
 
 .ledger-item:last-child {
@@ -437,7 +395,7 @@ body {
 
 .divider {
     border: none;
-    border-top: 1px solid var(--border);
+    border-top: 1px solid var(--border-color);
     margin: 6px 0;
 }
 
@@ -463,10 +421,10 @@ body {
     justify-content: space-between;
     padding: 10px 0;
     cursor: pointer;
-    border-bottom: 1px solid var(--border);
+    border-bottom: 1px solid var(--border-color);
     font-size: 13px;
     color: var(--text-secondary);
-    transition: var(--transition-theme);
+    transition: border-color 0.3s ease;
 }
 
 .toggle-input {
@@ -476,11 +434,11 @@ body {
 .toggle-switch {
     width: 40px;
     height: 22px;
-    background: var(--bg-inset);
+    background: var(--bg-tertiary);
     border-radius: 11px;
     position: relative;
     transition: background 0.3s ease;
-    border: 1px solid var(--border);
+    border: 1px solid var(--border-color);
 }
 
 .toggle-switch::after {
