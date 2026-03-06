@@ -1,6 +1,6 @@
 # Shared Task Registry
 
-Last updated: 2026-03-06
+Last updated: 2026-03-06 (CBK-CLAUDE-LNX-CLI session)
 
 Use this file as the actionable multi-agent backlog.
 
@@ -33,9 +33,9 @@ Update task status before doing work:
 |---|---|---|---|---|---|
 | P2-001 | Verify stable TTS playback while Whisper idle | High | Antigravity | todo | Milestone 1 |
 | P2-002 | Implement spoken confirmation after transcription | High | Antigravity | todo | Milestone 2 |
-| P2-003 | Add AI response loop (transcript -> API -> TTS) | High | Claude | todo | Milestone 3 |
+| P2-003 | Add AI response loop (transcript -> API -> TTS) | High | Claude | in_progress | CBK-CLAUDE-LNX-CLI picking up. Will wire Whisper -> Ollama llama3.2:3b -> TTS endpoint. |
 | P2-004 | Add always-on VAD recording | Medium | Gemini | todo | Milestone 4 |
-| P2-005 | Sabrina-style custom voice clone evaluation | Medium | Antigravity | todo | Stretch goal; privacy/licensing review needed |
+| P2-005 | Sabrina-style custom voice clone evaluation | Medium | Antigravity | in_progress | GX10: clone_sabrina.sh + tts_server.py + mac_tts_patch.js written & pushed. XTTS v2 deps installing (Python 3.11 venv). Blocked on final dep install (transformers/umap-learn). |
 
 ## Shared Docs and Ops
 
