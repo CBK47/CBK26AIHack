@@ -34,6 +34,9 @@ This document defines the shared system topology across all projects in this rep
 
 Routing rule: assign one owner per task in `task_registry.md`; Codex validates outputs before merge to `main`.
 
+Runtime codename source of truth: `00_SharedResources/runtime_registry.md`.
+Execution method source of truth: `00_SharedResources/project_methodology.md`.
+
 ## 3. Shared Documentation Contract
 
 | Document | Canonical purpose |

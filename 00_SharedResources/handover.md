@@ -8,10 +8,12 @@ Purpose: hand over active context when switching between models/agents/humans.
 ## 1. Read Order for Incoming Agent
 
 1. `00_SharedResources/global_architecture_spec.md`
-2. `00_SharedResources/task_registry.md`
-3. Relevant project `spec.md`
-4. This handover file
-5. Latest debrief entry in `00_SharedResources/debrief.md`
+2. `00_SharedResources/project_methodology.md`
+3. `00_SharedResources/runtime_registry.md`
+4. `00_SharedResources/task_registry.md`
+5. Relevant project `spec.md`
+6. This handover file
+7. Latest debrief entry in `00_SharedResources/debrief.md`
 
 ## 2. Current Priority Snapshot
 

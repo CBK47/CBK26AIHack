@@ -8,8 +8,16 @@ Use this file as the actionable multi-agent backlog.
 
 - `todo`: not started
 - `in_progress`: actively being worked
+- `on_hold`: paused intentionally; include short reason
 - `blocked`: waiting on dependency/decision
 - `done`: completed
+
+## Execution Rule
+
+Update task status before doing work:
+1. Set to `in_progress` when starting.
+2. Set to `on_hold` with reason if paused/abandoned.
+3. Set to `done` when complete.
 
 ## Project 1: Mission Control
 
