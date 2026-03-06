@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>AI Mission Control</title>
+  <link rel="stylesheet" href="popup.css">
+</head>
+<body>
+  <div class="noise-overlay"></div>
+  <div class="hologram-mesh"></div>
+  
+  <div class="container">
+    <header class="ticker-header glass-card">
+      <div class="live-dot"></div>
+      <div class="ticker-content" id="ticker-text">MONITORING CLAUDE.AI • ONLINE</div>
+    </header>
+
+    <main class="center-stage">
+      <!-- ChatGPT Gauge -->
+      <div class="gauge-card glass-card">
+        <div class="gauge-title">ChatGPT</div>
+        <div class="liquid-gauge">
+          <div class="liquid-fill" id="fill-chatgpt" style="--fill-level: 5%;">
+            <div class="wave"></div>
+            <div class="wave wave2"></div>
+          </div>
+          <div class="gauge-overlay">
+            <span class="tokens-value" id="val-chatgpt">0</span>
+            <span class="tokens-label">tokens</span>
+          </div>
+        </div>
+        <div class="stats-row">
+          <span>Prompts:</span>
+          <span id="prompts-chatgpt">0</span>
+        </div>
+      </div>
+
+      <!-- Claude Gauge -->
+      <div class="gauge-card glass-card">
+        <div class="gauge-title">Claude</div>
+        <div class="liquid-gauge claude-theme">
+          <div class="liquid-fill" id="fill-claude" style="--fill-level: 5%;">
+            <div class="wave"></div>
+            <div class="wave wave2"></div>
+          </div>
+          <div class="gauge-overlay">
+            <span class="tokens-value" id="val-claude">0</span>
+            <span class="tokens-label">tokens</span>
+          </div>
+        </div>
+        <div class="stats-row">
+          <span>Prompts:</span>
+          <span id="prompts-claude">0</span>
+        </div>
+      </div>
+
+      <!-- Kimi Gauge -->
+      <div class="gauge-card glass-card">
+        <div class="gauge-title">Kimi</div>
+        <div class="liquid-gauge kimi-theme">
+          <div class="liquid-fill" id="fill-kimi" style="--fill-level: 5%;">
+            <div class="wave"></div>
+            <div class="wave wave2"></div>
+          </div>
+          <div class="gauge-overlay">
+            <span class="tokens-value" id="val-kimi">0</span>
+            <span class="tokens-label">tokens</span>
+          </div>
+        </div>
+        <div class="stats-row">
+          <span>Prompts:</span>
+          <span id="prompts-kimi">0</span>
+        </div>
+      </div>
+    </main>
+
+    <footer class="sync-footer glass-card">
+      <div class="sync-status">
+        <div class="particles" id="sync-particles"></div>
+        <span class="sync-text">Telemetry Active</span>
+      </div>
+      <div class="fuel-gauge holographic">
+        $ <span id="val-cost">0.00</span>
+      </div>
+    </footer>
+  </div>
+
+  <script src="popup.js"></script>
+</body>
+</html>
