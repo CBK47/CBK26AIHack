@@ -95,6 +95,20 @@
           <div class="setting-divider"></div>
 
           <div class="setting-group">
+            <label class="setting-label">AI Response Loop</label>
+            <div class="setting-desc">After transcribing, send to local Ollama AI and speak the response</div>
+            <label style="display: flex; align-items: center; gap: 8px; cursor: pointer;">
+              <input type="checkbox" id="inputAiLoop"> Enable AI Loop
+            </label>
+            <div style="margin-top: 8px;">
+              <div class="setting-desc">Ollama model (default: llama3.2:3b)</div>
+              <input type="text" class="setting-input" id="inputOllamaModel" placeholder="llama3.2:3b">
+            </div>
+          </div>
+
+          <div class="setting-divider"></div>
+
+          <div class="setting-group">
             <label class="setting-label">Automation</label>
             <div class="setting-desc">Automatically paste and press Return after transcribing</div>
             <label style="display: flex; align-items: center; gap: 8px; cursor: pointer;">
@@ -206,6 +220,23 @@
           <div class="transcript-empty">// Awaiting input</div>
         </div>
         <div class="transcript-meta"></div>
+      </div>
+
+      <!-- AI Response Panel -->
+      <div class="ai-response-area" id="aiResponseArea" style="display:none">
+        <div class="transcript-header">
+          <span class="transcript-label ai-label">// AI Response</span>
+          <div class="transcript-actions">
+            <button class="transcript-btn" id="btnAiSpeak" title="Speak response">&#9654; Speak</button>
+            <button class="transcript-btn" id="btnAiStop" title="Stop speaking" style="display:none">&#9632; Stop</button>
+          </div>
+        </div>
+        <div class="ai-thinking" id="aiThinking" style="display:none">
+          <span class="ai-thinking-dots"><span>.</span><span>.</span><span>.</span></span>
+          <span class="ai-thinking-label">thinking</span>
+        </div>
+        <div class="ai-response-body" id="aiResponseBody"></div>
+        <div class="ai-response-meta" id="aiResponseMeta"></div>
       </div>
 
     </div>

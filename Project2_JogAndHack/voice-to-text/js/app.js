@@ -396,6 +396,13 @@ async function sendAudio(blob) {
       });
     }
 
+    // AI response loop — server-side (if ai_loop config is on, response is in payload)
+    if (data.ai_response) {
+      showAIResponse(data.ai_response, data.ai_audio_b64, data.ai_error);
+    } else if (data.ai_error) {
+      showAIResponse(null, null, data.ai_error);
+    }
+
   } catch (err) {
     showError(err.message);
     console.error('[VTT] Transcribe error:', err);
@@ -457,6 +464,89 @@ function showError(msg) {
   $('.transcript-area').classList.add('visible');
 }
 
+// --- AI Response ---
+let currentAudio = null;
+let currentUtterance = null;
+
+function showAIThinking() {
+  const area = $('#aiResponseArea');
+  area.style.display = 'block';
+  $('#aiThinking').style.display = 'flex';
+  $('#aiResponseBody').textContent = '';
+  $('#aiResponseMeta').textContent = '';
+  $('#btnAiStop').style.display = 'none';
+  $('#btnAiSpeak').style.display = 'none';
+}
+
+function showAIResponse(text, audiob64, error) {
+  const area = $('#aiResponseArea');
+  area.style.display = 'block';
+  $('#aiThinking').style.display = 'none';
+
+  if (error && !text) {
+    $('#aiResponseBody').innerHTML = `<span style="color:var(--orange)">// AI error: ${error}</span>`;
+    $('#aiResponseMeta').textContent = '';
+    return;
+  }
+
+  $('#aiResponseBody').textContent = text || '';
+  $('#btnAiSpeak').style.display = 'inline-block';
+
+  if (audiob64) {
+    // Play server-generated TTS audio (WAV from XTTS)
+    const bytes = Uint8Array.from(atob(audiob64), c => c.charCodeAt(0));
+    const blob = new Blob([bytes], { type: 'audio/wav' });
+    const url = URL.createObjectURL(blob);
+    if (currentAudio) { currentAudio.pause(); URL.revokeObjectURL(currentAudio.src); }
+    currentAudio = new Audio(url);
+    currentAudio.play();
+    $('#btnAiStop').style.display = 'inline-block';
+    currentAudio.onended = () => {
+      $('#btnAiStop').style.display = 'none';
+      URL.revokeObjectURL(url);
+    };
+    $('#aiResponseMeta').textContent = `// XTTS voice`;
+  } else if (text && 'speechSynthesis' in window) {
+    // Browser Web Speech API fallback
+    speakText(text);
+    $('#aiResponseMeta').textContent = `// browser TTS (XTTS server offline)`;
+  } else {
+    $('#aiResponseMeta').textContent = `// text only (no TTS)`;
+  }
+}
+
+function speakText(text) {
+  if (currentUtterance) window.speechSynthesis.cancel();
+  currentUtterance = new SpeechSynthesisUtterance(text);
+  currentUtterance.rate = 1.05;
+  currentUtterance.pitch = 1.0;
+  currentUtterance.onstart = () => $('#btnAiStop').style.display = 'inline-block';
+  currentUtterance.onend = () => $('#btnAiStop').style.display = 'none';
+  window.speechSynthesis.speak(currentUtterance);
+}
+
+function stopAISpeech() {
+  if (currentAudio) { currentAudio.pause(); currentAudio.currentTime = 0; }
+  if ('speechSynthesis' in window) window.speechSynthesis.cancel();
+  $('#btnAiStop').style.display = 'none';
+}
+
+async function triggerAIChat(text) {
+  if (!text) return;
+  showAIThinking();
+  try {
+    const res = await fetch(`${API_URL}/ai_chat`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ text })
+    });
+    const data = await res.json();
+    showAIResponse(data.response, data.audio_b64, data.error);
+  } catch (err) {
+    showAIResponse(null, null, err.message);
+  }
+}
+
 // --- Actions ---
 function copyTranscript() {
   const body = $('.transcript-body');
@@ -475,6 +565,9 @@ function clearTranscript() {
   $('.transcript-meta').innerHTML = '';
   $('.transcript-area').classList.remove('visible');
   localStorage.removeItem('vtt-last-transcript');
+  stopAISpeech();
+  $('#aiResponseArea').style.display = 'none';
+  $('#aiResponseBody').textContent = '';
 }
 
 function downloadTranscript() {
@@ -578,6 +671,8 @@ async function openSettings() {
   selectedDevice = currentConfig.device || 'cpu';
   $('#inputModelPath').value = currentConfig.model_path || '';
   $('#inputAutoSubmit').checked = !!currentConfig.auto_submit;
+  $('#inputAiLoop').checked = !!currentConfig.ai_loop;
+  $('#inputOllamaModel').value = currentConfig.ollama_model || 'llama3.2:3b';
   updateSelectedStates();
   $('#settingsNote').textContent = '';
 
@@ -614,12 +709,17 @@ async function saveSettings() {
   const autoSubmit = $('#inputAutoSubmit').checked;
   const note = $('#settingsNote');
 
+  const aiLoop = $('#inputAiLoop').checked;
+  const ollamaModel = ($('#inputOllamaModel').value || '').trim();
+
   const updates = {
     model: selectedModel,
     device: selectedDevice,
-    auto_submit: autoSubmit
+    auto_submit: autoSubmit,
+    ai_loop: aiLoop
   };
   if (modelPath) updates.model_path = modelPath;
+  if (ollamaModel) updates.ollama_model = ollamaModel;
 
   try {
     const res = await fetch(`${API_URL}/config`, {
@@ -814,6 +914,13 @@ document.addEventListener('DOMContentLoaded', () => {
   $('#btnCopy').addEventListener('click', copyTranscript);
   $('#btnClear').addEventListener('click', clearTranscript);
   $('#btnDownload').addEventListener('click', downloadTranscript);
+
+  // AI response actions
+  $('#btnAiSpeak').addEventListener('click', () => {
+    const text = $('#aiResponseBody').textContent;
+    if (text) speakText(text);
+  });
+  $('#btnAiStop').addEventListener('click', stopAISpeech);
 
   // Zoom
   $('#btnZoomIn').addEventListener('click', zoomIn);
