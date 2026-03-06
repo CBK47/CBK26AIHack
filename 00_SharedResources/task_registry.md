@@ -15,19 +15,19 @@ Use this file as the actionable multi-agent backlog.
 
 | ID | Task | Priority | Owner | Status | Notes |
 |---|---|---|---|---|---|
-| P1-001 | Replace heuristic token limits with real provider limits | High | unassigned | todo | Coordinate with `api_research.md` |
-| P1-002 | Replace random heatmap with real history snapshots | High | unassigned | todo | Requires storage schema update |
+| P1-001 | Replace heuristic token limits with real provider limits | High | OpenCode | todo | Coordinate with `api_research.md` |
+| P1-002 | Replace random heatmap with real history snapshots | High | Aider | todo | Requires storage schema update |
 | P1-003 | Wire feature toggles from UI to actual behavior | Medium | unassigned | todo | History/GitHub toggles currently stubbed |
 
 ## Project 2: Jog and Hack
 
 | ID | Task | Priority | Owner | Status | Notes |
 |---|---|---|---|---|---|
-| P2-001 | Verify stable TTS playback while Whisper idle | High | unassigned | todo | Milestone 1 |
-| P2-002 | Implement spoken confirmation after transcription | High | unassigned | todo | Milestone 2 |
+| P2-001 | Verify stable TTS playback while Whisper idle | High | Antigravity | todo | Milestone 1 |
+| P2-002 | Implement spoken confirmation after transcription | High | Antigravity | todo | Milestone 2 |
 | P2-003 | Add AI response loop (transcript -> API -> TTS) | High | unassigned | todo | Milestone 3 |
 | P2-004 | Add always-on VAD recording | Medium | unassigned | todo | Milestone 4 |
-| P2-005 | Sabrina-style custom voice clone evaluation | Medium | unassigned | todo | Stretch goal; privacy/licensing review needed |
+| P2-005 | Sabrina-style custom voice clone evaluation | Medium | Antigravity | todo | Stretch goal; privacy/licensing review needed |
 
 ## Shared Docs and Ops
 
