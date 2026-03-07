@@ -161,12 +161,49 @@
       color: var(--accent);
     }
     .stat-label { font-size: 11px; color: var(--muted); margin-top: 4px; }
+
+    .content-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 16px;
+      margin-bottom: 28px;
+    }
+    .content-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 16px;
+    }
+    .content-card h3 {
+      font-size: 14px;
+      margin-bottom: 8px;
+      color: #ffd07a;
+      letter-spacing: 0.03em;
+    }
+    .content-card p {
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.6;
+    }
+    .content-card ul {
+      margin-left: 16px;
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.6;
+    }
+    .content-card li { margin-bottom: 4px; }
     
     footer {
       text-align: center;
       padding: 40px;
       color: var(--muted);
       border-top: 1px solid var(--border);
+    }
+
+    @media (max-width: 820px) {
+      .status-bar { flex-direction: column; }
+      .stats-grid { grid-template-columns: 1fr; }
+      .content-grid { grid-template-columns: 1fr; }
     }
   </style>
 </head>
@@ -177,6 +214,71 @@
       <h1>AUTO<span>MINER</span></h1>
       <p class="subtitle">Earns ETH when agents are idle. Auto-switches to most profitable coin.</p>
     </header>
+
+    <div class="content-grid">
+      <section class="content-card">
+        <h3>What This Service Does</h3>
+        <p>
+          Auto Miner is a fallback revenue engine for the swarm. If no active compute rental job is running,
+          this node can switch into mining mode so idle hardware still generates value.
+        </p>
+      </section>
+      <section class="content-card">
+        <h3>Activation Logic</h3>
+        <ul>
+          <li>Rental workload active: miner stays paused.</li>
+          <li>Rental workload idle: miner can auto-start.</li>
+          <li>Profitability check can rotate strategy/coin profile.</li>
+        </ul>
+      </section>
+      <section class="content-card">
+        <h3>Economics Snapshot</h3>
+        <ul>
+          <li>Baseline profile shown: RandomX / Monero style workload.</li>
+          <li>Illustrative output target: around 30 kH/s class throughput.</li>
+          <li>Swarm goal: keep idle cycles from going to waste.</li>
+        </ul>
+      </section>
+      <section class="content-card">
+        <h3>Operator Notes</h3>
+        <ul>
+          <li>Treat this as opportunistic fallback, not primary revenue.</li>
+          <li>Watch reject rate and hashrate drift for hardware issues.</li>
+          <li>Keep power/thermals within safe limits on long runs.</li>
+        </ul>
+      </section>
+      <section class="content-card">
+        <h3>Opportunity Context</h3>
+        <p>
+          In the FREYWILL model, idle infrastructure is treated as recoverable value.
+          Auto-Miner exists to reduce wasted runtime between paid inference and compute jobs.
+        </p>
+      </section>
+      <section class="content-card">
+        <h3>Stack + Integration</h3>
+        <ul>
+          <li>Integrated into Project 4 service mesh and Swarm Command telemetry.</li>
+          <li>Payment/treasury accounting routes through the x402 shared rails.</li>
+          <li>Coordination with Compute Rental avoids overlap with paid workloads.</li>
+        </ul>
+      </section>
+      <section class="content-card">
+        <h3>Status + Ports</h3>
+        <ul>
+          <li>Project 4 port: <code>4003</code> (auto-miner control plane).</li>
+          <li>Sibling dependencies: <code>4000</code> dashboard, <code>4002</code> compute, <code>4006</code> payment rail.</li>
+          <li>Service state should remain idle-first unless explicit fallback trigger fires.</li>
+        </ul>
+      </section>
+      <section class="content-card">
+        <h3>Roadmap Alignment</h3>
+        <ul>
+          <li>Keep miner as fallback revenue, not brand-defining feature.</li>
+          <li>Improve profitability switching logic and thermal safety guards.</li>
+          <li>Preserve clear handover notes for multi-agent operation continuity.</li>
+        </ul>
+      </section>
+    </div>
     
     <div class="status-bar">
       <div class="status-card" id="status-card">
@@ -229,6 +331,20 @@
         <div class="stat-label">Rejected</div>
       </div>
     </div>
+
+    <section style="margin:24px 0 8px;padding:16px;border:1px solid var(--border);border-radius:12px;background:rgba(0,0,0,0.2);">
+      <h2 style="font-size:16px;margin-bottom:8px;">Project Brief (From Swarm Doc)</h2>
+      <p style="color:var(--muted);font-size:13px;line-height:1.6;">
+        Auto-Miner is positioned as the fallback utilization service in FREYWILL: if core AI/compute demand drops,
+        this lane converts idle cycles into treasury-supporting revenue while keeping primary inference workloads prioritized.
+      </p>
+      <ul style="margin:8px 0 0 18px;color:var(--muted);font-size:13px;line-height:1.65;">
+        <li>Economic role: defensive uptime monetization, not primary go-to-market product.</li>
+        <li>Integration role: coordinated with compute rental and x402/tax accounting paths.</li>
+        <li>Operational role: safe-mode fallback with thermal and reject-rate monitoring.</li>
+        <li>Project 4 port map anchor: <code>4003</code> miner with <code>4000/4002/4006</code> support links.</li>
+      </ul>
+    </section>
     
     <footer>
       <p>Auto-fallback: Mines when no rental jobs active</p>
@@ -275,4 +391,3 @@
   </script>
 </body>
 </html>
-HTMLEOF

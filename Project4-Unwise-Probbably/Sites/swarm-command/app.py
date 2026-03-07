@@ -147,6 +147,13 @@ def openclaw():
     return send_from_directory(openclaw_dir, "index.html")
 
 
+@app.route("/research/swarm-report.pdf")
+def swarm_report_pdf():
+    """Serve the swarm research report PDF."""
+    project4_root = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
+    return send_from_directory(project4_root, "swarm_research_report.pdf")
+
+
 @app.route("/api/swarm")
 def swarm():
     """Get all agents status"""

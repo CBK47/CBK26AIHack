@@ -1,0 +1,28 @@
+{
+  "allowed-stack-test": {
+    "path": "allowed-stack-test",
+    "name": "Allowed Stack Test",
+    "files": [
+      "index.html",
+      "style.css",
+      "app.js"
+    ],
+    "wallet": "",
+    "created": "2026-03-07T12:21:16.383436",
+    "expires": 1773147199.5248,
+    "status": "live",
+    "unlisted": false
+  },
+  "web101": {
+    "path": "web101",
+    "name": "Web101",
+    "files": [
+      "index.html"
+    ],
+    "wallet": "",
+    "created": "2026-03-07T12:35:57.767091",
+    "expires": 1773147199.5248,
+    "status": "live",
+    "unlisted": false
+  }
+}

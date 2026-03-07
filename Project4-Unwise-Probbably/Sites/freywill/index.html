@@ -19,11 +19,69 @@
     .status { margin-top: 3rem; font-size: 0.75rem; color: #444; }
     .status a { color: #00ff88; text-decoration: none; }
     .status a:hover { text-decoration: underline; }
+    .research {
+      width: 100%;
+      max-width: 640px;
+      margin-top: 2rem;
+      border: 1px solid #1a1a1a;
+      border-radius: 10px;
+      background: #0f0f0f;
+      padding: 1rem 1.25rem;
+    }
+    .research h2 {
+      font-size: 0.95rem;
+      color: #9dffcb;
+      margin-bottom: 0.6rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+    .research h3 {
+      font-size: 0.78rem;
+      color: #d6ffe9;
+      margin: 0.8rem 0 0.35rem;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+    }
+    .research p {
+      color: #a2a2a2;
+      font-size: 0.82rem;
+      line-height: 1.55;
+      margin-bottom: 0.35rem;
+    }
+    .research ul { margin-left: 1rem; color: #9a9a9a; font-size: 0.82rem; }
+    .research li { margin-bottom: 0.35rem; }
   </style>
 </head>
 <body>
   <h1>FREYWILL</h1>
   <p class="tagline">Pay-per-call AI. 120B local inference. 90% below market.</p>
+
+  <section class="research">
+    <h2>Project Brief (From Swarm Doc)</h2>
+    <h3>One-Liner</h3>
+    <p>FREYWILL is a pay-per-call AI marketplace: "Fiverr for AI agents" using local 120B inference.</p>
+    <h3>Opportunity</h3>
+    <p>Hackathon teams burn API credits fast; this stack uses GB10 local inference to cut market pricing by 80-90%.</p>
+    <h3>Core Offer + Pricing</h3>
+    <ul>
+      <li>Summarize: 0.001 USDC</li>
+      <li>Complete: 0.001 USDC</li>
+      <li>Review: 0.005 USDC</li>
+      <li>Payment rail: x402 on Base/USDC, accountless pay-per-call flow.</li>
+    </ul>
+    <h3>Architecture</h3>
+    <ul>
+      <li>Flask API + x402 payment middleware + Ollama local models.</li>
+      <li>Models: <code>gpt-oss:120b</code> and <code>qwen2.5-coder:32b</code>.</li>
+      <li>Service discovery via <code>/.well-known/x402</code> for autonomous agents.</li>
+    </ul>
+    <h3>Status + Roadmap</h3>
+    <ul>
+      <li>Scaffold and dashboard are done; API/payment lanes are in active build/mock mode.</li>
+      <li>Next commits: core API services, payment middleware, landing/deployment polish.</li>
+      <li>Project 4 ports: <code>4000-4007</code> active, <code>4008-4014</code> reserved.</li>
+    </ul>
+  </section>
 
   <div class="endpoints">
     <div class="endpoint">

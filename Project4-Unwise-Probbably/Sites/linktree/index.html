@@ -54,6 +54,30 @@
       flex-direction: column;
       gap: 16px;
     }
+    .brief {
+      width: 100%;
+      max-width: 500px;
+      margin-bottom: 20px;
+      padding: 16px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+    }
+    .brief h2 {
+      font-size: 13px;
+      margin-bottom: 8px;
+      color: var(--accent);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+    }
+    .brief p, .brief li {
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.6;
+    }
+    .brief ul {
+      margin: 8px 0 0 18px;
+    }
     .link-card {
       background: var(--surface);
       border: 1px solid var(--border);
@@ -116,6 +140,23 @@
   <div class="logo">🚀</div>
   <h1>aihack26.xyz</h1>
   <p class="tagline">Project 4: FREYWILL Swarm Ecosystem</p>
+  <p class="tagline" style="max-width:560px;text-align:center;margin-top:-24px;margin-bottom:28px;">
+    Research-backed stack: pay-per-call AI, edge compute rental, fallback mining, rapid hosting, and x402 settlement.
+  </p>
+
+  <section class="brief">
+    <h2>Project Brief (From Swarm Doc)</h2>
+    <p>
+      FREYWILL is positioned as an AI-services marketplace with local 120B inference and x402 micropayments on Base/USDC.
+      The strategy is to undercut cloud inference costs while keeping service quality and settlement speed high.
+    </p>
+    <ul>
+      <li>Core prices: summarize/complete at 0.001 USDC, code review at 0.005 USDC.</li>
+      <li>Architecture: Flask APIs + x402 middleware + local Ollama models.</li>
+      <li>Treasury rule: 1% shared tax, 99% provider payout.</li>
+      <li>Project 4 active ports: 4000-4007 with 4008-4014 reserved.</li>
+    </ul>
+  </section>
   
   <div class="links">
     <a href="/" class="link-card">
@@ -188,6 +229,15 @@
         <div class="link-desc">Escrow & 1% tax on all transactions</div>
       </div>
       <span class="link-fee">1%</span>
+    </a>
+
+    <a href="https://swarm.aihack26.xyz/research/swarm-report.pdf" class="link-card" target="_blank" rel="noopener noreferrer">
+      <div class="link-icon" style="background: linear-gradient(135deg, #6FD3FF, #4D9FFF);">📘</div>
+      <div class="link-info">
+        <div class="link-title">Swarm Research Report</div>
+        <div class="link-desc">Deep-dive PDF: services, pricing, architecture</div>
+      </div>
+      <span class="link-fee">PDF</span>
     </a>
   </div>
   

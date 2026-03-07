@@ -11,6 +11,7 @@ import time
 import uuid
 import shutil
 import subprocess
+from collections import defaultdict, deque
 from datetime import datetime
 from flask import Flask, request, jsonify, send_from_directory, render_template_string, abort, redirect
 from werkzeug.utils import secure_filename
@@ -22,9 +23,21 @@ app.config['MAX_CONTENT_LENGTH'] = MAX_CONTENT_LENGTH
 
 UPLOAD_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), "uploads")
 ALLOWED_EXTENSIONS = {'.html', '.htm'}
+MAX_SCAN_BYTES = int(os.getenv("DROP_HOST_MAX_SCAN_BYTES", "500000"))
+RATE_LIMIT_WINDOW_SECONDS = int(os.getenv("DROP_HOST_RATE_LIMIT_WINDOW_SECONDS", "60"))
+RATE_LIMIT_MAX_DEPLOYS = int(os.getenv("DROP_HOST_RATE_LIMIT_MAX_DEPLOYS", "20"))
+
+PROMPT_INJECTION_PATTERNS = [
+    re.compile(r"ignore\s+(all\s+)?(previous|prior)\s+instructions", re.IGNORECASE),
+    re.compile(r"(reveal|print|show)\s+(the\s+)?(system|developer)\s+prompt", re.IGNORECASE),
+    re.compile(r"\b(jailbreak|developer\s*mode|dan\s+mode)\b", re.IGNORECASE),
+    re.compile(r"BEGIN\s+(SYSTEM|PROMPT|INSTRUCTIONS)", re.IGNORECASE),
+    re.compile(r"(exfiltrate|steal|dump)\s+(secrets?|tokens?|credentials?)", re.IGNORECASE),
+]
 
 # Active deployments
 DEPLOYMENTS = {}
+RATE_LIMIT_BUCKETS = defaultdict(deque)
 WALLET = "0xD4CD3823A32Cd397fb1b4810Cf5B957A61599003"
 DOMAIN = "drop.aihack26.xyz"
 
@@ -63,6 +76,114 @@ def as_bool(value):
     if value is None:
         return False
     return str(value).strip().lower() in {"1", "true", "yes", "on"}
+
+
+def get_client_ip():
+    xff = request.headers.get("X-Forwarded-For", "").strip()
+    if xff:
+        return xff.split(",")[0].strip()
+    return request.remote_addr or "unknown"
+
+
+def rate_limit_allowed(ip):
+    now = time.time()
+    bucket = RATE_LIMIT_BUCKETS[ip]
+    while bucket and (now - bucket[0]) > RATE_LIMIT_WINDOW_SECONDS:
+        bucket.popleft()
+    if len(bucket) >= RATE_LIMIT_MAX_DEPLOYS:
+        retry_after = max(1, int(RATE_LIMIT_WINDOW_SECONDS - (now - bucket[0])))
+        return False, retry_after
+    bucket.append(now)
+    return True, None
+
+
+def contains_prompt_injection(text):
+    for pattern in PROMPT_INJECTION_PATTERNS:
+        if pattern.search(text):
+            return True
+    return False
+
+
+def deployment_has_html(dep):
+    for file_name in dep.get("files", []):
+        if allowed_file(file_name):
+            return True
+    return False
+
+
+def deployments_index_file():
+    return os.path.join(UPLOAD_DIR, "deployments_index.json")
+
+
+def save_deployments_index():
+    serializable = {}
+    for path, dep in DEPLOYMENTS.items():
+        serializable[path] = {
+            "path": dep.get("path", path),
+            "name": dep.get("name", "Untitled"),
+            "files": dep.get("files", []),
+            "wallet": dep.get("wallet", ""),
+            "created": dep.get("created", datetime.now().isoformat()),
+            "expires": dep.get("expires", datetime.now().timestamp() + 86400 * 3),
+            "status": dep.get("status", "live"),
+            "unlisted": dep.get("unlisted", False),
+        }
+    with open(deployments_index_file(), "w", encoding="utf-8") as f:
+        json.dump(serializable, f, indent=2)
+
+
+def restore_from_upload_folders():
+    now = datetime.now()
+    for entry in os.listdir(UPLOAD_DIR):
+        folder = os.path.join(UPLOAD_DIR, entry)
+        if not os.path.isdir(folder):
+            continue
+        files = []
+        for root, _, filenames in os.walk(folder):
+            for filename in filenames:
+                rel = os.path.relpath(os.path.join(root, filename), folder)
+                files.append(rel)
+        if not files:
+            continue
+        DEPLOYMENTS[entry] = {
+            "path": entry,
+            "name": entry.replace("-", " ").title(),
+            "folder": folder,
+            "files": files,
+            "wallet": "",
+            "created": datetime.fromtimestamp(os.path.getmtime(folder)).isoformat(),
+            "expires": (now.timestamp() + 86400 * 3),
+            "status": "live",
+            "unlisted": "unlisted" in entry.lower(),
+        }
+
+
+def load_deployments_index():
+    DEPLOYMENTS.clear()
+    if os.path.exists(deployments_index_file()):
+        try:
+            with open(deployments_index_file(), "r", encoding="utf-8") as f:
+                raw = json.load(f)
+            for path, dep in raw.items():
+                folder = os.path.join(UPLOAD_DIR, path)
+                if not os.path.isdir(folder):
+                    continue
+                DEPLOYMENTS[path] = {
+                    "path": path,
+                    "name": dep.get("name", "Untitled"),
+                    "folder": folder,
+                    "files": dep.get("files", []),
+                    "wallet": dep.get("wallet", ""),
+                    "created": dep.get("created", datetime.now().isoformat()),
+                    "expires": dep.get("expires", datetime.now().timestamp() + 86400 * 3),
+                    "status": dep.get("status", "live"),
+                    "unlisted": dep.get("unlisted", False),
+                }
+        except (OSError, json.JSONDecodeError):
+            DEPLOYMENTS.clear()
+    if not DEPLOYMENTS:
+        restore_from_upload_folders()
+    save_deployments_index()
 
 
 @app.route("/")
@@ -130,6 +251,14 @@ def serve_user_file(username, filename):
 @app.route("/api/deploy", methods=["POST"])
 def deploy():
     """Deploy site with custom path"""
+    ip = get_client_ip()
+    allowed, retry_after = rate_limit_allowed(ip)
+    if not allowed:
+        return jsonify({
+            "error": f"Rate limit exceeded. Try again in {retry_after}s.",
+            "retry_after": retry_after,
+        }), 429
+
     if request.content_length and request.content_length > MAX_CONTENT_LENGTH:
         return jsonify({"error": "Files too large (max 50MB)"}), 413
     
@@ -137,6 +266,10 @@ def deploy():
     project_name = request.form.get("project_name", "Untitled").strip()
     wallet = request.form.get("wallet_address", "").strip()
     unlisted = as_bool(request.form.get("unlisted"))
+
+    scan_fields = [user_path, project_name, wallet]
+    if any(contains_prompt_injection(field) for field in scan_fields if field):
+        return jsonify({"error": "Upload rejected by content safety checks"}), 422
     
     if not user_path:
         return jsonify({"error": "Please choose a path name"}), 400
@@ -165,6 +298,22 @@ def deploy():
             rel_path = safe_relative_path(file.filename)
             if not rel_path:
                 continue
+
+            # Prompt-injection guardrail: scan HTML payload for known injection phrases.
+            file_bytes = file.read(MAX_SCAN_BYTES + 1)
+            file.stream.seek(0)
+            if len(file_bytes) > MAX_SCAN_BYTES:
+                shutil.rmtree(project_folder, ignore_errors=True)
+                return jsonify({"error": "HTML file too large for safety scan"}), 413
+            try:
+                file_text = file_bytes.decode("utf-8", errors="strict")
+            except UnicodeDecodeError:
+                shutil.rmtree(project_folder, ignore_errors=True)
+                return jsonify({"error": "Only UTF-8 HTML files are supported"}), 400
+            if contains_prompt_injection(file_text):
+                shutil.rmtree(project_folder, ignore_errors=True)
+                return jsonify({"error": "Upload rejected by content safety checks"}), 422
+
             filepath = os.path.join(project_folder, rel_path)
             os.makedirs(os.path.dirname(filepath), exist_ok=True)
             file.save(filepath)
@@ -187,6 +336,7 @@ def deploy():
     }
     
     DEPLOYMENTS[user_path] = deployment
+    save_deployments_index()
     
     return jsonify({
         "success": True,
@@ -206,12 +356,17 @@ def deploy():
     })
 
 
+load_deployments_index()
+
+
 @app.route("/api/sites")
 def list_sites():
     """List all deployed sites"""
     sites = []
     for path, dep in DEPLOYMENTS.items():
         if dep.get("unlisted"):
+            continue
+        if not deployment_has_html(dep):
             continue
         sites.append({
             "path": path,
