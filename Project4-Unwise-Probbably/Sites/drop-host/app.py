@@ -17,7 +17,8 @@ from werkzeug.utils import secure_filename
 
 # Configure Flask to serve the React build
 app = Flask(__name__, static_folder='frontend/dist/assets', template_folder='frontend/dist')
-app.config['MAX_CONTENT_LENGTH'] = 50 * 1024 * 1024  # 50MB — enforced by Flask
+MAX_CONTENT_LENGTH = 50 * 1024 * 1024  # 50MB
+app.config['MAX_CONTENT_LENGTH'] = MAX_CONTENT_LENGTH
 
 UPLOAD_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), "uploads")
 ALLOWED_EXTENSIONS = {'.html', '.htm', '.css', '.js', '.png', '.jpg', '.jpeg', '.gif', '.svg', '.ico', '.json', '.txt', '.woff', '.woff2', '.ttf', '.eot', '.mp4', '.webm'}
@@ -62,6 +63,13 @@ def sanitize_path(name):
 def index():
     """Serve the React Frontend"""
     return send_from_directory(app.template_folder, "index.html")
+
+
+@app.route("/assets/<path:filename>")
+def serve_assets(filename):
+    """Serve bundled frontend assets from the Vite build output."""
+    assets_dir = os.path.join(app.template_folder, "assets")
+    return send_from_directory(assets_dir, filename)
 
 
 @app.route("/<filename>")
