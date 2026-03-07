@@ -58,6 +58,36 @@ TARGET_DIR="$UPLOAD_DIR/$SLUG"
 mkdir -p "$TARGET_DIR"
 rsync -a --delete "$SOURCE_DIR"/ "$TARGET_DIR"/
 
+# Rewrite absolute asset references (e.g. "/hero.jpg") to site-local relative
+# paths (e.g. "./hero.jpg") so subpath hosting under /<slug>/ works correctly.
+while IFS= read -r rel; do
+  case "$rel" in
+    *.html|*.js|*.css|*.map) continue ;;
+  esac
+
+  pattern="$(printf '%s' "$rel" | sed -e 's/[.[\*^$()+?{}|]/\\&/g' -e 's/[&]/\\&/g')"
+  replacement="$(printf '%s' "$rel" | sed -e 's/[&]/\\&/g')"
+
+  while IFS= read -r text_file; do
+    sed -i '' \
+      -e "s#\"/$pattern\"#\"./$replacement\"#g" \
+      -e "s#'/$pattern'#'./$replacement'#g" \
+      -e "s#url(/$pattern)#url(./$replacement)#g" \
+      "$text_file"
+  done < <(find "$TARGET_DIR" -type f \( -name '*.html' -o -name '*.js' -o -name '*.css' \))
+done < <(
+  cd "$TARGET_DIR"
+  find . -type f ! -name '.DS_Store' | sed 's#^\./##' | sort
+)
+
+# Generic cleanup for absolute media/font URLs that may not map 1:1 to files
+# in the extracted tree but still need to resolve under /<slug>/.
+while IFS= read -r text_file; do
+  perl -0777 -i -pe 's#"/([^"]+\.(?:jpg|jpeg|png|webp|gif|svg|mp4|webm|woff2?|ttf|otf))"#"./$1"#g' "$text_file"
+  perl -0777 -i -pe "s#'/([^']+\\.(?:jpg|jpeg|png|webp|gif|svg|mp4|webm|woff2?|ttf|otf))'#'./\$1'#g" "$text_file"
+  perl -0777 -i -pe 's#url\(\s*/([^)[:space:]]+\.(?:jpg|jpeg|png|webp|gif|svg|mp4|webm|woff2?|ttf|otf))\s*\)#url(./$1)#g' "$text_file"
+done < <(find "$TARGET_DIR" -type f \( -name '*.html' -o -name '*.js' -o -name '*.css' \))
+
 FILES_JSON="$(
   cd "$TARGET_DIR"
   find . -type f ! -name '.DS_Store' | sed 's#^\./##' | sort | jq -R . | jq -s .
