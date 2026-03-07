@@ -13,9 +13,7 @@ ingress:
     service: http://localhost:4004
   - hostname: drop-host.aihack26.xyz
     service: http://localhost:4005
-  - hostname: drop.aihack26.xyz
-    service: http://localhost:4005
-  - hostname: x402.aihack26.xyz
+- hostname: x402.aihack26.xyz
     service: http://localhost:4006
   - hostname: linktree.aihack26.xyz
     service: http://localhost:4007
