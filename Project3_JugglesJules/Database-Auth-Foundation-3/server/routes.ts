@@ -5,6 +5,7 @@ import { insertTrickSchema, insertSessionSchema, insertSessionTrickSchema, inser
 import { z } from "zod";
 import { processSessionXP } from "./xp";
 import { jsPDF } from "jspdf";
+import { hashPassword, verifyPassword, requireAuth } from "./auth";
 
 export async function registerRoutes(
   httpServer: Server,
@@ -36,7 +37,7 @@ export async function registerRoutes(
     res.json(filtered);
   });
 
-  app.post("/api/tricks", async (req, res) => {
+  app.post("/api/tricks", requireAuth, async (req, res) => {
     const schema = insertTrickSchema.extend({
       name: z.string().min(1, "Name is required"),
       objectsCount: z.number().min(1, "Objects count must be at least 1"),
@@ -48,19 +49,19 @@ export async function registerRoutes(
     res.status(201).json(trick);
   });
 
-  app.post("/api/sessions", async (req, res) => {
+  app.post("/api/sessions", requireAuth, async (req, res) => {
     const parsed = insertSessionSchema.safeParse(req.body);
     if (!parsed.success) return res.status(400).json({ message: "Invalid session data", errors: parsed.error.flatten() });
     const session = await storage.createSession(parsed.data);
     res.status(201).json(session);
   });
 
-  app.get("/api/sessions/:userId", async (req, res) => {
+  app.get("/api/sessions/:userId", requireAuth, async (req, res) => {
     const sessions = await storage.getSessions(req.params.userId);
     res.json(sessions);
   });
 
-  app.get("/api/session/:id", async (req, res) => {
+  app.get("/api/session/:id", requireAuth, async (req, res) => {
     const id = parseInt(req.params.id);
     if (isNaN(id)) return res.status(400).json({ message: "Invalid session ID" });
     const session = await storage.getSession(id);
@@ -68,29 +69,31 @@ export async function registerRoutes(
     res.json(session);
   });
 
-  app.patch("/api/session/:id", async (req, res) => {
+  app.patch("/api/session/:id", requireAuth, async (req, res) => {
     const id = parseInt(req.params.id);
     if (isNaN(id)) return res.status(400).json({ message: "Invalid session ID" });
-    const session = await storage.updateSession(id, req.body);
-    if (!session) return res.status(404).json({ message: "Session not found" });
-    res.json(session);
+    const existing = await storage.getSession(id);
+    if (!existing) return res.status(404).json({ message: "Session not found" });
+    if (existing.userId !== req.session.userId) return res.status(403).json({ message: "Forbidden" });
+    const updated = await storage.updateSession(id, req.body);
+    res.json(updated);
   });
 
-  app.post("/api/session-tricks", async (req, res) => {
+  app.post("/api/session-tricks", requireAuth, async (req, res) => {
     const parsed = insertSessionTrickSchema.safeParse(req.body);
     if (!parsed.success) return res.status(400).json({ message: "Invalid data", errors: parsed.error.flatten() });
     const st = await storage.createSessionTrick(parsed.data);
     res.status(201).json(st);
   });
 
-  app.get("/api/session-tricks/:sessionId", async (req, res) => {
+  app.get("/api/session-tricks/:sessionId", requireAuth, async (req, res) => {
     const sessionId = parseInt(req.params.sessionId);
     if (isNaN(sessionId)) return res.status(400).json({ message: "Invalid session ID" });
     const sessionTricks = await storage.getSessionTricks(sessionId);
     res.json(sessionTricks);
   });
 
-  app.patch("/api/session-tricks/:id", async (req, res) => {
+  app.patch("/api/session-tricks/:id", requireAuth, async (req, res) => {
     const id = parseInt(req.params.id);
     if (isNaN(id)) return res.status(400).json({ message: "Invalid ID" });
     const updated = await storage.updateSessionTrick(id, req.body);
@@ -98,17 +101,17 @@ export async function registerRoutes(
     res.json(updated);
   });
 
-  app.get("/api/user-tricks/:userId", async (req, res) => {
+  app.get("/api/user-tricks/:userId", requireAuth, async (req, res) => {
     const userTricks = await storage.getUserTricks(req.params.userId);
     res.json(userTricks);
   });
 
-  app.post("/api/user-tricks", async (req, res) => {
+  app.post("/api/user-tricks", requireAuth, async (req, res) => {
     const ut = await storage.upsertUserTrick(req.body);
     res.json(ut);
   });
 
-  app.get("/api/achievements/:userId", async (req, res) => {
+  app.get("/api/achievements/:userId", requireAuth, async (req, res) => {
     const achievements = await storage.getAchievements(req.params.userId);
     res.json(achievements);
   });
@@ -123,11 +126,16 @@ export async function registerRoutes(
     if (!username || !email || !password) {
       return res.status(400).json({ message: "Username, email, and password are required" });
     }
+    if (typeof password !== "string" || password.length < 8) {
+      return res.status(400).json({ message: "Password must be at least 8 characters" });
+    }
     const existingUser = await storage.getUserByUsername(username);
     if (existingUser) return res.status(409).json({ message: "Username already taken" });
     const existingEmail = await storage.getUserByEmail(email);
     if (existingEmail) return res.status(409).json({ message: "Email already in use" });
-    const user = await storage.createUser({ username, email, password });
+    const hashed = await hashPassword(password);
+    const user = await storage.createUser({ username, email, password: hashed });
+    req.session.userId = user.id;
     const { password: _, ...safeUser } = user;
     res.status(201).json(safeUser);
   });
@@ -138,22 +146,42 @@ export async function registerRoutes(
       return res.status(400).json({ message: "Username and password are required" });
     }
     const user = await storage.getUserByUsername(username);
-    if (!user || user.password !== password) {
+    if (!user || !(await verifyPassword(password, user.password))) {
       return res.status(401).json({ message: "Invalid credentials" });
     }
+    req.session.userId = user.id;
     const { password: _, ...safeUser } = user;
     res.json(safeUser);
   });
 
-  app.get("/api/user/:id", async (req, res) => {
+  app.post("/api/auth/logout", (req, res) => {
+    req.session.destroy(() => {
+      res.clearCookie("connect.sid");
+      res.json({ message: "Logged out" });
+    });
+  });
+
+  app.get("/api/auth/me", requireAuth, async (req, res) => {
+    const user = await storage.getUser(req.session.userId!);
+    if (!user) return res.status(404).json({ message: "User not found" });
+    const { password: _, ...safeUser } = user;
+    res.json(safeUser);
+  });
+
+  app.get("/api/user/:id", requireAuth, async (req, res) => {
     const user = await storage.getUser(req.params.id);
     if (!user) return res.status(404).json({ message: "User not found" });
     const { password: _, ...safeUser } = user;
     res.json(safeUser);
   });
 
-  app.patch("/api/user/:id", async (req, res) => {
-    const user = await storage.updateUser(req.params.id, req.body);
+  app.patch("/api/user/:id", requireAuth, async (req, res) => {
+    if (req.session.userId !== req.params.id) {
+      return res.status(403).json({ message: "Forbidden" });
+    }
+    // Prevent privilege escalation via body
+    const { password: _p, id: _id, ...safeBody } = req.body;
+    const user = await storage.updateUser(req.params.id, safeBody);
     if (!user) return res.status(404).json({ message: "User not found" });
     const { password: _, ...safeUser } = user;
     res.json(safeUser);

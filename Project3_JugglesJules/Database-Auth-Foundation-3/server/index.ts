@@ -1,11 +1,35 @@
 import express, { type Request, Response, NextFunction } from "express";
+import session from "express-session";
+import MemoryStore from "memorystore";
 import { registerRoutes } from "./routes";
 import { serveStatic } from "./static";
 import { createServer } from "http";
 import { seedDatabase } from "./seed";
+import "./auth"; // load session type augmentation
 
 const app = express();
 const httpServer = createServer(app);
+
+const MStore = MemoryStore(session);
+const sessionSecret = process.env.SESSION_SECRET;
+if (!sessionSecret) {
+  console.warn("[security] SESSION_SECRET env var not set — using insecure default. Set it before wider deployment.");
+}
+
+app.use(
+  session({
+    secret: sessionSecret || "change-me-in-production",
+    resave: false,
+    saveUninitialized: false,
+    store: new MStore({ checkPeriod: 86400000 }), // prune expired entries every 24h
+    cookie: {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "lax",
+      maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
+    },
+  })
+);
 
 declare module "http" {
   interface IncomingMessage {
