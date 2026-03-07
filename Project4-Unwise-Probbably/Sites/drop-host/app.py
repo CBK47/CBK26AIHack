@@ -21,7 +21,7 @@ MAX_CONTENT_LENGTH = 50 * 1024 * 1024  # 50MB
 app.config['MAX_CONTENT_LENGTH'] = MAX_CONTENT_LENGTH
 
 UPLOAD_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), "uploads")
-ALLOWED_EXTENSIONS = {'.html', '.htm', '.css', '.js', '.png', '.jpg', '.jpeg', '.gif', '.svg', '.ico', '.json', '.txt', '.woff', '.woff2', '.ttf', '.eot', '.mp4', '.webm'}
+ALLOWED_EXTENSIONS = {'.html', '.htm', '.css', '.js'}
 
 # Active deployments
 DEPLOYMENTS = {}
