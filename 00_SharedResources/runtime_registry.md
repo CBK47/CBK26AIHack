@@ -1,6 +1,6 @@
 # Runtime Registry: Codenames, Locations, and Tool Stacks
 
-Last updated: 2026-03-06
+Last updated: 2026-03-07
 
 Purpose: provide one canonical naming system for model+location+tool combinations.
 
@@ -19,6 +19,7 @@ Examples:
 | `CBK-CODEX-MAC-MC` | Codex app | Mac | Desktop app | Mission Control and GitHub integrity gate | Repo edit, terminal execution, integration checks |
 | `CBK-CLAUDE-MAC-DESK` | Claude desktop/app | Mac | Desktop app | Architecture review and deep reasoning support | Spec analysis, design review, refactor guidance |
 | `CBK-CLAUDE-LNX-CLI` | Claude CLI | Linux box | Terminal/CLI | Autonomous build and implementation runs | Scripted code edits, test loops, batch execution |
+| `CBK-CLAUDE-LNX-CLI2` | Claude CLI | Linux box | Terminal/CLI | Manual individual task helper; human-in-the-loop JFDI execution | Ad-hoc tasks, direct human collaboration, one-off builds |
 | `CBK-GPT-MAC-RESEARCH` | ChatGPT | Mac | Browser/app | Quick research and rapid external lookup | Fast investigation, summary extraction |
 | `CBK-ANTIGRAV-HYBRID-VOICE` | Antigravity (multi-model) | Mac + Linux | Mixed | Project 2 voice-loop specialist | STT/TTS integration, runtime voice pipeline validation |
 
