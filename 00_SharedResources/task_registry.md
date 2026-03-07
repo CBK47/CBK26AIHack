@@ -56,3 +56,5 @@ Update task status before doing work:
 | SH-003 | Maintain GitHub branch/merge integrity and release hygiene | High | Codex | in_progress | Final gate before merge to `main` |
 | SH-004 | Maintain live server/port inventory across environments | High | CBK-PORTWATCH-LNX-NET | in_progress | 2026-03-07 audit captured GX10 exposed ports: 22, 7860, 24802; see `port_registry.md` |
 | SH-005 | Run recurring mini security checks on active services | High | CBK-SENTINEL-LNX-SEC | todo | Prioritize exposed apps, auth routes, dependency risk, and config drift |
+| SH-006 | Run post-crash controlled rollout with explicit gate checks | High | Codex | done | Completed 2026-03-07 with `recovery_gate.sh` + runbook and repeated PASS gates |
+| SH-007 | Validate Project5 complex-site ingestion into Drop & Host | High | Codex | done | Completed 2026-03-07: `p5-filler-demo`, `p5-kaleo-demo`, `p5-photographer-demo` imported and externally reachable |

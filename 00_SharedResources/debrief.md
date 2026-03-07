@@ -10,6 +10,27 @@ Purpose: append concise session outcomes. This is not the architecture source of
 - Decisions made:
 - Follow-ups:
 
+## 2026-03-07 (CBK-CODEX-MAC-DESK — Project 4 Recovery + Project5 Ingestion)
+
+- Session scope: controlled post-crash recovery, deployment hardening, and staged import test of complex guest websites.
+- What changed:
+  - Added `00_SharedResources/recovery_controlled_rollout.md` with root-cause + prevention workflow.
+  - Added `00_SharedResources/recovery_gate.sh` for repeatable gates: health checks, log scan, tests, memory snapshot.
+  - Updated `Sites/drop-host/app.py` to serve static assets from deployed site folders (upload ingest still HTML-only).
+  - Added `Sites/drop-host/import_project5_site.sh` to import built zip outputs into `uploads/` + `deployments_index.json`.
+  - Imported and verified:
+    - `p5-filler-demo`
+    - `p5-kaleo-demo`
+    - `p5-photographer-demo`
+  - Updated `task_registry.md`, `handover.md`, and `Project4-Unwise-Probbably/PROJECT_STATUS.md`.
+- Decisions made:
+  - Use a single execution lane (Codex) for deployment-path work to avoid concurrent mutation conflicts.
+  - Use gate checks before every checkpoint commit.
+  - Keep upload pipeline HTML-only for now; allow static asset serving for trusted/manual imported multi-file sites.
+- Follow-ups:
+  - Add file locking for `deployments_index.json` to prevent concurrent write races.
+  - Add explicit `drop-host` reload endpoint to avoid hard process restarts when importing manually.
+
 ## 2026-03-07 (CBK-CLAUDE-MAC-DESK — P3 Security Hardening + Tunnel)
 
 - Session scope: P3-002, P3-003, P3-004 — backend hardening for JugglesJules before demo sharing.

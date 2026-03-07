@@ -1,61 +1,71 @@
-# PROJECT STATUS
+# PROJECT STATUS — Project 4 (FREYWILL) + Drop & Host Recovery
 
 Last updated: 2026-03-07
 
-## Summary: Work Completed While Drop and Host Was In Progress
+## Current State
 
-### Completed
+- Project 4 services on ports `4000-4007` are live and healthy.
+- Cloudflare tunnel routes are returning HTTP 200 for all public subdomains.
+- Drop & Host is stable after controlled recovery and repeated gate checks.
 
-1. Project status documentation
-- Architecture overview
-- Port allocation
-- Network topology framing
-- Deployment checklist
+## Recovery Summary (Post-Crash)
 
-2. Shared design system
-- `shared-assets/styles.css` with cohesive CSS variables
-- `shared-assets/nav.html` shared navigation component
-- Visual direction: void black + neon cyan/blue
+### What was fixed
 
-3. Swarm Command dashboard (port 4000)
-- Cohesive branding applied
-- Shared navigation links to all services
-- Live stats cards with earnings display
-- Service grid with hover behavior
+1. Added a controlled rollout runbook:
+   - `00_SharedResources/recovery_controlled_rollout.md`
+2. Added a mechanical health/test gate:
+   - `00_SharedResources/recovery_gate.sh`
+3. Fixed complex-site serving path in Drop & Host:
+   - `Sites/drop-host/app.py` now serves static assets (JS/CSS/images/fonts) for deployed site folders.
+   - Upload ingest remains HTML-only.
+4. Added manual complex-site import tool:
+   - `Sites/drop-host/import_project5_site.sh`
 
-4. Polish automation
-- `polish-services.sh` created for fast updates
+### Root causes addressed
 
-## Port Allocation Summary
+- Dist-level frontend patching without gate checks.
+- Browser caching confusion during rapid edits.
+- HTML-only serving logic blocking bundled assets for complex sites.
+- Process restart drift (orphan process) handled with explicit process reset.
 
-### Project 4: FREYWILL (4000-4014)
+## Port Map (Project 4)
 
-- `4000` Swarm Command dashboard
+- `4000` Swarm Command
 - `4001` FREYWILL AI
 - `4002` Compute Rental
 - `4003` Auto-Miner
 - `4004` Hackathon Hosting
-- `4005` Drop and Host
-- `4006` x402 Payments
+- `4005` Drop & Host
+- `4006` x402 Shared Pay
 - `4007` Linktree
-- `4008-4014` Reserved slots
+- `4008-4014` Reserved
 
-### Project 5: Hacker Webhosting (5000-5019)
+## Project5 Complex Sites Imported into Drop & Host
 
-- `5000` Gateway/Directory
-- `5001-5019` Guest slots (19)
+Now live:
 
-Note: if hosted on macOS, avoid `5000` due AirPlay conflict; use Linux host for this range or remap.
+- `https://drop.aihack26.xyz/p5-filler-demo/`
+- `https://drop.aihack26.xyz/p5-kaleo-demo/`
+- `https://drop.aihack26.xyz/p5-photographer-demo/`
 
-## Next Steps
+Existing upload examples still live:
 
-- Polish remaining sister sites with shared nav
-- Build Project 5 structure (5000-5019)
-- Add systemd auto-start
-- Create monitoring dashboard
-- Validate Cloudflare tunnel flow after DNS propagation
+- `https://drop.aihack26.xyz/web101/`
+- `https://drop.aihack26.xyz/allowed-stack-test/`
 
-## Coordination
+## Validation Results
 
-- Drop and Host remains the priority landing for final polish.
-- Once ready, integrate with shared navigation across all sister services.
+- Local endpoint checks: PASS for all `4000-4007`.
+- Public endpoint checks: PASS for all project subdomains.
+- Drop-host API `/api/sites`: PASS.
+- Drop-host tests: `5 passed`.
+- Multi-file site assets (JS/CSS/images) for all 3 Project5 imports: PASS locally and externally.
+
+## Recommended Operating Pattern
+
+1. Make one scoped change.
+2. Run `./00_SharedResources/recovery_gate.sh`.
+3. Verify public URL + critical assets.
+4. Update docs/task registry.
+5. Commit and push checkpoint.

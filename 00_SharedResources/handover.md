@@ -1,31 +1,58 @@
-# Sitrep Handover: Project 4 Deployment & Infrastructure
+# Handover: Project 4 Stabilization + Project5 Site Imports
 
-## Summary
-The goal is to move the "Project 4" ecosystem (8 Python/Flask services) to be live on `aihack26.xyz` subdomains via Cloudflare Tunnels. Localhost is stable, but frontend assets and specific routing for `drop-host` and `freywill` need final polish.
+Last updated: 2026-03-07
 
-## 🚀 Active Status
-- **Tunnel:** `cloudflared` is running a unified tunnel (`aihack26-sites`) for all 8 ports.
-- **Microservices:** Ports 4000-4007 are all active in the background on this Mac.
-- **DNS:** Subdomains (swarm, freywill, compute, miner, host, drop-host, x402, linktree) are routed to the tunnel.
+## Scope Completed
 
-## 🛠 Work in Progress: "Advanced" Drop & Host
-- **The Issue:** The previous version of `drop-host` (port 4005) was a "basic" port that was missing advanced UI features.
-- **Ongoing Fix:** I am currently overwriting the `drop-host` frontend with the source found in: `/Users/cbk/Code/BroadShield/Example IT Rec Site Simple/-PROJECT-4-FREYWILL-AI-Services-Marketplace/drop-host`.
-- **Next Step:** The `npm install && npm run build` process was started. You need to ensure the build completes and that the Flask app (`app.py`) correctly serves the `dist` folder.
-- **Critical Caveat:** The user noted that `https://drop.aihack26.xyz/` might still have internal links pointing to `localhost`. These need to be updated to use relative paths or the production domain.
+1. Built a controlled recovery process with explicit gates.
+2. Stabilized Drop & Host for complex static websites.
+3. Imported and verified 3 Project5 complex websites into public hosting.
 
-## ⚠️ Known Issues
-1. **Freywill (Port 4001):** The root `/` route returns 404 because it can't find its `index.html`. It currently looks in `.` but the files might be in a different structure or need a build.
-2. **Localhost Links:** The "Advanced" frontend being ported over likely contains hardcoded `http://localhost:4005` links in its React components. These need to be swept and updated to use the production subdomains.
-3. **Start Script:** `start_all_sites.sh` is unreliable. I manually started the sites using `nohup python3 ... &`.
+## Key Files Changed
 
-## 📍 Key Locations
-- **Unified Config:** `/Users/cbk/Code/CBK26AIHack/Project4-Unwise-Probbably/Sites/tunnel_config.yml`
-- **Drop-Host Site:** `/Users/cbk/Code/CBK26AIHack/Project4-Unwise-Probbably/Sites/drop-host`
-- **Original Source (Advanced):** `/Users/cbk/Code/BroadShield/Example IT Rec Site Simple/-PROJECT-4-FREYWILL-AI-Services-Marketplace/drop-host`
+- `00_SharedResources/recovery_controlled_rollout.md`
+- `00_SharedResources/recovery_gate.sh`
+- `00_SharedResources/task_registry.md`
+- `Project4-Unwise-Probbably/PROJECT_STATUS.md`
+- `Project4-Unwise-Probbably/Sites/drop-host/app.py`
+- `Project4-Unwise-Probbably/Sites/drop-host/import_project5_site.sh`
+- `Project4-Unwise-Probbably/Sites/drop-host/uploads/deployments_index.json`
+- `Project4-Unwise-Probbably/Sites/drop-host/uploads/p5-filler-demo/*`
+- `Project4-Unwise-Probbably/Sites/drop-host/uploads/p5-kaleo-demo/*`
+- `Project4-Unwise-Probbably/Sites/drop-host/uploads/p5-photographer-demo/*`
 
-## 📋 Recommended Next Steps
-1. Verify `npm run build` finished in `Sites/drop-host/frontend`.
-2. check `Sites/drop-host/app.py` is serving the `frontend/dist` directory.
-3. Search and replace `localhost:4005` with `drop-host.aihack26.xyz` (or relative paths) in the `src` of the new frontend.
-4. Locate the correct `index.html` for Freywill and fix the `send_from_directory` path in its `app.py`.
+## Live URLs Verified
+
+- `https://drop.aihack26.xyz/p5-filler-demo/`
+- `https://drop.aihack26.xyz/p5-kaleo-demo/`
+- `https://drop.aihack26.xyz/p5-photographer-demo/`
+- `https://drop.aihack26.xyz/web101/`
+- `https://drop.aihack26.xyz/allowed-stack-test/`
+
+## Service Runtime Notes
+
+- Project 4 services are active on ports `4000-4007`.
+- Drop-host process may survive detached-screen shutdown in orphaned state.
+- Reliable restart method for drop-host:
+
+```bash
+pkill -f '/Sites/drop-host.*python3 app.py' || true
+screen -dmS p4-4005 bash -lc 'cd /Users/cbk/Code/CBK26AIHack/Project4-Unwise-Probbably/Sites/drop-host && /Users/cbk/.pyenv/versions/3.13.12/bin/python3 app.py > output.log 2>&1'
+```
+
+## Operational Gate
+
+Run before/after deployment-path edits:
+
+```bash
+cd /Users/cbk/Code/CBK26AIHack
+./00_SharedResources/recovery_gate.sh
+```
+
+Expected: `GATE RESULT: PASS`
+
+## Follow-up Suggestions
+
+1. Add file lock around `deployments_index.json` writes to avoid concurrent import/deploy race.
+2. Add an admin-only `/api/reload` endpoint to refresh index without process restart.
+3. Consider a small managed allowlist for uploadable static asset types (if HTML-only policy is loosened later).

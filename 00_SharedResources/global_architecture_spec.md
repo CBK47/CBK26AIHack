@@ -13,6 +13,7 @@ This document defines the shared system topology across all projects in this rep
 | `Project2_JogAndHack` | Jog and Hack Voice UI | Voice-first interaction loop for coding while mobile | In progress |
 | `Project3_JugglesJules` | Just Juggle Support | Friend support project: backend and hosting enablement | In progress |
 | `Project4-Unwise-Probbably` | FREYWILL | AI services marketplace with x402 + local inference | In progress |
+| `Project5-ServiceUserSites` | Service User Sites | Packaged guest/partner sites for hosted deployment tests | In progress |
 
 ## 2. Model Orchestration Topology
 
@@ -92,3 +93,4 @@ Managed manually via `port_registry.md`. No reverse proxy currently — one tunn
 - Project 4 (FREYWILL) runs on GX10 inference via Ollama at `192.168.0.28:11434`.
 - Project 4 service progress details are tracked in `Project4-Unwise-Probbably/PROJECT_STATUS.md`.
 - Project 5 range (`5000-5019`) should run on Linux host or be remapped if run on macOS due AirPlay conflict on `5000`.
+- Controlled recovery/testing gate for deployment changes: `00_SharedResources/recovery_gate.sh`.
