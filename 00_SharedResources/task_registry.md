@@ -1,6 +1,6 @@
 # Shared Task Registry
 
-Last updated: 2026-03-06
+Last updated: 2026-03-07
 
 Use this file as the actionable multi-agent backlog.
 
@@ -36,6 +36,16 @@ Update task status before doing work:
 | P2-003 | Add AI response loop (transcript -> API -> TTS) | High | Claude | todo | Milestone 3 |
 | P2-004 | Add always-on VAD recording | Medium | Gemini | todo | Milestone 4 |
 | P2-005 | Sabrina-style custom voice clone evaluation | Medium | Antigravity | todo | Stretch goal; privacy/licensing review needed |
+
+## Project 3: Just Juggle Support (Friend Project)
+
+| ID | Task | Priority | Owner | Status | Notes |
+|---|---|---|---|---|---|
+| P3-001 | Deep-dive architecture + backend takeover assessment | High | Codex | done | Completed on 2026-03-07; see session notes for findings |
+| P3-002 | Own backend stabilization for hosted environment | High | CBK-CLAUDE-LNX-CLI | todo | Focus: auth hardening, authorization checks, deploy-safe defaults |
+| P3-003 | Set up temporary Cloudflare Tunnel hosting for demo access | High | CBK-CLAUDE-LNX-CLI | todo | Tunnel to app on Linux; HTTPS required for camera/microphone features |
+| P3-004 | Add minimum pre-public security hardening pass | High | Claude | todo | Password hashing, session auth, IDOR protections before wider sharing |
+| P3-005 | Plan follow-up full security audit after demo window | Medium | Codex | todo | Deeper dependency + endpoint abuse review |
 
 ## Shared Docs and Ops
 

@@ -1,0 +1,68 @@
+Phase 2: The Logic & Library (Tricks & XP)
+"Great. Now, let’s populate the app. Please create a seed file using this data for the 10 starter tricks. Also, implement the XP and Mastery logic: 1 XP per catch, 100 XP per Mastered trick (at 100 catches), and the 30-catch milestone toast.
+Name
+Siteswap
+Difficulty
+Props
+Tip
+Cascade
+3
+1
+3 Balls
+The foundation. Focus on a consistent peak height.
+Over the Top
+3
+2
+3 Balls
+One ball travels over the rest. Keep the "under" throws low.
+Juggle to the Edge
+3
+2
+3 Balls
+Wide throws. Great for spatial awareness.
+Reverse Cascade
+3
+2
+3 Balls
+All throws are "outside-in." Like the Cascade but reversed.
+Tennis
+3
+2
+3 Balls
+One ball goes back and forth over the "rainbow."
+Half-Mess
+3
+3
+3 Balls
+Introduction to crossed arms. Keep the non-crossed hand steady.
+The Claw
+3
+3
+3 Balls
+Catching from above. Snap your wrist down.
+Column Juggling
+2
+1
+2 Balls
+Master the vertical path before moving to 3-ball columns.
+Two in One Hand
+4
+2
+2 Balls
+Crucial for 4-ball patterns. Keep the circle "inside-out."
+Columns (3 Ball)
+(4,4)(0,0)
+3
+3 Balls
+Two on the outside, one in the middle. Synchronized throws.
+
+II. Implementation Logic for the XP & Milestones
+XP and Mastery Logic:
+Catch XP: Every successful catch recorded in a session adds 1 XP to the user profile.
+Unlock XP: When a trick's mastery_score reaches 100 (100 catches total recorded), grant the user 100 XP and mark it as "Mastered."
+Milestone 1 (The Apprentice): 30 Catches. Trigger a "Nice Progress!" toast notification.
+Milestone 2 (The Master): 100 Catches. Trigger an "Achievement Unlocked" animation and update the user_tricks table.
+Please ensure the Trick Library Tab is now functional and displays these tricks from the database."
+Make sure to handle the 'Camera Permission' request gracefully and provide a fallback message if the user denies access.
+Phase 3: The Interactive Features (Training & Games)
+"Now let's build the interactive Training Tab and the Games Tab. I need a Svelte component for the Height Challenge that uses the device camera with an SVG overlay of a head and shoulders. It should have dashed lines for 'Chin', 'Forehead', and 'Ceiling'.

@@ -1,0 +1,175 @@
+Phase 1: The Foundation (Database & Auth)
+I am building 'Just Juggle.' Here is the vision, technical stack (Astro/Svelte/Drizzle), and the SQL Schema. Please set up the project structure, initialize the SQLite database with Drizzle, and create the basic Folder structure for an Astro project.
+
+
+"Just Juggle" - Personal Juggling Trainer App
+Vision: To provide a comprehensive and engaging platform for jugglers of all levels to learn, practice, track progress, and be continuously motivated on their juggling journey.
+I. Core Functionality
+1. Home Screen (Dashboard)
+Interactive Training Tracker:
+Prominent display of recent training data (e.g., last session's duration, number of tricks practiced, average drops per trick, streaks).
+Visual representation of daily/weekly progress (e.g., small progress bar for daily goals, visual cues for completed sessions).
+Quick access to "Start Training" or "Continue Last Session."
+Customisable Welcome Message: Allow users to set a personalised greeting.
+"Today's Focus" / Recommended Session: Based on user's goals, recent performance, or upcoming challenges.
+Achievement Highlights: Showcase recent milestones or unlocked rewards.
+2. Training Tab (Your Personal Trainer)
+Dynamic Training Set Generation:
+Parameters:
+Training Time: Sliding bar (e.g., 10-minute increments, 10-60 minutes).
+Energy Levels: Multiple-choice (e.g., "High," "Moderate," "Low," "Just want to chill").
+Focus Point:
+"Technique Refinement" (Focus on consistency, fewer drops)
+"Endurance Building" (Longer runs of known tricks)
+"New Trick Learning" (Introduce new or recently unlocked tricks)
+"Variety & Flow" (Combine different tricks, build short sequences)
+"Performance Prep" (For specific sequences or routines)
+Intelligent Session Generation:
+Populate a sequence of tricks from the Trick Library, intelligently selecting based on parameters, user's skill level, and past performance.
+Suggest specific "number of catches" for each trick (e.g., "30 catches of Cascade," "5 catches of Flash").
+Adaptive Difficulty: If "Low Energy," suggest easier or fewer new tricks. If "New Trick Learning," prioritise unlocking/practicing new patterns.
+Guided Training Workflow:
+Trick-by-Trick Progression: Display the current trick, number of catches, and a small visual reminder/tip from the trick library.
+Drop Recording: User can easily tap a button to record each "drop" during a trick.
+"Skip" / "Repeat" Options: Allow users to skip a trick or repeat it if they feel they need more practice.
+Timer for Duration-Based Tricks: For endurance exercises.
+"Next Trick" Prompt: Clear visual and optional audio cue for the upcoming trick.
+Post-Training Review:
+Reflective Questions:
+"How did you feel about this session?" (e.g., "Great," "Good," "Okay," "Challenging," "Frustrated").
+"What was your favorite trick from this session?"
+"What was your least favorite/most challenging trick?"
+"Any other observations or notes?" (Free-form text input).
+Session Summary: Display total time, total drops, tricks practiced, and a performance summary.
+Save & Customise:
+Save Favorite Training Sets: Users can save generated sets for future use.
+Custom Set Builder Integration: Direct link to the Sequence Builder for advanced users to create their own training routines.
+Automatic Data Storage: All training session data (duration, tricks practiced, drops per trick, user feedback) is automatically stored for progress analysis.
+3. Stats Tab (Advanced Analytics Dashboard)
+Comprehensive Progress Visualisation:
+Graphs & Charts:
+Drops per session/trick over time.
+Total practice time per day/week/month.
+Number of unique tricks practiced.
+Mastery progression of individual tricks (e.g., decreasing drop rate).
+"Best Runs" (longest streak without drops for a specific trick).
+Key Performance Indicators (KPIs): Display total juggling time, total tricks learned, personal bests.
+Heatmap: Visualising practice consistency (e.g., calendar heatmap showing practice days).
+Insights & Recommendations:
+"You're improving quickly on your Reverse Cascade!"
+"Consider focusing on endurance next week to reduce drops on your Shower."
+"You haven't practiced 4-ball patterns in a while - maybe try one today?"
+Filter & Drill Down: Allow users to filter stats by trick, time period, number of balls, etc.
+4. Trick Library Tab
+Categorisation:
+By Objects: 2-Ball, 3-Ball, 4-Ball, 5-Ball, 6+ Balls
+By Type: Clubs, Rings, Hats, Scarves, Contact Juggling, Partner Juggling, Poi/Other Prop Juggling.
+Trick Details (for each entry):
+Title: Clear and concise name (e.g., "Cascade," "Mills Mess," "Shower").
+Description: Explain the mechanics and common variations.
+Siteswap Notation: Crucial for advanced jugglers (e.g., 3, 531, 441).
+Difficulty Level: (e.g., Beginner, Intermediate, Advanced, Expert) - perhaps a 1-5 star rating system.
+Number of Objects Needed: (e.g., "3 balls," "2 clubs").
+Tip about the Pattern: Practical advice for learning or improving (e.g., "Focus on flat throws," "Keep your elbows tucked").
+High-Quality Video Demonstration: Crucial for visual learners. (This is a key missing piece - static descriptions are not enough for juggling).
+Prerequisite Tricks: List tricks that should be mastered first.
+Populated using Online Resources: Emphasize the need for reliable, accurate, and high-quality content. Consider integration or careful curation.
+Search & Filter: Allow users to search by name, filter by difficulty, number of objects, or category.
+5. Sequence Builder Tab
+Intuitive Drag-and-Drop Interface: For arranging steps.
+Trick Selection: Access to the full Trick Library with a search feature.
+Customisation per Trick:
+Specify "Number of Catches" for each step in the sequence.
+Add custom notes or cues for each step.
+Save, Load, Edit Sequences: Users can manage their custom routines.
+"Auto Generate" Feature: Based on criteria like duration, difficulty, or specific tricks to include/exclude.
+Playback Mode with Cues:
+Audio Cues: Reads the name of the next upcoming trick and number of catches before the start of the next step.
+Visual Cues: Highlight the current trick in the sequence.
+Metronome: Adjustable tempo (BPM) to set the rhythm for the sequence.
+Optional Loop Mode: Automatically repeat the sequence upon reaching the end.
+Share Sequence Feature: Allow users to share their created sequences with others (e.g., via a link or app internal sharing).
+6. Trick Progression Tab
+Customisable Progression Paths: Users can select goals (e.g., "Learn 4 Balls," "Master Clubs") and the app suggests a path.
+Skill-Based Unlocking System:
+Tricks are "unlocked" upon successful demonstration of prerequisite tricks or reaching a certain level of mastery (e.g., low drop rate over multiple sessions).
+This provides a clear learning path and gamified motivation.
+Visual progress bar for each progression path.
+Guided Learning: For each trick in a progression, link directly to its library entry and suggest practice drills.
+III. Technical Considerations / Behind the Scenes
+Database: Robust database to store user data, trick library, training sessions, and progress.
+User Authentication: Secure login/registration.
+Offline Capability (Partial): Allow users to access the trick library and perhaps some training functionalities even without an internet connection (though video demos would require it).
+Performance Optimisation: Ensure the app is fast and responsive, especially during training sessions.
+Scalability: Design for future expansion (more tricks, more games, more users).
+Cross-Platform Development: Consider building for both iOS and Android if resources allow.
+Technical Implementation Specs for Replit Agent:
+Framework: Astro (latest version).
+Interactivity: Use Svelte components for the Timer, Drop Counter, and Sequence Builder (Islands architecture).
+Database: Use SQLite with Drizzle ORM.
+Styling: Tailwind CSS for layout and Dark Mode toggle.
+Charts: Use lucide-react for icons and recharts or Chart.js for the Stats Tab.
+PWA: Configure vite-plugin-pwa so I can "Install" this on my phone for use in the gym.
+Data Seeding: Please generate a seed file with 10 basic 3-ball tricks (Cascade, Over the Top, Juggle to the Edge, etc.) so the library isn't empty on first run.
+SQL schema
+
+ -- 1. Users Table: Basic profile and gamification stats
+CREATE TABLE users (
+  id TEXT PRIMARY KEY,
+  username TEXT NOT NULL,
+  email TEXT UNIQUE NOT NULL,
+  xp INTEGER DEFAULT 0,
+  level INTEGER DEFAULT 1,
+  current_streak INTEGER DEFAULT 0,
+  preferred_theme TEXT DEFAULT 'dark',
+  created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+);
+-- 2. Tricks Library: The source of truth for all juggling patterns
+CREATE TABLE tricks (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  name TEXT NOT NULL,
+  description TEXT,
+  siteswap TEXT,
+  difficulty INTEGER, -- 1 to 5
+  objects_count INTEGER,
+  prop_type TEXT, -- 'balls', 'clubs', etc.
+  video_url TEXT,
+  prerequisites TEXT -- Stored as comma-separated trick IDs
+);
+-- 3. Training Sessions: High-level data for a single practice block
+CREATE TABLE sessions (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  user_id TEXT REFERENCES users(id),
+  duration_minutes INTEGER,
+  energy_level TEXT, -- 'High', 'Moderate', 'Low'
+  focus_point TEXT,
+  total_drops INTEGER DEFAULT 0,
+  mood_rating TEXT, -- From post-training review
+  notes TEXT,
+  created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+);
+-- 4. Session_Tricks: Tracks performance of SPECIFIC tricks within a session
+CREATE TABLE session_tricks (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  session_id INTEGER REFERENCES sessions(id),
+  trick_id INTEGER REFERENCES tricks(id),
+  catches_goal INTEGER,
+  catches_actual INTEGER,
+  drops INTEGER DEFAULT 0
+);
+-- 5. User_Tricks (Mastery): Tracks the user's progress on individual tricks
+CREATE TABLE user_tricks (
+  user_id TEXT REFERENCES users(id),
+  trick_id INTEGER REFERENCES tricks(id),
+  is_unlocked BOOLEAN DEFAULT FALSE,
+  personal_best_catches INTEGER DEFAULT 0,
+  mastery_score INTEGER DEFAULT 0, -- 0 to 100 based on drop rate
+  PRIMARY KEY (user_id, trick_id)
+);
+-- 6. Achievements: Badges earned by the user
+CREATE TABLE achievements (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  user_id TEXT REFERENCES users(id),
+  badge_name TEXT,
+  unlocked_at DATETIME DEFAULT CURRENT_TIMESTAMP
+);

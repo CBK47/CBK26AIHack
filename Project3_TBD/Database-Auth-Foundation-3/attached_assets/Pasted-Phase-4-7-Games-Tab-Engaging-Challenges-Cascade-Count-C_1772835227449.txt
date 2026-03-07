@@ -1,0 +1,33 @@
+Phase 4:
+
+7. Games Tab (Engaging Challenges)
+* Cascade Count:
+    * Challenge: Juggle a basic cascade for a set number of throws (e.g., 100, 250, 500).
+    * Metrics: Record time taken to complete the set and total number of drops.
+    * Leaderboard (Optional): Compare against friends or global users.
+* Flash:
+    * Challenge: Juggle a specific number of catches (e.g., 5, 7, 10) as quickly and cleanly as possible.
+    * Metrics: Record fastest time to complete with 0 drops.
+* Height Challenge:
+    * Challenge: Juggle balls at a specific height.
+    * Gamification: Different "height levels" (e.g., "chin height," "head height," "above head," "ceiling height").
+    * Visual Guide: Overlay in the app using the device's camera (if feasible, otherwise a static diagram) showing the target height.
+    * Timer: User tries to maintain consistent height for a set duration.
+    * Metrics: Record number of drops, time maintained at target height.
+* Siteswap Challenges:
+    * Challenge: App presents a siteswap sequence (e.g., 333, 423, 534) for a set duration or number of throws.
+    * Metrics: Record drops, successful duration.
+    * Randomized Generation: Offer random siteswap challenges.
+* Balance and Juggling:
+    * Challenge: Combine juggling with balance exercises (e.g., on one leg, squatting, standing on a balance board).
+    * Sequence: App presents a sequence of balance poses to hold while juggling for a set number of throws or duration.
+    * Metrics: Record drops, successful completion of balance poses.
+* Sequence Challenge:
+    * Challenge: App presents a pre-defined or custom sequence of juggling tricks (e.g., "flat throw," "under the leg throw," "neck catch").
+    * Metrics: User performs tricks in order without dropping. Record drops, successful completion.
+8. Profile Page
+* Personal Details: Edit name, preferred juggling style, current skill level.
+* Customization:
+    * Color Theme Editor: Allow users to choose different app color themes.
+* Training Goals: Set short-term and long-term juggling goals (e.g., "Learn 4-ball cascade by month end," "Practice 30 minutes daily"). These can feed into the training generator.
+* Notifications Preferences: Manage daily reminders, progress reports.
