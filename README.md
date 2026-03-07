@@ -11,8 +11,8 @@ This top-level README is the workspace index. It explains what each folder is fo
 | `00_SharedResources/` | Cross-project docs used by all agents/models | Start here before planning or handoff |
 | `Project1_MissionControl/` | Chrome extension for AI usage telemetry and dashboard UX | Work on extension, UI, tracking, provider integration |
 | `Project2_JogAndHack/` | Voice-first workflow stack (Whisper VTT, automation, voice loop) | Work on speech-to-text, text-to-speech, local orchestration |
-| `Project3_TBD/` | Placeholder for next project | Empty by design |
-| `Project4_TBD/` | Placeholder for next project | Empty by design |
+| `Project3_JugglesJules/` | Just Juggle support project | Backend/hosting support for friend project |
+| `Project4-Unwise-Probbably/` | FREYWILL marketplace concept | Agent-built AI services marketplace workstream |
 | `.agent/`, `.claude/` | Tooling/agent local config | Usually do not edit unless needed |
 
 ## Shared Resources Glossary
@@ -54,5 +54,5 @@ This top-level README is the workspace index. It explains what each folder is fo
 
 - Repo structure is split into shared resources plus four project slots.
 - Project 1 and Project 2 are active.
-- Project 3 and Project 4 are placeholders.
+- Project 3 and Project 4 are now active named workstreams.
 - `Project2_JogAndHack/voice-to-text/` is now tracked directly in this repo (not as nested git).

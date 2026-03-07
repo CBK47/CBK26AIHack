@@ -11,8 +11,8 @@ This document defines the shared system topology across all projects in this rep
 |---|---|---|---|
 | `Project1_MissionControl` | AI Mission Control | Browser extension for AI usage telemetry and dashboard UX | In progress |
 | `Project2_JogAndHack` | Jog and Hack Voice UI | Voice-first interaction loop for coding while mobile | In progress |
-| `Project3_TBD` | TBD | Reserved slot for future project | Ideation |
-| `Project4_TBD` | TBD | Reserved slot for future project | Ideation |
+| `Project3_JugglesJules` | Just Juggle Support | Friend support project: backend and hosting enablement | In progress |
+| `Project4-Unwise-Probbably` | FREYWILL | AI services marketplace with x402 + local inference | In progress |
 
 ## 2. Model Orchestration Topology
 
