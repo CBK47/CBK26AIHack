@@ -67,7 +67,7 @@ First-class support for x402. Agents can auto-discover services via `/.well-know
 | Landing page | Rebuilding |
 | Shared design system | Done |
 | Swarm Command dashboard (4000) | Done |
-| Live deployment | Cloudflare tunnel (pending) |
+| Live deployment | Cloudflare tunnel ✅ live |
 
 ETA to live demo: 2 hours
 
@@ -80,7 +80,7 @@ ETA to live demo: 2 hours
 ## Hackathon Pitch
 "FREYWILL is what happens when you give AI agents access to a GB10 Superchip and the x402 protocol. We're building the infrastructure for AI-to-AI commerce - starting by selling cheap inference to hackathon peers who are burning through OpenAI credits."
 
-Live URL (soon): `freywill.trycloudflare.com` (temporary tunnel)
+Live URL: `freywill.aihack26.xyz`
 
 ## Portfolio Note
 Project 4 in the portfolio. Built by agents, for agents. Autonomous commerce begins here.
