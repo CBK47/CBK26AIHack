@@ -21,7 +21,7 @@ MAX_CONTENT_LENGTH = 50 * 1024 * 1024  # 50MB
 app.config['MAX_CONTENT_LENGTH'] = MAX_CONTENT_LENGTH
 
 UPLOAD_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), "uploads")
-ALLOWED_EXTENSIONS = {'.html', '.htm', '.css', '.js'}
+ALLOWED_EXTENSIONS = {'.html', '.htm'}
 
 # Active deployments
 DEPLOYMENTS = {}
@@ -57,6 +57,12 @@ def sanitize_path(name):
     """Sanitize user-chosen path name"""
     name = re.sub(r'[^a-zA-Z0-9_-]', '-', name)
     return name[:30] or "site"
+
+
+def as_bool(value):
+    if value is None:
+        return False
+    return str(value).strip().lower() in {"1", "true", "yes", "on"}
 
 
 @app.route("/")
@@ -130,6 +136,7 @@ def deploy():
     user_path = request.form.get("path_name", "").strip()
     project_name = request.form.get("project_name", "Untitled").strip()
     wallet = request.form.get("wallet_address", "").strip()
+    unlisted = as_bool(request.form.get("unlisted"))
     
     if not user_path:
         return jsonify({"error": "Please choose a path name"}), 400
@@ -176,6 +183,7 @@ def deploy():
         "created": datetime.now().isoformat(),
         "expires": (datetime.now().timestamp() + 86400 * 3),  # 3 days best effort
         "status": "live",
+        "unlisted": unlisted,
     }
     
     DEPLOYMENTS[user_path] = deployment
@@ -188,6 +196,7 @@ def deploy():
             "project_name": project_name,
             "files_count": len(saved_files),
             "expires": "3 days (best effort during hackathon)",
+            "unlisted": unlisted,
         },
         "message": f"🎉 LIVE! https://{DOMAIN}/{user_path}/",
         "tip": {
@@ -202,6 +211,8 @@ def list_sites():
     """List all deployed sites"""
     sites = []
     for path, dep in DEPLOYMENTS.items():
+        if dep.get("unlisted"):
+            continue
         sites.append({
             "path": path,
             "name": dep["name"],

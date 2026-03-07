@@ -1,0 +1,940 @@
+<!DOCTYPE html>
+<!--
+  ╔══════════════════════════════════════════════════════╗
+  ║  WEB DEV 101 — I Looked This Up                     ║
+  ║  A website explaining itself while existing          ║
+  ║  Built at a hackathon. Please be kind.               ║
+  ╚══════════════════════════════════════════════════════╝
+
+  HTML = the bones (structure)
+  CSS  = the skin (looks)
+  JS   = the brain (behaviour)
+
+  This entire file is ONE .html file.
+  You can right-click → View Page Source to see all of this.
+-->
+<html lang="en">
+
+<head>
+  <!-- HEAD = stuff the browser needs to know but doesn't show on the page -->
+  <meta charset="UTF-8">
+  <!-- ↑ tells browser: "text is UTF-8 encoding" (supports emoji, accents, etc) -->
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <!-- ↑ THIS IS THE RESPONSIVE LINE. Without it, mobile looks like a tiny desktop.
+         width=device-width  → use the actual screen width
+         initial-scale=1.0   → don't zoom in by default                         -->
+
+  <title>Web Dev 101 — I Looked This Up</title>
+  <!-- ↑ appears in the browser tab -->
+
+  <style>
+    /*
+    ════════════════════════════════════════════════════
+    THIS IS CSS.
+    CSS lives inside <style> tags (or a separate .css file).
+    It controls how EVERYTHING LOOKS.
+
+    Format:
+      selector { property: value; }
+
+    selector = what to style  (element, .class, #id)
+    property = what to change (color, font-size, margin...)
+    value    = what to set it to
+
+    Comments in CSS use  /* like this * /
+    ════════════════════════════════════════════════════
+    */
+
+    /* ── RESET: browsers have their own default styles. Nuke them. ── */
+    * {
+      margin: 0;       /* remove default spacing outside elements */
+      padding: 0;      /* remove default spacing inside elements  */
+      box-sizing: border-box;
+      /* ↑ box-sizing: border-box means padding/border are INCLUDED in width.
+           Without this, a 200px box with 20px padding = 240px wide. Confusing. */
+    }
+
+    /* ── ROOT VARIABLES: define colours once, use everywhere ── */
+    :root {
+      --black:   #0a0a0a;
+      --dark:    #111111;
+      --card:    #1a1a1a;
+      --border:  #2a2a2a;
+      --green:   #00ff88;
+      --blue:    #4fc3f7;
+      --purple:  #bb86fc;
+      --orange:  #ffb74d;
+      --text:    #e0e0e0;
+      --muted:   #888888;
+      --font-mono: 'Courier New', monospace;
+      --font-sans: system-ui, -apple-system, sans-serif;
+    }
+    /* ↑ Usage: color: var(--green);  Change it once, updates everywhere. */
+
+    /* ── BODY: the whole page ── */
+    body {
+      background: var(--black);
+      color: var(--text);
+      font-family: var(--font-sans);
+      line-height: 1.6;  /* space between lines of text. 1.6 = comfortable reading */
+    }
+
+    /* ── TYPOGRAPHY ── */
+    h1 { font-size: 3rem;   line-height: 1.1; }
+    h2 { font-size: 2rem;   margin-bottom: 0.5rem; }
+    h3 { font-size: 1.3rem; margin-bottom: 0.5rem; }
+    p  { margin-bottom: 1rem; color: var(--text); }
+
+    a {
+      color: var(--green);
+      text-decoration: none; /* removes the underline */
+    }
+    a:hover { text-decoration: underline; } /* adds it back on hover */
+
+    code {
+      font-family: var(--font-mono);
+      background: #1e1e1e;
+      padding: 0.1em 0.4em;
+      border-radius: 3px;
+      font-size: 0.9em;
+      color: var(--orange);
+    }
+
+    /* ── LAYOUT UTILITY ── */
+    .container {
+      max-width: 860px;  /* never wider than 860px */
+      margin: 0 auto;    /* auto left+right margin = centered horizontally */
+      padding: 0 1.5rem; /* breathing room on small screens */
+    }
+    /*
+    ↑ THIS IS HOW YOU CENTER A DIV ON THE PAGE.
+      max-width + margin: 0 auto
+      Works when the element is a block element (div, section, p, etc.)
+      Does NOT work on inline elements (span, a) — make them display:block first.
+    */
+
+    section {
+      padding: 5rem 0;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .label {
+      display: inline-block;
+      font-size: 0.7rem;
+      font-family: var(--font-mono);
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--green);
+      border: 1px solid var(--green);
+      padding: 0.2rem 0.6rem;
+      margin-bottom: 1rem;
+      opacity: 0.8;
+    }
+
+    /* ── CARDS ── */
+    .card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 1.5rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .card-grid {
+      display: grid;
+      /*
+      display: grid = 2D layout. Think spreadsheet.
+      grid-template-columns defines the columns.
+
+      repeat(auto-fit, minmax(240px, 1fr))  ← responsive magic:
+        auto-fit    = fit as many columns as possible
+        minmax      = each column is at least 240px, but can grow to fill space (1fr)
+        Result: 3 columns on desktop, 2 on tablet, 1 on mobile. Automatically.
+      */
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 1rem; /* space between grid items */
+    }
+
+    /* ── CODE BLOCKS ── */
+    .code-block {
+      background: #0d1117;
+      border: 1px solid var(--border);
+      border-left: 3px solid var(--green);
+      border-radius: 6px;
+      padding: 1.5rem;
+      font-family: var(--font-mono);
+      font-size: 0.85rem;
+      line-height: 1.8;
+      overflow-x: auto; /* scroll sideways if code is wide */
+      white-space: pre;
+      color: #cdd9e5;
+      margin: 1.5rem 0;
+    }
+
+    .comment  { color: #6e7681; }   /* grey */
+    .tag      { color: #7ee787; }   /* green */
+    .attr     { color: #79c0ff; }   /* blue */
+    .val      { color: #a5d6ff; }   /* light blue */
+    .prop     { color: #ff7b72; }   /* red */
+    .keyword  { color: #f2cc60; }   /* yellow */
+    .string   { color: #a5d6ff; }   /* light blue */
+    .number   { color: #f2cc60; }   /* yellow */
+
+    /* ── DEMO BOXES ── */
+    .demo-area {
+      background: #0d1117;
+      border: 1px dashed var(--border);
+      border-radius: 8px;
+      padding: 2rem;
+      margin: 1.5rem 0;
+      position: relative;
+    }
+
+    .demo-label {
+      position: absolute;
+      top: -0.6rem;
+      left: 1rem;
+      background: #0d1117;
+      padding: 0 0.5rem;
+      font-size: 0.65rem;
+      font-family: var(--font-mono);
+      color: var(--muted);
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+    }
+
+    /* ── CENTERING DEMO ── */
+    .center-demo-outer {
+      background: #1a1a2e;
+      border: 2px dashed #444;
+      height: 120px;
+      position: relative;
+      border-radius: 6px;
+      margin: 0.75rem 0;
+    }
+
+    .center-flex {
+      display: flex;
+      justify-content: center; /* horizontal center */
+      align-items: center;     /* vertical center */
+      height: 100%;
+    }
+
+    .center-box {
+      background: var(--green);
+      color: #000;
+      font-family: var(--font-mono);
+      font-size: 0.8rem;
+      font-weight: bold;
+      padding: 0.5rem 1rem;
+      border-radius: 4px;
+    }
+
+    /* ── HERO STYLES ── */
+    #hero {
+      min-height: 100vh;   /* vh = viewport height. 100vh = full screen height */
+      display: flex;
+      flex-direction: column;  /* stack children vertically */
+      justify-content: center; /* center vertically */
+      align-items: center;     /* center horizontally */
+      text-align: center;
+      padding: 2rem;
+      background:
+        radial-gradient(ellipse at top, #0a1628 0%, var(--black) 70%);
+      /* ↑ radial-gradient = circle of colour. "at top" = starts at the top. */
+      border-bottom: 1px solid var(--border);
+      position: relative;
+      overflow: hidden;
+    }
+
+    #hero::before {
+      /* ::before = a fake element inserted BEFORE the content.
+         Used for decorative stuff without adding HTML. */
+      content: '';
+      position: absolute;
+      width: 600px;
+      height: 600px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(0,255,136,0.04) 0%, transparent 70%);
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      /* ↑ translate(-50%, -50%) moves element back by half its own size.
+           Combined with top:50% left:50%, this perfectly centers it. */
+      pointer-events: none; /* don't block clicks */
+    }
+
+    .hero-badge {
+      display: inline-block;
+      border: 1px solid rgba(0,255,136,0.4);
+      color: var(--green);
+      font-family: var(--font-mono);
+      font-size: 0.75rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      padding: 0.4rem 1rem;
+      border-radius: 100px;
+      margin-bottom: 2rem;
+      background: rgba(0,255,136,0.05);
+    }
+
+    #hero h1 {
+      color: var(--text);
+      margin-bottom: 1rem;
+    }
+
+    #hero h1 span { color: var(--green); }
+
+    #hero p.subtitle {
+      color: var(--muted);
+      font-size: 1.1rem;
+      max-width: 520px;
+      margin: 0 auto 2.5rem;
+    }
+
+    .hero-pills {
+      display: flex;
+      gap: 0.75rem;
+      flex-wrap: wrap; /* wrap to next line on small screens */
+      justify-content: center;
+    }
+
+    .pill {
+      padding: 0.5rem 1.25rem;
+      border-radius: 100px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      cursor: default;
+    }
+    .pill-html { background: rgba(255,183,77,0.15);  color: var(--orange); border: 1px solid rgba(255,183,77,0.3); }
+    .pill-css  { background: rgba(79,195,247,0.15);  color: var(--blue);   border: 1px solid rgba(79,195,247,0.3); }
+    .pill-js   { background: rgba(187,134,252,0.15); color: var(--purple); border: 1px solid rgba(187,134,252,0.3); }
+
+    /* ── BUTTONS ── */
+    .btn {
+      display: inline-block;
+      padding: 0.75rem 1.75rem;
+      border-radius: 6px;
+      font-size: 0.95rem;
+      font-weight: 600;
+      cursor: pointer;
+      border: none;
+      transition: all 0.2s ease;
+      /* ↑ transition = animate changes. "all 0.2s ease" = animate everything over 0.2 seconds */
+    }
+
+    .btn-green {
+      background: var(--green);
+      color: #000;
+    }
+    .btn-green:hover {
+      background: #00cc6a;
+      transform: translateY(-2px); /* lifts up 2px on hover */
+      box-shadow: 0 8px 20px rgba(0,255,136,0.3);
+    }
+
+    .btn-outline {
+      background: transparent;
+      color: var(--green);
+      border: 1px solid var(--green);
+    }
+    .btn-outline:hover {
+      background: rgba(0,255,136,0.1);
+    }
+
+    /* ── JS DEMO ── */
+    #click-counter {
+      font-size: 4rem;
+      font-weight: bold;
+      color: var(--green);
+      font-family: var(--font-mono);
+      text-align: center;
+      margin: 1rem 0;
+      transition: transform 0.1s;
+    }
+
+    #colour-box {
+      height: 80px;
+      border-radius: 8px;
+      margin: 1rem 0;
+      transition: background 0.4s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: var(--font-mono);
+      font-size: 0.85rem;
+    }
+
+    /* ── RESPONSIVE ── */
+    /*
+    @media = only apply these styles IF a condition is true.
+    max-width: 600px = "if screen is 600px wide or less"
+    This is how you make things look different on mobile.
+    */
+    @media (max-width: 600px) {
+      h1 { font-size: 2rem; }
+      h2 { font-size: 1.5rem; }
+      section { padding: 3rem 0; }
+    }
+
+    /* ── NAV ── */
+    nav {
+      position: sticky; /* sticks to top when scrolling */
+      top: 0;
+      z-index: 100;     /* stay on top of everything (higher = more on top) */
+      background: rgba(10,10,10,0.9);
+      backdrop-filter: blur(12px); /* blurs whatever is behind it */
+      border-bottom: 1px solid var(--border);
+      padding: 1rem 0;
+    }
+
+    nav .container {
+      display: flex;
+      justify-content: space-between; /* pushes children to opposite ends */
+      align-items: center;
+    }
+
+    .nav-logo {
+      font-family: var(--font-mono);
+      font-weight: bold;
+      color: var(--green);
+      font-size: 1.1rem;
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 1.5rem;
+      list-style: none; /* removes bullet points from <ul> */
+    }
+
+    .nav-links a {
+      color: var(--muted);
+      font-size: 0.9rem;
+      transition: color 0.2s;
+    }
+    .nav-links a:hover { color: var(--text); text-decoration: none; }
+
+    /* ── FOOTER ── */
+    footer {
+      padding: 3rem 0;
+      text-align: center;
+      color: var(--muted);
+      font-size: 0.85rem;
+      border-top: 1px solid var(--border);
+    }
+
+    /* ── HIGHLIGHT BOX ── */
+    .highlight {
+      border-left: 3px solid var(--green);
+      background: rgba(0,255,136,0.05);
+      padding: 1rem 1.25rem;
+      border-radius: 0 6px 6px 0;
+      margin: 1.5rem 0;
+      font-size: 0.95rem;
+    }
+
+    .tag-orange { color: var(--orange); }
+    .tag-blue   { color: var(--blue); }
+    .tag-purple { color: var(--purple); }
+    .tag-green  { color: var(--green); }
+
+  </style>
+</head>
+
+<body>
+  <!-- HTML STRUCTURE STARTS HERE -->
+  <!-- Everything you see on screen lives inside <body> -->
+
+  <!-- ════════════════════════════════════════
+       NAV BAR
+       A <nav> element tells the browser "this is navigation".
+       Semantic HTML = using the RIGHT tag for the job.
+       ════════════════════════════════════════ -->
+  <nav>
+    <div class="container">
+      <span class="nav-logo">WEB 101</span>
+      <ul class="nav-links">
+        <li><a href="#html">HTML</a></li>
+        <li><a href="#css">CSS</a></li>
+        <li><a href="#js">JS</a></li>
+        <li><a href="#centering">Centering</a></li>
+        <li><a href="#responsive">Responsive</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <!-- ════════════════════════════════════════
+       HERO SECTION
+       A "hero" is the big section at the top of a page.
+       It's called a hero because it's the MAIN ATTRACTION.
+       Usually: big headline + short description + call to action.
+       ════════════════════════════════════════ -->
+  <section id="hero">
+    <!-- ↑ id="hero" — lets CSS (#hero) and JS (getElementById) target this specific element -->
+    <div class="hero-badge">★ This is a hero section</div>
+    <h1>Web Dev 101<br><span>I Looked This Up</span></h1>
+    <p class="subtitle">
+      A webpage explaining itself while existing.
+      View the source (right-click → View Page Source) to see everything.
+    </p>
+    <div class="hero-pills">
+      <span class="pill pill-html">HTML = Structure</span>
+      <span class="pill pill-css">CSS = Style</span>
+      <span class="pill pill-js">JS = Behaviour</span>
+    </div>
+  </section>
+
+  <!-- ════════════════════════════════════════
+       SECTION: WHAT ARE HTML, CSS & JS?
+       ════════════════════════════════════════ -->
+  <section id="html">
+    <div class="container">
+      <div class="label">The Big Three</div>
+      <h2>HTML, CSS, and JavaScript</h2>
+      <p>Think of a website like a person.</p>
+
+      <div class="card-grid">
+
+        <!-- HTML CARD -->
+        <div class="card" style="border-top: 3px solid var(--orange);">
+          <!-- ↑ style="..." = inline CSS. Quick and dirty. Fine for one-offs. -->
+          <div class="label" style="color:var(--orange); border-color:var(--orange);">HTML</div>
+          <h3 class="tag-orange">The Skeleton 🦴</h3>
+          <p>HTML is the structure. It defines what exists on the page: headings, paragraphs, buttons, images, links.</p>
+          <p>Without HTML there is no page. It's the starting point for everything.</p>
+          <p>File: <code>index.html</code></p>
+        </div>
+
+        <!-- CSS CARD -->
+        <div class="card" style="border-top: 3px solid var(--blue);">
+          <div class="label" style="color:var(--blue); border-color:var(--blue);">CSS</div>
+          <h3 class="tag-blue">The Skin 💅</h3>
+          <p>CSS controls colours, fonts, spacing, layout, animations. Without it, every website looks like a Word document from 1996.</p>
+          <p>CSS can live in a <code>&lt;style&gt;</code> tag or a separate <code>.css</code> file.</p>
+          <p>File: <code>styles.css</code></p>
+        </div>
+
+        <!-- JS CARD -->
+        <div class="card" style="border-top: 3px solid var(--purple);">
+          <div class="label" style="color:var(--purple); border-color:var(--purple);">JavaScript</div>
+          <h3 class="tag-purple">The Brain 🧠</h3>
+          <p>JS makes things happen. Click a button → something changes. Type in a box → get a result. It's the only language that runs in browsers.</p>
+          <p>JS can live in a <code>&lt;script&gt;</code> tag or a separate <code>.js</code> file.</p>
+          <p>File: <code>script.js</code></p>
+        </div>
+
+      </div>
+
+      <div class="highlight">
+        💡 You technically only <em>need</em> HTML. A plain HTML file with no CSS or JS will display in any browser. CSS and JS are enhancements — layer them on top.
+      </div>
+
+      <!-- CODE EXAMPLE: basic HTML structure -->
+      <h3 style="margin-top:2rem; margin-bottom:0.5rem;">What HTML looks like:</h3>
+      <div class="code-block"><span class="comment">&lt;!-- This is an HTML comment. The browser ignores it. --&gt;</span>
+
+<span class="tag">&lt;h1&gt;</span>This is a heading<span class="tag">&lt;/h1&gt;</span>             <span class="comment">&lt;!-- h1 = biggest heading --&gt;</span>
+<span class="tag">&lt;h2&gt;</span>This is a smaller heading<span class="tag">&lt;/h2&gt;</span>    <span class="comment">&lt;!-- h2–h6 get progressively smaller --&gt;</span>
+<span class="tag">&lt;p&gt;</span>This is a paragraph of text.<span class="tag">&lt;/p&gt;</span>   <span class="comment">&lt;!-- p = paragraph --&gt;</span>
+
+<span class="tag">&lt;a</span> <span class="attr">href</span>=<span class="val">"https://google.com"</span><span class="tag">&gt;</span>Click me<span class="tag">&lt;/a&gt;</span>  <span class="comment">&lt;!-- a = anchor = a link --&gt;</span>
+
+<span class="tag">&lt;img</span> <span class="attr">src</span>=<span class="val">"photo.jpg"</span> <span class="attr">alt</span>=<span class="val">"A photo"</span><span class="tag">&gt;</span>  <span class="comment">&lt;!-- img has no closing tag --&gt;</span>
+
+<span class="tag">&lt;div&gt;</span>                     <span class="comment">&lt;!-- div = a box. No meaning. Just a container. --&gt;</span>
+  <span class="tag">&lt;p&gt;</span>I'm inside a div.<span class="tag">&lt;/p&gt;</span>  <span class="comment">&lt;!-- indentation shows nesting --&gt;</span>
+<span class="tag">&lt;/div&gt;</span>
+
+<span class="tag">&lt;button</span> <span class="attr">onclick</span>=<span class="val">"alert('hello!')"</span><span class="tag">&gt;</span>Click<span class="tag">&lt;/button&gt;</span>  <span class="comment">&lt;!-- button with inline JS --&gt;</span></div>
+
+    </div>
+  </section>
+
+  <!-- ════════════════════════════════════════
+       SECTION: CSS
+       ════════════════════════════════════════ -->
+  <section id="css">
+    <div class="container">
+      <div class="label">CSS</div>
+      <h2>How CSS Works</h2>
+      <p>CSS targets elements by <strong>selector</strong> and tells them what to look like.</p>
+
+      <div class="code-block"><span class="comment">/* target → what to change */</span>
+
+<span class="tag">p</span> {                           <span class="comment">/* all &lt;p&gt; tags */</span>
+  <span class="prop">color</span>: <span class="string">red</span>;
+  <span class="prop">font-size</span>: <span class="number">18px</span>;
+}
+
+<span class="tag">.card</span> {                       <span class="comment">/* elements with class="card" */</span>
+  <span class="prop">background</span>: <span class="string">#111</span>;
+  <span class="prop">border-radius</span>: <span class="number">8px</span>;        <span class="comment">/* rounded corners */</span>
+  <span class="prop">padding</span>: <span class="number">1.5rem</span>;            <span class="comment">/* space INSIDE the element */</span>
+  <span class="prop">margin</span>: <span class="number">1rem</span>;               <span class="comment">/* space OUTSIDE the element */</span>
+}
+
+<span class="tag">#hero</span> {                        <span class="comment">/* element with id="hero" — only one per page */</span>
+  <span class="prop">min-height</span>: <span class="number">100vh</span>;           <span class="comment">/* vh = % of viewport height */</span>
+}
+
+<span class="tag">h1</span>:<span class="keyword">hover</span> {                     <span class="comment">/* only when mouse is over it */</span>
+  <span class="prop">color</span>: <span class="string">lime</span>;
+}</div>
+
+      <!-- LIVE DEMO: button styled vs unstyled -->
+      <h3 style="margin-bottom: 1rem;">CSS in action — styled vs unstyled button:</h3>
+      <div class="demo-area">
+        <span class="demo-label">live demo</span>
+        <div style="display:flex; gap:2rem; align-items:center; flex-wrap:wrap;">
+          <div>
+            <p style="font-size:0.8rem; color:var(--muted); margin-bottom:0.5rem;">No CSS:</p>
+            <button>Click me</button>
+            <!-- ↑ browser default styling — ugly and proud -->
+          </div>
+          <div>
+            <p style="font-size:0.8rem; color:var(--muted); margin-bottom:0.5rem;">With CSS:</p>
+            <button class="btn btn-green">Click me</button>
+          </div>
+          <div>
+            <p style="font-size:0.8rem; color:var(--muted); margin-bottom:0.5rem;">Different CSS:</p>
+            <button class="btn btn-outline">Click me</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="highlight">
+        💡 <strong>class vs id:</strong><br>
+        <code>class="card"</code> → reusable, many elements can share it. Targeted with <code>.card</code> in CSS.<br>
+        <code>id="hero"</code> → unique, one element per page. Targeted with <code>#hero</code> in CSS.
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ════════════════════════════════════════
+       SECTION: JAVASCRIPT
+       ════════════════════════════════════════ -->
+  <section id="js">
+    <div class="container">
+      <div class="label">JavaScript</div>
+      <h2>How JavaScript Works</h2>
+      <p>JS runs in the browser. It can read and change anything on the page. These demos are powered by the JS at the bottom of this file.</p>
+
+      <!-- CLICK COUNTER DEMO -->
+      <h3>Demo 1: click counter</h3>
+      <div class="demo-area">
+        <span class="demo-label">interactive demo</span>
+        <div id="click-counter">0</div>
+        <div style="text-align:center;">
+          <button class="btn btn-green" onclick="incrementCounter()">Click me</button>
+          &nbsp;
+          <button class="btn btn-outline" onclick="resetCounter()">Reset</button>
+        </div>
+        <!-- onclick="..." = run this JS when clicked -->
+      </div>
+
+      <div class="code-block"><span class="comment">// JavaScript comments use //</span>
+<span class="comment">// This is the code powering the counter above:</span>
+
+<span class="keyword">let</span> count = <span class="number">0</span>;   <span class="comment">// let = variable. Stores a value.</span>
+
+<span class="keyword">function</span> <span class="tag">incrementCounter</span>() {      <span class="comment">// function = reusable block of code</span>
+  count = count + <span class="number">1</span>;               <span class="comment">// increase count by 1</span>
+  <span class="tag">document</span>.<span class="keyword">getElementById</span>(<span class="string">'click-counter'</span>)  <span class="comment">// find the element</span>
+    .<span class="keyword">textContent</span> = count;             <span class="comment">// update its text</span>
+}
+
+<span class="keyword">function</span> <span class="tag">resetCounter</span>() {
+  count = <span class="number">0</span>;
+  <span class="tag">document</span>.<span class="keyword">getElementById</span>(<span class="string">'click-counter'</span>).<span class="keyword">textContent</span> = <span class="number">0</span>;
+}</div>
+
+      <!-- COLOUR CHANGER DEMO -->
+      <h3 style="margin-top:2rem;">Demo 2: change style with JS</h3>
+      <div class="demo-area">
+        <span class="demo-label">interactive demo</span>
+        <div id="colour-box" style="background:#1a1a2e; color:var(--muted);">click a colour</div>
+        <div style="display:flex; gap:0.75rem; flex-wrap:wrap;">
+          <button class="btn" style="background:#e53935; color:#fff;" onclick="changeColour('#e53935','#fff','#e53935')">Red</button>
+          <button class="btn" style="background:#43a047; color:#fff;" onclick="changeColour('#43a047','#fff','#43a047')">Green</button>
+          <button class="btn" style="background:#1e88e5; color:#fff;" onclick="changeColour('#1e88e5','#fff','#1e88e5')">Blue</button>
+          <button class="btn" style="background:#8e24aa; color:#fff;" onclick="changeColour('#8e24aa','#fff','#8e24aa')">Purple</button>
+          <button class="btn btn-outline" onclick="changeColour('#1a1a2e','#555','transparent')">Reset</button>
+        </div>
+      </div>
+
+      <div class="code-block"><span class="keyword">function</span> <span class="tag">changeColour</span>(bg, textColor, borderColor) {
+  <span class="keyword">const</span> box = <span class="tag">document</span>.<span class="keyword">getElementById</span>(<span class="string">'colour-box'</span>);
+  <span class="comment">// .style lets you set any CSS property directly from JS:</span>
+  box.<span class="keyword">style</span>.background = bg;
+  box.<span class="keyword">style</span>.color = textColor;
+  box.<span class="keyword">style</span>.border = <span class="string">`2px solid <span class="keyword">${borderColor}</span>`</span>;
+  box.<span class="keyword">textContent</span> = bg;  <span class="comment">// show the hex value as text</span>
+}</div>
+
+    </div>
+  </section>
+
+  <!-- ════════════════════════════════════════
+       SECTION: CENTERING A DIV
+       ════════════════════════════════════════ -->
+  <section id="centering">
+    <div class="container">
+      <div class="label">The eternal struggle</div>
+      <h2>How to Center a Div</h2>
+      <p>This is the most Googled question in web development. Here are the three ways that actually work.</p>
+
+      <!-- METHOD 1 -->
+      <h3>Method 1: Flexbox (recommended for almost everything)</h3>
+      <div class="center-demo-outer">
+        <div class="center-flex">
+          <div class="center-box">I am centered</div>
+        </div>
+      </div>
+      <div class="code-block"><span class="tag">.parent</span> {
+  <span class="prop">display</span>: <span class="string">flex</span>;
+  <span class="prop">justify-content</span>: <span class="string">center</span>;  <span class="comment">/* horizontal */</span>
+  <span class="prop">align-items</span>: <span class="string">center</span>;      <span class="comment">/* vertical   */</span>
+  <span class="prop">height</span>: <span class="number">100%</span>;               <span class="comment">/* parent needs a height for vertical to work */</span>
+}</div>
+
+      <!-- METHOD 2 -->
+      <h3>Method 2: margin: auto (centers a block element horizontally)</h3>
+      <div class="center-demo-outer" style="height:80px; display:flex; align-items:center;">
+        <div style="width:200px; margin:0 auto; background:var(--blue); color:#000; padding:0.5rem; text-align:center; border-radius:4px; font-family:monospace; font-size:0.8rem; font-weight:bold;">margin: 0 auto</div>
+      </div>
+      <div class="code-block"><span class="tag">.child</span> {
+  <span class="prop">width</span>: <span class="number">200px</span>;       <span class="comment">/* must have a width */</span>
+  <span class="prop">margin</span>: <span class="string">0 auto</span>;    <span class="comment">/* 0 top/bottom, auto left/right = centered */</span>
+}
+<span class="comment">/* Only centers horizontally. Good for page containers. */</span></div>
+
+      <!-- METHOD 3 -->
+      <h3>Method 3: CSS Grid (center anything, anywhere)</h3>
+      <div class="center-demo-outer">
+        <div style="display:grid; place-items:center; height:100%;">
+          <div class="center-box" style="background:var(--purple);">place-items: center</div>
+        </div>
+      </div>
+      <div class="code-block"><span class="tag">.parent</span> {
+  <span class="prop">display</span>: <span class="string">grid</span>;
+  <span class="prop">place-items</span>: <span class="string">center</span>;  <span class="comment">/* shorthand for align-items + justify-items */</span>
+}
+<span class="comment">/* One line. The cleanest method. */</span></div>
+
+      <div class="highlight">
+        🚫 <strong>What doesn't work:</strong> <code>margin: auto</code> on inline elements (<code>span</code>, <code>a</code>).
+        Add <code>display: block</code> first. Also <code>text-align: center</code> only centers text, not the box itself.
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ════════════════════════════════════════
+       SECTION: RESPONSIVE DESIGN
+       ════════════════════════════════════════ -->
+  <section id="responsive">
+    <div class="container">
+      <div class="label">Responsive Design</div>
+      <h2>Making It Look Right on Every Screen</h2>
+      <p>Responsive design means the layout <em>responds</em> to the screen size. Try resizing this window.</p>
+
+      <h3>The viewport meta tag — the most important line in HTML</h3>
+      <div class="code-block"><span class="tag">&lt;meta</span> <span class="attr">name</span>=<span class="val">"viewport"</span> <span class="attr">content</span>=<span class="val">"width=device-width, initial-scale=1.0"</span><span class="tag">&gt;</span>
+
+<span class="comment">&lt;!-- Without this: mobile browsers render the page at ~980px then
+     shrink it down to fit the screen. Everything is tiny.
+
+     With this: the page renders at the actual device width.
+     This one line enables all responsive CSS to work.              --&gt;</span></div>
+
+      <h3>Media queries — different CSS for different screen sizes</h3>
+      <div class="code-block"><span class="comment">/* Desktop: default styles (written first) */</span>
+<span class="tag">.card-grid</span> {
+  <span class="prop">grid-template-columns</span>: <span class="string">repeat(3, 1fr)</span>;  <span class="comment">/* 3 columns */</span>
+}
+
+<span class="comment">/* Tablet: screen width 768px or less */</span>
+<span class="keyword">@media</span> (<span class="prop">max-width</span>: <span class="number">768px</span>) {
+  <span class="tag">.card-grid</span> { <span class="prop">grid-template-columns</span>: <span class="string">repeat(2, 1fr)</span>; }  <span class="comment">/* 2 cols */</span>
+}
+
+<span class="comment">/* Mobile: screen width 480px or less */</span>
+<span class="keyword">@media</span> (<span class="prop">max-width</span>: <span class="number">480px</span>) {
+  <span class="tag">.card-grid</span> { <span class="prop">grid-template-columns</span>: <span class="string">1fr</span>; }          <span class="comment">/* 1 col  */</span>
+  <span class="tag">h1</span>          { <span class="prop">font-size</span>: <span class="number">2rem</span>; }                          <span class="comment">/* smaller */</span>
+}</div>
+
+      <h3 style="margin-top:2rem;">Responsive units — stop using px for everything</h3>
+      <div class="card-grid">
+        <div class="card">
+          <code>px</code>
+          <p style="margin-top:0.5rem; margin-bottom:0;">Fixed pixels. <code>16px</code> is always 16px. Use for borders, small spacing.</p>
+        </div>
+        <div class="card">
+          <code>rem</code>
+          <p style="margin-top:0.5rem; margin-bottom:0;">Relative to root font size. <code>1rem</code> = 16px. Scales with user's font preferences. Use for fonts.</p>
+        </div>
+        <div class="card">
+          <code>%</code>
+          <p style="margin-top:0.5rem; margin-bottom:0;">Percentage of the parent. <code>width: 50%</code> = half the parent's width. Use for fluid layouts.</p>
+        </div>
+        <div class="card">
+          <code>vw / vh</code>
+          <p style="margin-top:0.5rem; margin-bottom:0;">Viewport width/height. <code>100vh</code> = full screen height. Use for full-page sections.</p>
+        </div>
+      </div>
+
+      <div class="highlight">
+        💡 <strong>The easiest responsive layout trick:</strong><br>
+        <code>grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));</code><br>
+        This one line makes a grid that's automatically 3 columns on desktop, 2 on tablet, 1 on mobile. No media queries needed.
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ════════════════════════════════════════
+       SECTION: TIPS & TRICKS
+       ════════════════════════════════════════ -->
+  <section id="tips">
+    <div class="container">
+      <div class="label">Cheat sheet</div>
+      <h2>Useful Tips & Tricks</h2>
+
+      <div class="card-grid">
+
+        <div class="card">
+          <h3>🔍 DevTools</h3>
+          <p>Press <code>F12</code> or <code>Cmd+Option+I</code> to open DevTools. Inspect any element, live-edit CSS, and debug JS.</p>
+          <p>Right-click anything → Inspect to jump straight to its HTML.</p>
+        </div>
+
+        <div class="card">
+          <h3>📦 The Box Model</h3>
+          <p>Every element is a box. From outside in:</p>
+          <p>
+            <code>margin</code> → space outside<br>
+            <code>border</code> → the edge<br>
+            <code>padding</code> → space inside<br>
+            <code>content</code> → the actual thing
+          </p>
+        </div>
+
+        <div class="card">
+          <h3>⚡ Flexbox in 3 lines</h3>
+          <div class="code-block" style="margin:0.5rem 0; font-size:0.8rem;">.parent {
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+}</div>
+          <p style="margin-bottom:0;">Puts children in a row with spacing. <code>flex-wrap: wrap</code> lets them wrap to next line.</p>
+        </div>
+
+        <div class="card">
+          <h3>🎨 CSS Variables</h3>
+          <div class="code-block" style="margin:0.5rem 0; font-size:0.8rem;">:root {
+  --green: #00ff88;
+}
+h1 { color: var(--green); }</div>
+          <p style="margin-bottom:0;">Define colours once at the top. Change one line to retheme everything.</p>
+        </div>
+
+        <div class="card">
+          <h3>📱 Quick Mobile Test</h3>
+          <p>In DevTools (<code>F12</code>), click the phone/tablet icon (or press <code>Ctrl+Shift+M</code>) to toggle device emulation. Test your site at any screen size.</p>
+        </div>
+
+        <div class="card">
+          <h3>🔤 System Font Stack</h3>
+          <div class="code-block" style="margin:0.5rem 0; font-size:0.8rem;">font-family:
+  system-ui,
+  -apple-system,
+  sans-serif;</div>
+          <p style="margin-bottom:0;">Uses the OS's native font. Looks great, loads instantly, no Google Fonts needed.</p>
+        </div>
+
+      </div>
+
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer>
+    <div class="container">
+      <p>Built at a hackathon • HTML + CSS + JS only • No frameworks</p>
+      <p style="margin-top:0.5rem;">Right-click → <strong>View Page Source</strong> to read all the comments</p>
+    </div>
+  </footer>
+
+  <!-- ════════════════════════════════════════
+       JAVASCRIPT
+       <script> tags go at the bottom so the HTML loads first.
+       If you put JS in <head>, it runs before the HTML exists — nothing works.
+       ════════════════════════════════════════ -->
+  <script>
+    // JavaScript comments use //
+    // This is the JS powering the interactive demos above.
+
+    // ── COUNTER ──
+    let count = 0;  // let = variable that can change. const = can't change.
+
+    function incrementCounter() {
+      count = count + 1;
+
+      const el = document.getElementById('click-counter');
+      // document.getElementById = find ONE element by its id attribute
+
+      el.textContent = count;
+      // .textContent = the text inside the element
+
+      // Little bounce animation:
+      el.style.transform = 'scale(1.3)';
+      setTimeout(function() {
+        el.style.transform = 'scale(1)';
+      }, 100);
+      // setTimeout(fn, ms) = run fn after ms milliseconds
+    }
+
+    function resetCounter() {
+      count = 0;
+      document.getElementById('click-counter').textContent = 0;
+    }
+
+    // ── COLOUR CHANGER ──
+    function changeColour(bg, textColor, borderColor) {
+      const box = document.getElementById('colour-box');
+      box.style.background = bg;
+      box.style.color = textColor;
+      box.style.borderLeft = '4px solid ' + borderColor;
+      box.textContent = bg;
+    }
+
+    // ── SMOOTH SCROLL for nav links ──
+    // document.querySelectorAll = find ALL elements matching a CSS selector
+    document.querySelectorAll('a[href^="#"]').forEach(function(link) {
+      // .forEach = loop over each item
+      // href^="#" = href starts with #
+
+      link.addEventListener('click', function(e) {
+        // addEventListener = "when this event happens, run this function"
+        // 'click' = the click event
+
+        e.preventDefault();
+        // preventDefault = stop the default browser behaviour (jumping to anchor)
+
+        const target = document.querySelector(this.getAttribute('href'));
+        // document.querySelector = find the first element matching a CSS selector
+
+        if (target) {
+          target.scrollIntoView({ behavior: 'smooth' });
+          // scrollIntoView = scroll the page to this element
+          // behavior: 'smooth' = animate it
+        }
+      });
+    });
+  </script>
+
+</body>
+</html>
