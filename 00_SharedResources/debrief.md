@@ -10,6 +10,23 @@ Purpose: append concise session outcomes. This is not the architecture source of
 - Decisions made:
 - Follow-ups:
 
+## 2026-03-07 (CBK-CODEX-MAC-DESK — Prod/Demo Readiness Deep Audit)
+
+- Session scope: deep verification of active Project 4 stack, Drop & Host safety controls, Project5 imported site integrity, and runtime stability evidence.
+- What changed:
+  - Added `00_SharedResources/prod_demo_readiness_report_2026-03-07.md` with endpoint matrix, gate results, safety tests, port/process inventory, and go/no-go.
+  - Re-ran local + public health checks for all active services (`4000-4007`) and tunnel domains; all returned `200`.
+  - Re-ran `00_SharedResources/recovery_gate.sh`; result PASS (including drop-host pytest suite).
+  - Performed systematic ZIP-vs-live asset diff for imported Project5 sites.
+  - Identified one concrete content defect: `p5-kaleo-demo` references `footer-cabin.jpg` that is missing in both source ZIP and deployed folder.
+- Decisions made:
+  - Mark current state as demo-ready with caveats, not strict production-ready.
+  - Treat Kaleo missing image as source package defect (not unzip/import corruption).
+- Follow-ups:
+  - Patch or re-export Kaleo package with `footer-cabin.jpg`.
+  - Add service supervision/watchdog for `4000-4007` + tunnel.
+  - Decide if `deployments_index.json` should remain repo-tracked runtime state.
+
 ## 2026-03-07 (CBK-CODEX-MAC-DESK — Project 4 Recovery + Project5 Ingestion)
 
 - Session scope: controlled post-crash recovery, deployment hardening, and staged import test of complex guest websites.
