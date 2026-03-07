@@ -17,9 +17,9 @@ from werkzeug.utils import secure_filename
 
 # Configure Flask to serve the React build
 app = Flask(__name__, static_folder='frontend/dist/assets', template_folder='frontend/dist')
+app.config['MAX_CONTENT_LENGTH'] = 50 * 1024 * 1024  # 50MB — enforced by Flask
 
 UPLOAD_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), "uploads")
-MAX_CONTENT_LENGTH = 50 * 1024 * 1024  # 50MB
 ALLOWED_EXTENSIONS = {'.html', '.htm', '.css', '.js', '.png', '.jpg', '.jpeg', '.gif', '.svg', '.ico', '.json', '.txt', '.woff', '.woff2', '.ttf', '.eot', '.mp4', '.webm'}
 
 # Active deployments
@@ -32,6 +32,24 @@ os.makedirs(UPLOAD_DIR, exist_ok=True)
 
 def allowed_file(filename):
     return any(filename.lower().endswith(ext) for ext in ALLOWED_EXTENSIONS)
+
+
+def safe_relative_path(raw_path):
+    """Sanitize a file path while preserving subdirectory structure.
+
+    secure_filename() alone flattens 'css/main.css' → 'cssmain.css', breaking
+    relative references in uploaded HTML. This function sanitizes each component
+    individually so directory structure is preserved for multi-file sites.
+    """
+    parts = raw_path.replace("\\", "/").split("/")
+    safe_parts = []
+    for part in parts:
+        if part in ("", ".", ".."):
+            continue
+        safe_part = secure_filename(part)
+        if safe_part:
+            safe_parts.append(safe_part)
+    return os.path.join(*safe_parts) if safe_parts else None
 
 
 def sanitize_path(name):
@@ -84,10 +102,12 @@ def serve_user_file(username, filename):
     if not deployment:
         abort(404)
     
-    safe_filename = secure_filename(filename)
+    safe_filename = safe_relative_path(filename)
+    if not safe_filename:
+        abort(404)
     file_path = os.path.join(deployment["folder"], safe_filename)
-    
-    if os.path.exists(file_path) and allowed_file(safe_filename):
+
+    if os.path.exists(file_path) and os.path.isfile(file_path) and allowed_file(safe_filename):
         return send_from_directory(deployment["folder"], safe_filename)
     
     abort(404)
@@ -111,28 +131,29 @@ def deploy():
     # Check if path already taken
     if user_path in DEPLOYMENTS:
         return jsonify({"error": f"Path '/{user_path}' already taken. Try another name."}), 409
-    
+
     if "files" not in request.files:
         return jsonify({"error": "No files uploaded"}), 400
-    
+
     files = request.files.getlist("files")
     if not files or files[0].filename == "":
         return jsonify({"error": "No files selected"}), 400
-    
+
     # Create project folder
     project_folder = os.path.join(UPLOAD_DIR, user_path)
     os.makedirs(project_folder, exist_ok=True)
-    
-    # Save files
+
+    # Save files — preserve subdirectory structure so relative CSS/JS refs work
     saved_files = []
     for file in files:
         if file and allowed_file(file.filename):
-            filename = secure_filename(file.filename)
-            # Handle folders by extracting just the filename
-            filename = os.path.basename(filename)
-            filepath = os.path.join(project_folder, filename)
+            rel_path = safe_relative_path(file.filename)
+            if not rel_path:
+                continue
+            filepath = os.path.join(project_folder, rel_path)
+            os.makedirs(os.path.dirname(filepath), exist_ok=True)
             file.save(filepath)
-            saved_files.append(filename)
+            saved_files.append(rel_path)
     
     if not saved_files:
         shutil.rmtree(project_folder, ignore_errors=True)
@@ -210,7 +231,7 @@ def discovery():
 # The old HTML form was removed to serve the React app instead.
 
 if __name__ == "__main__":
-    print("🚀 DROP & HOST on http://0.0.0.0:5005")
+    print("🚀 DROP & HOST on http://0.0.0.0:4005")
     print(f"   Domain: {DOMAIN}")
     print("   Upload at: /")
     print("   Sites at: /<username>/")

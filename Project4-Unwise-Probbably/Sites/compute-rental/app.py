@@ -95,7 +95,7 @@ def rent():
         "status": "active",
         "started": datetime.now().isoformat(),
         "ends": (datetime.now().timestamp() + hours * 3600),
-        "payment_address": "0xfreywill0000000000000000000000000000000"
+        "payment_address": VAULT_ADDRESS
     }
     JOBS.append(job)
     

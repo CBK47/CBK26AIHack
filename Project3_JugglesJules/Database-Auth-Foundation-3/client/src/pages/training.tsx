@@ -511,17 +511,15 @@ export default function TrainingPage() {
             <CardContent className="p-4 flex items-center justify-between gap-4">
               <div className="flex items-center gap-3">
                 <div
-                  className={`w-10 h-10 rounded-full border-2 transition-all duration-75 flex items-center justify-center ${
-                    trainingMetronome.beat
+                  className={`w-10 h-10 rounded-full border-2 transition-all duration-75 flex items-center justify-center ${trainingMetronome.beat
                       ? "border-primary bg-primary/20 scale-110"
                       : "border-muted-foreground/20 bg-muted/30 scale-100"
-                  }`}
+                    }`}
                   data-testid="training-metronome-pulse"
                 >
                   <div
-                    className={`w-4 h-4 rounded-full transition-all duration-75 ${
-                      trainingMetronome.beat ? "bg-primary" : "bg-muted-foreground/20"
-                    }`}
+                    className={`w-4 h-4 rounded-full transition-all duration-75 ${trainingMetronome.beat ? "bg-primary" : "bg-muted-foreground/20"
+                      }`}
                   />
                 </div>
                 <div>
@@ -592,40 +590,50 @@ export default function TrainingPage() {
 
             <div className="flex items-center justify-center gap-6">
               <div className="text-center">
-                <p className="text-xs text-muted-foreground mb-2">Drops</p>
-                <div className="flex items-center gap-3">
+                <p className="text-xs text-muted-foreground mb-4">Manual Drop Log</p>
+                <div className="flex flex-col items-center gap-6">
                   <Button
-                    size="icon"
-                    variant="outline"
-                    onClick={() => {
-                      const newDrops = [...drops];
-                      newDrops[currentIndex] = Math.max(0, newDrops[currentIndex] - 1);
-                      setDrops(newDrops);
-                    }}
-                    data-testid="button-drop-minus"
-                  >
-                    <Minus className="w-4 h-4" />
-                  </Button>
-                  <span className="text-3xl font-bold min-w-[3ch] text-center" data-testid="text-drops-count">
-                    {drops[currentIndex]}
-                  </span>
-                  <Button
-                    size="icon"
+                    size="lg"
                     variant="destructive"
+                    className="w-full sm:w-64 h-24 text-2xl font-black rounded-2xl shadow-lg active:scale-95 transition-all flex flex-col gap-1"
                     onClick={recordDrop}
                     data-testid="button-drop-plus"
                   >
-                    <Plus className="w-4 h-4" />
+                    <Plus className="w-8 h-8" />
+                    DROP
                   </Button>
+
+                  <div className="flex items-center gap-8">
+                    <Button
+                      size="icon"
+                      variant="outline"
+                      className="w-12 h-12 rounded-full"
+                      onClick={() => {
+                        const newDrops = [...drops];
+                        newDrops[currentIndex] = Math.max(0, newDrops[currentIndex] - 1);
+                        setDrops(newDrops);
+                      }}
+                      data-testid="button-drop-minus"
+                    >
+                      <Minus className="w-5 h-5" />
+                    </Button>
+                    <div className="flex flex-col">
+                      <span className="text-4xl font-mono font-black" data-testid="text-drops-count">
+                        {drops[currentIndex]}
+                      </span>
+                      <span className="text-[10px] text-muted-foreground uppercase">Drops</span>
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
           </CardContent>
         </Card>
 
-        <div className="flex items-center justify-between gap-3">
+        <div className="grid grid-cols-2 sm:flex sm:items-center sm:justify-between gap-3">
           <Button
             variant="outline"
+            className="h-12"
             onClick={prevTrick}
             disabled={currentIndex === 0}
             data-testid="button-prev-trick"
@@ -634,6 +642,7 @@ export default function TrainingPage() {
           </Button>
           <Button
             variant="outline"
+            className="h-12 hidden sm:flex"
             onClick={() => {
               const newDrops = [...drops];
               newDrops[currentIndex] = 0;
@@ -643,7 +652,7 @@ export default function TrainingPage() {
           >
             <RotateCcw className="w-4 h-4 mr-1" /> Reset
           </Button>
-          <Button onClick={nextTrick} data-testid="button-next-trick">
+          <Button className="h-12" onClick={nextTrick} data-testid="button-next-trick">
             {currentIndex === trainingSet.length - 1 ? (
               <>Finish <Check className="w-4 h-4 ml-1" /></>
             ) : (

@@ -54,7 +54,7 @@ export default function Dashboard() {
   }
 
   return (
-    <div className="p-6 space-y-6 max-w-7xl mx-auto">
+    <div className="p-4 md:p-6 space-y-4 md:space-y-6 max-w-7xl mx-auto">
       <div className="flex flex-wrap items-center justify-between gap-4">
         <div>
           <h1 className="text-2xl font-bold tracking-tight" data-testid="text-welcome">
@@ -226,46 +226,13 @@ export default function Dashboard() {
         </Card>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between gap-1 space-y-0 pb-2">
-            <CardTitle className="text-base font-semibold">Quick Actions</CardTitle>
-            <Zap className="w-4 h-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent className="grid grid-cols-2 gap-3">
-            <Link href="/training">
-              <Button variant="outline" className="w-full h-auto py-4 flex flex-col gap-2" data-testid="button-quick-train">
-                <Dumbbell className="w-5 h-5" />
-                <span className="text-xs">Quick Train</span>
-              </Button>
-            </Link>
-            <Link href="/tricks">
-              <Button variant="outline" className="w-full h-auto py-4 flex flex-col gap-2" data-testid="button-quick-tricks">
-                <BookOpen className="w-5 h-5" />
-                <span className="text-xs">Browse Tricks</span>
-              </Button>
-            </Link>
-            <Link href="/stats">
-              <Button variant="outline" className="w-full h-auto py-4 flex flex-col gap-2" data-testid="button-quick-stats">
-                <BarChart3 className="w-5 h-5" />
-                <span className="text-xs">View Stats</span>
-              </Button>
-            </Link>
-            <Link href="/progression">
-              <Button variant="outline" className="w-full h-auto py-4 flex flex-col gap-2" data-testid="button-quick-progression">
-                <TrendingUp className="w-5 h-5" />
-                <span className="text-xs">Progression</span>
-              </Button>
-            </Link>
-          </CardContent>
-        </Card>
-
-        <Card>
+      <div className="flex flex-col lg:flex-row gap-4">
+        <Card className="lg:w-2/3">
           <CardHeader className="flex flex-row items-center justify-between gap-1 space-y-0 pb-2">
             <CardTitle className="text-base font-semibold">Today's Focus</CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="rounded-md bg-gradient-to-br from-primary/10 to-primary/5 p-5 space-y-3">
+            <div className="rounded-md bg-gradient-to-br from-primary/10 to-primary/5 p-5 space-y-3 border-l-4 border-l-primary">
               <h3 className="font-semibold text-sm">Suggested Session</h3>
               <p className="text-sm text-muted-foreground">
                 {totalSessions === 0
@@ -277,12 +244,46 @@ export default function Dashboard() {
               </p>
               <div className="pt-2">
                 <Link href="/training">
-                  <Button size="sm" data-testid="button-suggested-session">
+                  <Button size="lg" className="w-full sm:w-auto font-bold" data-testid="button-suggested-session">
+                    <Dumbbell className="w-4 h-4 mr-2" />
                     Start Suggested Session <ArrowRight className="w-3 h-3 ml-1" />
                   </Button>
                 </Link>
               </div>
             </div>
+          </CardContent>
+        </Card>
+
+        <Card className="lg:w-1/3">
+          <CardHeader className="flex flex-row items-center justify-between gap-1 space-y-0 pb-2">
+            <CardTitle className="text-base font-semibold">Quick Actions</CardTitle>
+            <Zap className="w-4 h-4 text-muted-foreground" />
+          </CardHeader>
+          <CardContent className="grid grid-cols-2 gap-3">
+            <Link href="/training">
+              <Button variant="outline" className="w-full h-auto py-3 md:py-4 flex flex-col gap-2" data-testid="button-quick-train">
+                <Dumbbell className="w-5 h-5 text-primary" />
+                <span className="text-xs">Quick Train</span>
+              </Button>
+            </Link>
+            <Link href="/tricks">
+              <Button variant="outline" className="w-full h-auto py-3 md:py-4 flex flex-col gap-2" data-testid="button-quick-tricks">
+                <BookOpen className="w-5 h-5 text-primary" />
+                <span className="text-xs">Browse Tricks</span>
+              </Button>
+            </Link>
+            <Link href="/stats">
+              <Button variant="outline" className="w-full h-auto py-3 md:py-4 flex flex-col gap-2" data-testid="button-quick-stats">
+                <BarChart3 className="w-5 h-5 text-primary" />
+                <span className="text-xs">View Stats</span>
+              </Button>
+            </Link>
+            <Link href="/progression">
+              <Button variant="outline" className="w-full h-auto py-3 md:py-4 flex flex-col gap-2" data-testid="button-quick-progression">
+                <TrendingUp className="w-5 h-5 text-primary" />
+                <span className="text-xs">Progression</span>
+              </Button>
+            </Link>
           </CardContent>
         </Card>
       </div>

@@ -99,7 +99,7 @@ def deploy():
         "promo_code": promo_code.upper() if promo_code else None,
         "status": "pending_payment",
         "created": datetime.now().isoformat(),
-        "url": f"https://hackathon.freywill.io/{slug}",
+        "url": f"https://host.aihack26.xyz/{slug}",
         "expires": (datetime.now().timestamp() + 86400 * 3),  # 3 days default
     }
     

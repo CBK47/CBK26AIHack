@@ -24,6 +24,7 @@ import { scheduleReminder, cancelReminder } from "@/lib/notifications";
 import ForumPage from "@/pages/forum";
 import CommunityPage from "@/pages/community";
 import ShopPage from "@/pages/shop";
+import { MobileBottomNav } from "@/components/mobile-bottom-nav";
 
 function Router() {
   return (
@@ -56,14 +57,21 @@ function AuthenticatedLayout() {
       <div className="flex h-screen w-full">
         <AppSidebar />
         <div className="flex flex-col flex-1 min-w-0">
-          <header className="flex items-center justify-between gap-1 p-2 border-b h-12">
-            <SidebarTrigger data-testid="button-sidebar-toggle" />
+          <header className="flex items-center justify-between gap-1 p-2 border-b h-12 md:h-12">
+            <SidebarTrigger data-testid="button-sidebar-toggle" className="hidden md:flex" />
+            <div className="flex items-center gap-2 md:hidden">
+              <div className="w-8 h-8 rounded-md bg-primary flex items-center justify-center">
+                <span className="text-primary-foreground font-bold text-xs">JJ</span>
+              </div>
+              <span className="font-semibold text-sm">Just Juggle</span>
+            </div>
             <ThemeToggle />
           </header>
-          <main className="flex-1 overflow-auto">
+          <main className="flex-1 overflow-auto pb-16 md:pb-0">
             <Router />
           </main>
         </div>
+        <MobileBottomNav />
       </div>
     </SidebarProvider>
   );

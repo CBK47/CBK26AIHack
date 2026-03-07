@@ -68,6 +68,17 @@ def payment_required(f):
         
         payment_header = request.headers.get("X-Payment", "")
         
+        payment_error = (jsonify({
+            "error": "Payment required",
+            "payment": {
+                "amount": price,
+                "currency": CURRENCY,
+                "chain": CHAIN,
+                "address": WALLET_ADDRESS,
+            },
+            "discovery": "/.well-known/x402"
+        }), 402)
+
         if DEMO_MODE:
             if payment_header or request.args.get("demo") == "true":
                 wallet = wallet or f"demo-{rate_key[:12]}"
@@ -75,17 +86,14 @@ def payment_required(f):
                 g.wallet = wallet
                 g.tier = "demo"
                 return f(*args, **kwargs)
-            
-            return jsonify({
-                "error": "Payment required",
-                "payment": {
-                    "amount": price,
-                    "currency": CURRENCY,
-                    "chain": CHAIN,
-                    "address": WALLET_ADDRESS,
-                },
-                "discovery": "/.well-known/x402"
-            }), 402
-        
+            return payment_error
+
+        # Live mode: require X-Payment header
+        if not payment_header:
+            return payment_error
+
+        log_transaction(wallet or rate_key, endpoint, price)
+        g.wallet = wallet or rate_key
+        g.tier = "live"
         return f(*args, **kwargs)
     return decorated

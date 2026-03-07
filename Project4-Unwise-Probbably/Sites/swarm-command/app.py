@@ -4,6 +4,7 @@ SWARM COMMAND — Unified dashboard + Reverse Proxy
 All services accessible through port 4000
 """
 import json
+import os
 import random
 from datetime import datetime
 from flask import Flask, jsonify, send_from_directory, request, Response
@@ -142,7 +143,8 @@ def index():
 @app.route("/openclaw/")
 def openclaw():
     """Serve OpenClaw landing page"""
-    return send_from_directory("../openclaw", "index.html")
+    openclaw_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "openclaw"))
+    return send_from_directory(openclaw_dir, "index.html")
 
 
 @app.route("/api/swarm")
@@ -168,9 +170,9 @@ def metrics():
     METRICS["total_earnings_usdc"] = total
     METRICS["utilization_percent"] = random.randint(10, 60)
     
-    gross_earnings = total * 1.01
-    METRICS["platform_fees_usdc"] = gross_earnings * 0.01
-    
+    platform_fees = total * 0.01
+    METRICS["platform_fees_usdc"] = platform_fees
+
     return jsonify({
         **METRICS,
         "breakdown": {
@@ -181,7 +183,7 @@ def metrics():
         "goal_progress": min(total / 0.01 * 100, 100),
         "goal_remaining": max(0.01 - total, 0),
         "platform_fee_rate": "1%",
-        "net_after_fees": total,
+        "net_after_fees": round(total - platform_fees, 6),
     })
 
 

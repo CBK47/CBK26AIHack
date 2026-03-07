@@ -94,7 +94,7 @@ def status():
     """Get miner status"""
     return jsonify({
         **MINER_STATE,
-        "uptime_seconds": int(time.time()) if MINER_STATE["start_time"] else 0,
+        "uptime_seconds": int(time.time() - datetime.fromisoformat(MINER_STATE["start_time"]).timestamp()) if MINER_STATE["start_time"] else 0,
         "coins": COINS,
     })
 

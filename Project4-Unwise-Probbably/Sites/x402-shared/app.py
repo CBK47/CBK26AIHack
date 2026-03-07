@@ -71,6 +71,8 @@ def process_payment():
         return jsonify({"error": "Invalid service"}), 400
     if amount <= 0:
         return jsonify({"error": "Invalid amount"}), 400
+    if amount > 10000:
+        return jsonify({"error": "Amount exceeds maximum (10000 USDC)"}), 400
     
     # Calculate tax
     tax_rate = REGISTERED_SERVICES[service_id]["fee_rate"]

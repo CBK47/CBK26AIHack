@@ -6,11 +6,13 @@ import { Label } from "@/components/ui/label";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useAuth } from "@/lib/auth";
 import { useToast } from "@/hooks/use-toast";
+import { useLocation } from "wouter";
 import { Dumbbell, Sparkles } from "lucide-react";
 
 export default function AuthPage() {
   const { setUser } = useAuth();
   const { toast } = useToast();
+  const [, setLocation] = useLocation();
   const [loading, setLoading] = useState(false);
 
   const [loginForm, setLoginForm] = useState({ username: "", password: "" });
@@ -32,6 +34,7 @@ export default function AuthPage() {
       const user = await res.json();
       setUser(user);
       toast({ title: "Welcome back!", description: `Good to see you, ${user.username}.` });
+      setLocation("/");
     } catch (err: any) {
       toast({ title: "Login failed", description: err.message, variant: "destructive" });
     } finally {
@@ -55,6 +58,7 @@ export default function AuthPage() {
       const user = await res.json();
       setUser(user);
       toast({ title: "Welcome to Just Juggle!", description: "Your juggling journey begins now." });
+      setLocation("/");
     } catch (err: any) {
       toast({ title: "Registration failed", description: err.message, variant: "destructive" });
     } finally {

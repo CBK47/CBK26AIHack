@@ -12,6 +12,11 @@ def index():
 
 @app.route("/<path:filename>")
 def static_files(filename):
+    # send_from_directory uses safe_join internally (raises NotFound if path escapes BASE_DIR),
+    # but we also explicitly reject any traversal attempts up front.
+    if ".." in filename or filename.startswith("/"):
+        from flask import abort
+        abort(404)
     return send_from_directory(BASE_DIR, filename)
 
 if __name__ == "__main__":
