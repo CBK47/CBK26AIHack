@@ -242,7 +242,9 @@ def serve_user_file(username, filename):
         abort(404)
     file_path = os.path.join(deployment["folder"], safe_filename)
 
-    if os.path.exists(file_path) and os.path.isfile(file_path) and allowed_file(safe_filename):
+    # Keep uploads HTML-only at ingest, but serve bundled static assets for
+    # manually imported multi-file sites (CSS/JS/images/fonts).
+    if os.path.exists(file_path) and os.path.isfile(file_path):
         return send_from_directory(deployment["folder"], safe_filename)
     
     abort(404)
