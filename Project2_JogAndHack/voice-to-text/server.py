@@ -218,8 +218,9 @@ def update_config():
     with open(CONFIG_FILE, "w") as f:
         json.dump(new_cfg, f, indent=2)
 
+    restart_keys = ("model", "model_path", "device", "compute_type")
+    needs_restart = any(updates.get(k) != CONFIG.get(k) for k in restart_keys if k in updates)
     CONFIG.update(updates)
-    needs_restart = any(k in updates for k in ("model", "model_path", "device", "compute_type"))
 
     print(f"[VTT] Config updated: {updates}")
     return jsonify({
