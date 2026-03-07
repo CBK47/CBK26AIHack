@@ -144,6 +144,26 @@
     }
     .earn-label { color: var(--muted); margin-top: 8px; }
     .earn-note { font-size: 12px; color: var(--muted); margin-top: 16px; }
+    .brief {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 18px;
+      margin: 24px 0 36px;
+    }
+    .brief h2 {
+      font-size: 14px;
+      margin-bottom: 8px;
+      color: var(--accent2);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+    }
+    .brief p, .brief li {
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.65;
+    }
+    .brief ul { margin: 8px 0 0 18px; }
     
     .features {
       display: grid;
@@ -186,6 +206,20 @@
       <p class="tagline">Your gaming PC earns while you sleep. Install once, collect passive income. We take 1%, you keep 99%.</p>
       <a href="#install" class="cta-btn">Start Earning →</a>
     </header>
+
+    <section class="brief">
+      <h2>Project Brief</h2>
+      <p>
+        OpenClaw extends the FREYWILL model to external idle hardware: monetize unused compute and route payment
+        settlement through the same x402 ecosystem used across Project 4.
+      </p>
+      <ul>
+        <li>Marketplace role: low-friction contributor lane for users not running full service stacks.</li>
+        <li>Economics: 99% to contributor, 1% treasury share to sustain shared infra.</li>
+        <li>Integration: complements compute rental and auto-miner fallback logic.</li>
+        <li>Architecture alignment: worker agents + orchestration + Base/USDC settlement.</li>
+      </ul>
+    </section>
     
     <div class="how-it-works">
       <div class="step">
