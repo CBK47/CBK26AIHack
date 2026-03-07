@@ -2,7 +2,7 @@
 """
 test_tts_endpoint.py — Unit tests for the GX10 TTS endpoint.
 Run from the Mac or GX10:
-  python3 test_tts_endpoint.py [--host 192.168.0.28] [--port 5002]
+  python3 test_tts_endpoint.py [--host 192.168.0.28] [--port 2002]
 """
 
 import argparse
@@ -12,7 +12,7 @@ import requests
 
 parser = argparse.ArgumentParser()
 parser.add_argument("--host", default="192.168.0.28")
-parser.add_argument("--port", default=5002, type=int)
+parser.add_argument("--port", default=2002, type=int)
 args = parser.parse_args()
 
 BASE = f"http://{args.host}:{args.port}"

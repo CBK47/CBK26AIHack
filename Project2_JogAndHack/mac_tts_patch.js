@@ -6,11 +6,11 @@
  *   - Sabrina voice toggle in UI
  *   - Hooks into the existing auto-submit flow
  *
- * GX10 TTS server: http://192.168.0.28:5002/tts
+ * GX10 TTS server: http://192.168.0.28:2002/tts
  */
 
 // ── Config ────────────────────────────────────────────────────────────────────
-const TTS_ENDPOINT = "http://192.168.0.28:5002/tts";
+const TTS_ENDPOINT = "http://192.168.0.28:2002/tts";
 const TTS_TIMEOUT_MS = 5000; // max wait before falling back to macOS say
 
 let sabrinaEnabled = localStorage.getItem("sabrinaVoice") !== "false"; // default on

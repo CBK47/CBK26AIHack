@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>OPENCLAW — Earn From Your Idle Hardware</title>
+  <style>
+    :root {
+      --bg: #050508;
+      --surface: #0d0d12;
+      --border: #1f1f2e;
+      --accent: #ff6b35;
+      --accent2: #f7931e;
+      --success: #00ff88;
+      --text: #e8e8f0;
+      --muted: #6b6b7b;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'SF Mono', Monaco, monospace;
+      font-size: 14px;
+    }
+    .container { max-width: 1000px; margin: 0 auto; padding: 40px 20px; }
+    
+    header {
+      text-align: center;
+      padding: 80px 20px;
+      background: linear-gradient(135deg, rgba(255,107,53,0.1), rgba(247,147,30,0.1));
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      margin-bottom: 40px;
+    }
+    .logo {
+      width: 80px;
+      height: 80px;
+      background: linear-gradient(135deg, var(--accent), var(--accent2));
+      border-radius: 20px;
+      margin: 0 auto 24px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 40px;
+    }
+    h1 {
+      font-size: clamp(36px, 6vw, 56px);
+      font-weight: 700;
+      letter-spacing: -2px;
+      margin-bottom: 16px;
+    }
+    h1 span {
+      background: linear-gradient(135deg, var(--accent), var(--accent2));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .tagline {
+      font-size: 18px;
+      color: var(--muted);
+      max-width: 500px;
+      margin: 0 auto 32px;
+    }
+    .cta-btn {
+      display: inline-block;
+      background: linear-gradient(135deg, var(--accent), var(--accent2));
+      color: #000;
+      padding: 16px 32px;
+      border-radius: 12px;
+      font-weight: 700;
+      font-size: 16px;
+      text-decoration: none;
+      transition: transform 0.2s;
+    }
+    .cta-btn:hover { transform: translateY(-2px); }
+    
+    .how-it-works {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 20px;
+      margin: 60px 0;
+    }
+    .step {
+      text-align: center;
+      padding: 24px;
+    }
+    .step-num {
+      width: 48px;
+      height: 48px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 16px;
+      font-weight: 700;
+      color: var(--accent);
+    }
+    .step-title { font-weight: 700; margin-bottom: 8px; }
+    .step-desc { color: var(--muted); font-size: 13px; }
+    
+    .earnings-calc {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 32px;
+      margin: 40px 0;
+    }
+    .calc-title { font-size: 18px; margin-bottom: 24px; text-align: center; }
+    .hardware-options {
+      display: flex;
+      gap: 12px;
+      justify-content: center;
+      margin-bottom: 24px;
+      flex-wrap: wrap;
+    }
+    .hw-btn {
+      padding: 12px 20px;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      color: var(--text);
+      cursor: pointer;
+      font-family: inherit;
+      transition: all 0.2s;
+    }
+    .hw-btn:hover, .hw-btn.active {
+      border-color: var(--accent);
+      background: rgba(255,107,53,0.1);
+    }
+    .earnings-display {
+      text-align: center;
+      padding: 24px;
+      background: var(--bg);
+      border-radius: 12px;
+    }
+    .earn-amount {
+      font-size: 48px;
+      font-weight: 700;
+      background: linear-gradient(135deg, var(--success), var(--accent2));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .earn-label { color: var(--muted); margin-top: 8px; }
+    .earn-note { font-size: 12px; color: var(--muted); margin-top: 16px; }
+    
+    .features {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 20px;
+      margin: 40px 0;
+    }
+    .feature {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 24px;
+    }
+    .feature-icon { font-size: 32px; margin-bottom: 12px; }
+    .feature-title { font-weight: 700; margin-bottom: 8px; }
+    .feature-desc { color: var(--muted); font-size: 13px; }
+    
+    footer {
+      text-align: center;
+      padding: 40px;
+      color: var(--muted);
+      border-top: 1px solid var(--border);
+      margin-top: 40px;
+    }
+    
+    @media (max-width: 900px) {
+      .how-it-works { grid-template-columns: repeat(2, 1fr); }
+      .features { grid-template-columns: 1fr; }
+    }
+    @media (max-width: 600px) {
+      .how-it-works { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <div class="logo">🐾</div>
+      <h1>OPEN<span>CLAW</span></h1>
+      <p class="tagline">Your gaming PC earns while you sleep. Install once, collect passive income. We take 1%, you keep 99%.</p>
+      <a href="#install" class="cta-btn">Start Earning →</a>
+    </header>
+    
+    <div class="how-it-works">
+      <div class="step">
+        <div class="step-num">1</div>
+        <div class="step-title">Install</div>
+        <div class="step-desc">Download the lightweight worker. Runs in background, uses &lt;5% CPU when active.</div>
+      </div>
+      <div class="step">
+        <div class="step-num">2</div>
+        <div class="step-title">Go Idle</div>
+        <div class="step-desc">When you're AFK for 5+ mins, worker automatically starts earning.</div>
+      </div>
+      <div class="step">
+        <div class="step-num">3</div>
+        <div class="step-title">Earn</div>
+        <div class="step-desc">Processes AI tasks, mines crypto, rents compute. Micro-rewards add up.</div>
+      </div>
+      <div class="step">
+        <div class="step-num">4</div>
+        <div class="step-title">Cash Out</div>
+        <div class="step-desc">Withdraw to any wallet at $5. No fees, no minimums, no lock-in.</div>
+      </div>
+    </div>
+    
+    <div class="earnings-calc">
+      <h3 class="calc-title">💰 How Much Can You Earn?</h3>
+      <div class="hardware-options">
+        <button class="hw-btn" onclick="setHardware('laptop')">💻 Basic Laptop</button>
+        <button class="hw-btn active" onclick="setHardware('gaming')">🎮 Gaming PC</button>
+        <button class="hw-btn" onclick="setHardware('workstation')">🖥️ Workstation</button>
+        <button class="hw-btn" onclick="setHardware('gb10')">⚡ GB10 Superchip</button>
+      </div>
+      <div class="earnings-display">
+        <div class="earn-amount" id="earn-amount">$15-45</div>
+        <div class="earn-label">per month (estimated)</div>
+        <div class="earn-note">Running 8hrs/day idle time • 1% platform fee included</div>
+      </div>
+    </div>
+    
+    <div class="features">
+      <div class="feature">
+        <div class="feature-icon">🔒</div>
+        <div class="feature-title">Privacy First</div>
+        <div class="feature-desc">Open source. No data collection. Your hardware, your earnings.</div>
+      </div>
+      <div class="feature">
+        <div class="feature-icon">⚡</div>
+        <div class="feature-title">Smart Scheduling</div>
+        <div class="feature-desc">Auto-pauses when you return. No lag, no interference with work/gaming.</div>
+      </div>
+      <div class="feature">
+        <div class="feature-icon">🌐</div>
+        <div class="feature-title">Multiple Income Streams</div>
+        <div class="feature-desc">Mining + AI inference + compute rental. Diversified, resilient.</div>
+      </div>
+    </div>
+    
+    <footer>
+      <p>Part of the FREYWILL Swarm Ecosystem</p>
+      <p style="margin-top:8px; font-size: 12px;">1% platform fee • 99% goes to you • Transparent • Open Source</p>
+    </footer>
+  </div>
+  
+  <script>
+    const earnings = {
+      'laptop': '$5-15',
+      'gaming': '$15-45',
+      'workstation': '$50-120',
+      'gb10': '$200-500'
+    };
+    
+    function setHardware(type) {
+      document.querySelectorAll('.hw-btn').forEach(btn => btn.classList.remove('active'));
+      event.target.classList.add('active');
+      document.getElementById('earn-amount').textContent = earnings[type];
+    }
+  </script>
+</body>
+</html>

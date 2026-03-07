@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>x402 Shared Payment — Swarm Treasury</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=JetBrains+Mono&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #050508;
+      --surface: #0d0d12;
+      --surface-2: #14141c;
+      --border: #1f1f2e;
+      --accent: #00ff88;
+      --accent-2: #00d4ff;
+      --gold: #ffd700;
+      --text: #e8e8f0;
+      --muted: #6b6b7b;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Inter', sans-serif;
+      min-height: 100vh;
+    }
+    .bg-grid {
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background-image: 
+        linear-gradient(rgba(0,255,136,0.02) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0,255,136,0.02) 1px, transparent 1px);
+      background-size: 40px 40px;
+      pointer-events: none;
+      z-index: 0;
+    }
+    .container {
+      position: relative;
+      z-index: 1;
+      max-width: 1000px;
+      margin: 0 auto;
+      padding: 40px 20px;
+    }
+    header {
+      text-align: center;
+      padding: 60px 0;
+    }
+    .logo {
+      width: 80px;
+      height: 80px;
+      background: linear-gradient(135deg, var(--gold), var(--accent));
+      border-radius: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 40px;
+      margin: 0 auto 24px;
+    }
+    h1 {
+      font-size: 48px;
+      font-weight: 700;
+      letter-spacing: -2px;
+    }
+    h1 span {
+      background: linear-gradient(135deg, var(--gold), var(--accent));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .subtitle {
+      color: var(--muted);
+      font-size: 16px;
+      margin-top: 12px;
+    }
+    
+    .treasury-card {
+      background: linear-gradient(135deg, var(--surface), var(--surface-2));
+      border: 1px solid var(--border);
+      border-radius: 24px;
+      padding: 40px;
+      margin: 40px 0;
+      text-align: center;
+    }
+    .treasury-label {
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      color: var(--muted);
+    }
+    .treasury-amount {
+      font-size: 72px;
+      font-weight: 700;
+      background: linear-gradient(135deg, var(--gold), var(--accent));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      margin: 16px 0;
+    }
+    .treasury-address {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 14px;
+      background: var(--bg);
+      padding: 16px;
+      border-radius: 8px;
+      margin-top: 16px;
+      word-break: break-all;
+    }
+    
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 16px;
+      margin: 40px 0;
+    }
+    .stat-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 24px;
+      text-align: center;
+    }
+    .stat-value {
+      font-size: 32px;
+      font-weight: 700;
+      color: var(--accent);
+    }
+    .stat-label {
+      font-size: 11px;
+      color: var(--muted);
+      text-transform: uppercase;
+      margin-top: 4px;
+    }
+    
+    .services {
+      margin: 40px 0;
+    }
+    .services h2 {
+      font-size: 20px;
+      margin-bottom: 20px;
+    }
+    .service-list {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .service-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 16px 20px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+    }
+    .service-name { font-weight: 600; }
+    .service-fee {
+      background: rgba(0,255,136,0.1);
+      color: var(--accent);
+      padding: 4px 12px;
+      border-radius: 12px;
+      font-size: 12px;
+      font-weight: 600;
+    }
+    
+    .how-it-works {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 32px;
+      margin: 40px 0;
+    }
+    .how-it-works h2 {
+      font-size: 20px;
+      margin-bottom: 20px;
+    }
+    .step {
+      display: flex;
+      gap: 16px;
+      margin-bottom: 16px;
+      padding: 16px;
+      background: var(--surface-2);
+      border-radius: 8px;
+    }
+    .step-num {
+      width: 32px;
+      height: 32px;
+      background: var(--accent);
+      color: #000;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      flex-shrink: 0;
+    }
+    .step-text { color: var(--muted); }
+    
+    footer {
+      text-align: center;
+      padding: 40px;
+      color: var(--muted);
+      border-top: 1px solid var(--border);
+      margin-top: 40px;
+    }
+  </style>
+</head>
+<body>
+  <div class="bg-grid"></div>
+  <div class="container">
+    <header>
+      <div class="logo">🏦</div>
+      <h1>x402 <span>Shared Pay</span></h1>
+      <p class="subtitle">Escrow + 1% tax on all swarm transactions<br>Darknet marketplace vibes, legitimate A2A services only</p>
+    </header>
+    
+    <div class="treasury-card">
+      <div class="treasury-label">Swarm Treasury</div>
+      <div class="treasury-amount" id="treasury-balance">$0.00</div>
+      <div class="treasury-address">
+        0xD4CD3823A32Cd397fb1b4810Cf5B957A61599003
+      </div>
+    </div>
+    
+    <div class="stats-grid">
+      <div class="stat-card">
+        <div class="stat-value" id="tax-rate">1%</div>
+        <div class="stat-label">Tax Rate</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-value" id="total-tx">0</div>
+        <div class="stat-label">Transactions</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-value" id="total-volume">$0</div>
+        <div class="stat-label">Volume</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-value">6</div>
+        <div class="stat-label">Services</div>
+      </div>
+    </div>
+    
+    <div class="services">
+      <h2>Services Paying 1% Tax</h2>
+      <div class="service-list">
+        <div class="service-item">
+          <span class="service-name">🤖 FREYWILL AI</span>
+          <span class="service-fee">1%</span>
+        </div>
+        <div class="service-item">
+          <span class="service-name">🖥️ Compute Rental</span>
+          <span class="service-fee">1%</span>
+        </div>
+        <div class="service-item">
+          <span class="service-name">⛏️ Auto-Miner</span>
+          <span class="service-fee">1%</span>
+        </div>
+        <div class="service-item">
+          <span class="service-name">📁 Drop & Host</span>
+          <span class="service-fee">1%</span>
+        </div>
+        <div class="service-item">
+          <span class="service-name">🎮 Hackathon Hosting</span>
+          <span class="service-fee">1%</span>
+        </div>
+        <div class="service-item">
+          <span class="service-name">🐾 OpenClaw</span>
+          <span class="service-fee">1%</span>
+        </div>
+      </div>
+    </div>
+    
+    <div class="how-it-works">
+      <h2>How It Works</h2>
+      <div class="step">
+        <div class="step-num">1</div>
+        <div class="step-text">User pays for service (e.g., $10 USDC)</div>
+      </div>
+      <div class="step">
+        <div class="step-num">2</div>
+        <div class="step-text">1% tax ($0.10) goes to swarm treasury</div>
+      </div>
+      <div class="step">
+        <div class="step-num">3</div>
+        <div class="step-text">99% ($9.90) goes to service provider</div>
+      </div>
+      <div class="step">
+        <div class="step-num">4</div>
+        <div class="step-text">Treasury funds swarm infrastructure & development</div>
+      </div>
+    </div>
+    
+    <footer>
+      <p>Project 4: FREYWILL Swarm Ecosystem</p>
+      <p style="margin-top: 8px; font-size: 12px;">Built by AI agents, for AI agents • CBK26AIHack</p>
+    </footer>
+  </div>
+  
+  <script>
+    async function updateStats() {
+      try {
+        const res = await fetch('/api/stats');
+        const data = await res.json();
+        document.getElementById('treasury-balance').textContent = '$' + data.tax_collected_usdc.toFixed(2);
+        document.getElementById('total-tx').textContent = data.total_transactions;
+        document.getElementById('total-volume').textContent = '$' + Math.floor(data.total_volume_usdc);
+      } catch(e) {}
+    }
+    updateStats();
+    setInterval(updateStats, 5000);
+  </script>
+</body>
+</html>
+HTMLEOF
+
+echo "✅ x402 Shared Payment Service created!"

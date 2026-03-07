@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AUTO-MINER — Fallback Earnings</title>
+  <style>
+    :root {
+      --bg: #050508;
+      --surface: #0d0d12;
+      --border: #1f1f2e;
+      --accent: #ffaa00;
+      --accent2: #ff5500;
+      --text: #e8e8f0;
+      --muted: #6b6b7b;
+      --success: #00ff88;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'SF Mono', Monaco, monospace;
+      font-size: 14px;
+    }
+    .container { max-width: 1000px; margin: 0 auto; padding: 40px 20px; }
+    
+    header {
+      text-align: center;
+      padding: 60px 0;
+      border-bottom: 1px solid var(--border);
+      margin-bottom: 40px;
+    }
+    .badge {
+      display: inline-block;
+      background: rgba(255,170,0,0.1);
+      border: 1px solid rgba(255,170,0,0.2);
+      color: var(--accent);
+      padding: 6px 14px;
+      border-radius: 20px;
+      font-size: 11px;
+      margin-bottom: 20px;
+    }
+    h1 {
+      font-size: clamp(32px, 6vw, 56px);
+      font-weight: 700;
+      letter-spacing: -2px;
+    }
+    h1 span { color: var(--accent); }
+    .subtitle { color: var(--muted); margin-top: 12px; }
+    
+    .status-bar {
+      display: flex;
+      gap: 20px;
+      margin-bottom: 40px;
+    }
+    .status-card {
+      flex: 1;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 24px;
+      text-align: center;
+    }
+    .status-card.active {
+      border-color: var(--success);
+      background: linear-gradient(135deg, var(--surface), rgba(0,255,136,0.05));
+    }
+    .status-indicator {
+      width: 16px;
+      height: 16px;
+      border-radius: 50%;
+      background: var(--muted);
+      margin: 0 auto 12px;
+    }
+    .status-card.active .status-indicator {
+      background: var(--success);
+      box-shadow: 0 0 20px rgba(0,255,136,0.4);
+      animation: pulse 2s infinite;
+    }
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.5; }
+    }
+    .status-title { font-weight: 600; margin-bottom: 4px; }
+    .status-value { font-size: 24px; color: var(--accent); }
+    
+    .controls {
+      display: flex;
+      gap: 12px;
+      justify-content: center;
+      margin-bottom: 40px;
+    }
+    .btn {
+      padding: 14px 28px;
+      border-radius: 8px;
+      font-weight: 600;
+      border: none;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .btn-start {
+      background: var(--success);
+      color: #000;
+    }
+    .btn-stop {
+      background: var(--accent2);
+      color: #fff;
+    }
+    .btn:hover { transform: translateY(-2px); opacity: 0.9; }
+    
+    .coins {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 24px;
+      margin-bottom: 40px;
+    }
+    .coins h2 { font-size: 16px; margin-bottom: 16px; }
+    .coin-list { display: flex; flex-direction: column; gap: 12px; }
+    .coin-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 16px;
+      background: var(--bg);
+      border-radius: 8px;
+      border: 1px solid transparent;
+    }
+    .coin-item.active {
+      border-color: var(--success);
+    }
+    .coin-name { font-weight: 600; }
+    .coin-algo { font-size: 12px; color: var(--muted); }
+    .coin-profit {
+      text-align: right;
+    }
+    .profit-value {
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--success);
+    }
+    .profit-label { font-size: 11px; color: var(--muted); }
+    
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
+      margin-bottom: 40px;
+    }
+    .stat-box {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 20px;
+      text-align: center;
+    }
+    .stat-value {
+      font-size: 28px;
+      font-weight: 700;
+      color: var(--accent);
+    }
+    .stat-label { font-size: 11px; color: var(--muted); margin-top: 4px; }
+    
+    footer {
+      text-align: center;
+      padding: 40px;
+      color: var(--muted);
+      border-top: 1px solid var(--border);
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <div class="badge">⚡ Fallback Strategy</div>
+      <h1>AUTO<span>MINER</span></h1>
+      <p class="subtitle">Earns ETH when agents are idle. Auto-switches to most profitable coin.</p>
+    </header>
+    
+    <div class="status-bar">
+      <div class="status-card" id="status-card">
+        <div class="status-indicator" id="status-light"></div>
+        <div class="status-title">Status</div>
+        <div class="status-value" id="mining-status">Stopped</div>
+      </div>
+      <div class="status-card">
+        <div class="status-title">Current Coin</div>
+        <div class="status-value" id="current-coin">—</div>
+      </div>
+      <div class="status-card">
+        <div class="status-title">Hashrate</div>
+        <div class="status-value" id="hashrate">0 H/s</div>
+      </div>
+    </div>
+    
+    <div class="controls">
+      <button class="btn btn-start" onclick="startMining()">⛏️ Start Mining</button>
+      <button class="btn btn-stop" onclick="stopMining()">🛑 Stop</button>
+    </div>
+    
+    <div class="coins">
+      <h2>Profitability Comparison</h2>
+      <div class="coin-list" id="coin-list">
+        <div class="coin-item">
+          <div>
+            <div class="coin-name">Monero (XMR)</div>
+            <div class="coin-algo">RandomX — CPU Optimized</div>
+          </div>
+          <div class="coin-profit">
+            <div class="profit-value">$0.50/day</div>
+            <div class="profit-label">~30 kh/s</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <div class="stats-grid">
+      <div class="stat-box">
+        <div class="stat-value" id="total-earned">$0.00</div>
+        <div class="stat-label">Total Earned</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-value" id="shares">0</div>
+        <div class="stat-label">Shares Accepted</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-value" id="rejects">0</div>
+        <div class="stat-label">Rejected</div>
+      </div>
+    </div>
+    
+    <footer>
+      <p>Auto-fallback: Mines when no rental jobs active</p>
+      <p>Goal: Earn $0.01 ETH to unlock on-chain operations</p>
+    </footer>
+  </div>
+  
+  <script>
+    async function updateStatus() {
+      try {
+        const res = await fetch('/api/status');
+        const data = await res.json();
+        
+        document.getElementById('mining-status').textContent = data.active ? 'Mining' : 'Stopped';
+        document.getElementById('current-coin').textContent = data.coin ? data.coin.toUpperCase() : '—';
+        document.getElementById('hashrate').textContent = data.hashrate > 0 
+          ? (data.hashrate > 1000 ? (data.hashrate/1000).toFixed(1) + ' kH/s' : data.hashrate.toFixed(0) + ' H/s')
+          : '0 H/s';
+        document.getElementById('total-earned').textContent = '$' + data.total_earnings.toFixed(4);
+        document.getElementById('shares').textContent = data.shares_accepted;
+        document.getElementById('rejects').textContent = data.shares_rejected;
+        
+        const card = document.getElementById('status-card');
+        if (data.active) {
+          card.classList.add('active');
+        } else {
+          card.classList.remove('active');
+        }
+      } catch(e) {}
+    }
+    
+    async function startMining() {
+      await fetch('/api/start', {method: 'POST'});
+      updateStatus();
+    }
+    
+    async function stopMining() {
+      await fetch('/api/stop', {method: 'POST'});
+      updateStatus();
+    }
+    
+    updateStatus();
+    setInterval(updateStatus, 3000);
+  </script>
+</body>
+</html>
+HTMLEOF

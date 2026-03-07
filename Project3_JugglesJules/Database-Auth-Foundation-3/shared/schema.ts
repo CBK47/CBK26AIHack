@@ -1,10 +1,9 @@
-import { sql } from "drizzle-orm";
-import { pgTable, text, integer, boolean, timestamp, serial, varchar, primaryKey } from "drizzle-orm/pg-core";
+import { sqliteTable, text, integer, primaryKey } from "drizzle-orm/sqlite-core";
 import { createInsertSchema } from "drizzle-zod";
 import { z } from "zod";
 
-export const users = pgTable("users", {
-  id: text("id").primaryKey().default(sql`gen_random_uuid()`),
+export const users = sqliteTable("users", {
+  id: text("id").primaryKey().$defaultFn(() => crypto.randomUUID()),
   username: text("username").notNull().unique(),
   email: text("email").notNull().unique(),
   password: text("password").notNull(),
@@ -16,14 +15,14 @@ export const users = pgTable("users", {
   displayName: text("display_name"),
   preferredStyle: text("preferred_style"),
   skillLevel: text("skill_level"),
-  notificationsEnabled: boolean("notifications_enabled").default(true).notNull(),
+  notificationsEnabled: integer("notifications_enabled", { mode: "boolean" }).default(true).notNull(),
   reminderTime: text("reminder_time"),
   reminderMessage: text("reminder_message"),
-  createdAt: timestamp("created_at").defaultNow().notNull(),
+  createdAt: integer("created_at", { mode: "timestamp" }).$defaultFn(() => new Date()).notNull(),
 });
 
-export const tricks = pgTable("tricks", {
-  id: serial("id").primaryKey(),
+export const tricks = sqliteTable("tricks", {
+  id: integer("id").primaryKey({ autoIncrement: true }),
   name: text("name").notNull(),
   description: text("description"),
   siteswap: text("siteswap"),
@@ -33,11 +32,11 @@ export const tricks = pgTable("tricks", {
   videoUrl: text("video_url"),
   tip: text("tip"),
   prerequisites: text("prerequisites"),
-  isCustom: boolean("is_custom").default(false).notNull(),
+  isCustom: integer("is_custom", { mode: "boolean" }).default(false).notNull(),
 });
 
-export const sessions = pgTable("sessions", {
-  id: serial("id").primaryKey(),
+export const sessions = sqliteTable("sessions", {
+  id: integer("id").primaryKey({ autoIncrement: true }),
   userId: text("user_id").references(() => users.id).notNull(),
   durationMinutes: integer("duration_minutes"),
   energyLevel: text("energy_level"),
@@ -45,11 +44,11 @@ export const sessions = pgTable("sessions", {
   totalDrops: integer("total_drops").default(0).notNull(),
   moodRating: text("mood_rating"),
   notes: text("notes"),
-  createdAt: timestamp("created_at").defaultNow().notNull(),
+  createdAt: integer("created_at", { mode: "timestamp" }).$defaultFn(() => new Date()).notNull(),
 });
 
-export const sessionTricks = pgTable("session_tricks", {
-  id: serial("id").primaryKey(),
+export const sessionTricks = sqliteTable("session_tricks", {
+  id: integer("id").primaryKey({ autoIncrement: true }),
   sessionId: integer("session_id").references(() => sessions.id).notNull(),
   trickId: integer("trick_id").references(() => tricks.id).notNull(),
   catchesGoal: integer("catches_goal"),
@@ -57,23 +56,99 @@ export const sessionTricks = pgTable("session_tricks", {
   drops: integer("drops").default(0).notNull(),
 });
 
-export const userTricks = pgTable("user_tricks", {
+export const userTricks = sqliteTable("user_tricks", {
   userId: text("user_id").references(() => users.id).notNull(),
   trickId: integer("trick_id").references(() => tricks.id).notNull(),
-  isUnlocked: boolean("is_unlocked").default(false).notNull(),
+  isUnlocked: integer("is_unlocked", { mode: "boolean" }).default(false).notNull(),
   personalBestCatches: integer("personal_best_catches").default(0).notNull(),
   masteryScore: integer("mastery_score").default(0).notNull(),
 }, (table) => [
   primaryKey({ columns: [table.userId, table.trickId] }),
 ]);
 
-export const achievements = pgTable("achievements", {
-  id: serial("id").primaryKey(),
+export const achievements = sqliteTable("achievements", {
+  id: integer("id").primaryKey({ autoIncrement: true }),
   userId: text("user_id").references(() => users.id).notNull(),
   badgeName: text("badge_name").notNull(),
-  unlockedAt: timestamp("unlocked_at").defaultNow().notNull(),
+  unlockedAt: integer("unlocked_at", { mode: "timestamp" }).$defaultFn(() => new Date()).notNull(),
 });
 
+export const gameResults = sqliteTable("game_results", {
+  id: integer("id").primaryKey({ autoIncrement: true }),
+  userId: text("user_id").references(() => users.id).notNull(),
+  gameType: text("game_type").notNull(),
+  score: integer("score").default(0).notNull(),
+  timeSeconds: integer("time_seconds").default(0).notNull(),
+  drops: integer("drops").default(0).notNull(),
+  metadata: text("metadata"),
+  createdAt: integer("created_at", { mode: "timestamp" }).$defaultFn(() => new Date()).notNull(),
+});
+
+export const trainingGoals = sqliteTable("training_goals", {
+  id: integer("id").primaryKey({ autoIncrement: true }),
+  userId: text("user_id").references(() => users.id).notNull(),
+  title: text("title").notNull(),
+  description: text("description"),
+  targetDate: integer("target_date", { mode: "timestamp" }),
+  isCompleted: integer("is_completed", { mode: "boolean" }).default(false).notNull(),
+  createdAt: integer("created_at", { mode: "timestamp" }).$defaultFn(() => new Date()).notNull(),
+});
+
+export const friendships = sqliteTable("friendships", {
+  id: integer("id").primaryKey({ autoIncrement: true }),
+  requesterId: text("requester_id").references(() => users.id).notNull(),
+  receiverId: text("receiver_id").references(() => users.id).notNull(),
+  status: text("status").default("pending").notNull(),
+  createdAt: integer("created_at", { mode: "timestamp" }).$defaultFn(() => new Date()).notNull(),
+});
+
+export const challenges = sqliteTable("challenges", {
+  id: integer("id").primaryKey({ autoIncrement: true }),
+  senderId: text("sender_id").references(() => users.id).notNull(),
+  receiverId: text("receiver_id").references(() => users.id).notNull(),
+  gameType: text("game_type").notNull(),
+  targetScore: integer("target_score").default(0).notNull(),
+  senderScore: integer("sender_score"),
+  receiverScore: integer("receiver_score"),
+  status: text("status").default("pending").notNull(),
+  createdAt: integer("created_at", { mode: "timestamp" }).$defaultFn(() => new Date()).notNull(),
+});
+
+export const forumPosts = sqliteTable("forum_posts", {
+  id: integer("id").primaryKey({ autoIncrement: true }),
+  userId: text("user_id").references(() => users.id).notNull(),
+  title: text("title").notNull(),
+  content: text("content").notNull(),
+  category: text("category").default("general").notNull(),
+  createdAt: integer("created_at", { mode: "timestamp" }).$defaultFn(() => new Date()).notNull(),
+});
+
+export const forumComments = sqliteTable("forum_comments", {
+  id: integer("id").primaryKey({ autoIncrement: true }),
+  postId: integer("post_id").references(() => forumPosts.id).notNull(),
+  userId: text("user_id").references(() => users.id).notNull(),
+  content: text("content").notNull(),
+  createdAt: integer("created_at", { mode: "timestamp" }).$defaultFn(() => new Date()).notNull(),
+});
+
+export const shopItems = sqliteTable("shop_items", {
+  id: integer("id").primaryKey({ autoIncrement: true }),
+  name: text("name").notNull(),
+  type: text("type").notNull(),
+  description: text("description"),
+  price: integer("price").notNull(),
+  requirement: text("requirement"),
+  data: text("data"),
+});
+
+export const userPurchases = sqliteTable("user_purchases", {
+  id: integer("id").primaryKey({ autoIncrement: true }),
+  userId: text("user_id").references(() => users.id).notNull(),
+  itemId: integer("item_id").references(() => shopItems.id).notNull(),
+  purchasedAt: integer("purchased_at", { mode: "timestamp" }).$defaultFn(() => new Date()).notNull(),
+});
+
+// Insert schemas
 export const insertUserSchema = createInsertSchema(users).omit({
   id: true,
   createdAt: true,
@@ -83,125 +158,21 @@ export const insertUserSchema = createInsertSchema(users).omit({
   preferredTheme: true,
 });
 
-export const insertTrickSchema = createInsertSchema(tricks).omit({
-  id: true,
-});
+export const insertTrickSchema = createInsertSchema(tricks).omit({ id: true });
+export const insertSessionSchema = createInsertSchema(sessions).omit({ id: true, createdAt: true, totalDrops: true });
+export const insertSessionTrickSchema = createInsertSchema(sessionTricks).omit({ id: true });
+export const insertUserTrickSchema = createInsertSchema(userTricks).omit({ isUnlocked: true, personalBestCatches: true, masteryScore: true });
+export const insertAchievementSchema = createInsertSchema(achievements).omit({ id: true, unlockedAt: true });
+export const insertGameResultSchema = createInsertSchema(gameResults).omit({ id: true, createdAt: true });
+export const insertTrainingGoalSchema = createInsertSchema(trainingGoals).omit({ id: true, createdAt: true, isCompleted: true });
+export const insertFriendshipSchema = createInsertSchema(friendships).omit({ id: true, createdAt: true, status: true });
+export const insertChallengeSchema = createInsertSchema(challenges).omit({ id: true, createdAt: true, senderScore: true, receiverScore: true, status: true });
+export const insertForumPostSchema = createInsertSchema(forumPosts).omit({ id: true, createdAt: true });
+export const insertForumCommentSchema = createInsertSchema(forumComments).omit({ id: true, createdAt: true });
+export const insertShopItemSchema = createInsertSchema(shopItems).omit({ id: true });
+export const insertUserPurchaseSchema = createInsertSchema(userPurchases).omit({ id: true, purchasedAt: true });
 
-export const insertSessionSchema = createInsertSchema(sessions).omit({
-  id: true,
-  createdAt: true,
-  totalDrops: true,
-});
-
-export const insertSessionTrickSchema = createInsertSchema(sessionTricks).omit({
-  id: true,
-});
-
-export const insertUserTrickSchema = createInsertSchema(userTricks).omit({
-  isUnlocked: true,
-  personalBestCatches: true,
-  masteryScore: true,
-});
-
-export const gameResults = pgTable("game_results", {
-  id: serial("id").primaryKey(),
-  userId: text("user_id").references(() => users.id).notNull(),
-  gameType: text("game_type").notNull(),
-  score: integer("score").default(0).notNull(),
-  timeSeconds: integer("time_seconds").default(0).notNull(),
-  drops: integer("drops").default(0).notNull(),
-  metadata: text("metadata"),
-  createdAt: timestamp("created_at").defaultNow().notNull(),
-});
-
-export const trainingGoals = pgTable("training_goals", {
-  id: serial("id").primaryKey(),
-  userId: text("user_id").references(() => users.id).notNull(),
-  title: text("title").notNull(),
-  description: text("description"),
-  targetDate: timestamp("target_date"),
-  isCompleted: boolean("is_completed").default(false).notNull(),
-  createdAt: timestamp("created_at").defaultNow().notNull(),
-});
-
-export const friendships = pgTable("friendships", {
-  id: serial("id").primaryKey(),
-  requesterId: text("requester_id").references(() => users.id).notNull(),
-  receiverId: text("receiver_id").references(() => users.id).notNull(),
-  status: text("status").default("pending").notNull(),
-  createdAt: timestamp("created_at").defaultNow().notNull(),
-});
-
-export const challenges = pgTable("challenges", {
-  id: serial("id").primaryKey(),
-  senderId: text("sender_id").references(() => users.id).notNull(),
-  receiverId: text("receiver_id").references(() => users.id).notNull(),
-  gameType: text("game_type").notNull(),
-  targetScore: integer("target_score").default(0).notNull(),
-  senderScore: integer("sender_score"),
-  receiverScore: integer("receiver_score"),
-  status: text("status").default("pending").notNull(),
-  createdAt: timestamp("created_at").defaultNow().notNull(),
-});
-
-export const forumPosts = pgTable("forum_posts", {
-  id: serial("id").primaryKey(),
-  userId: text("user_id").references(() => users.id).notNull(),
-  title: text("title").notNull(),
-  content: text("content").notNull(),
-  category: text("category").default("general").notNull(),
-  createdAt: timestamp("created_at").defaultNow().notNull(),
-});
-
-export const forumComments = pgTable("forum_comments", {
-  id: serial("id").primaryKey(),
-  postId: integer("post_id").references(() => forumPosts.id).notNull(),
-  userId: text("user_id").references(() => users.id).notNull(),
-  content: text("content").notNull(),
-  createdAt: timestamp("created_at").defaultNow().notNull(),
-});
-
-export const shopItems = pgTable("shop_items", {
-  id: serial("id").primaryKey(),
-  name: text("name").notNull(),
-  type: text("type").notNull(),
-  description: text("description"),
-  price: integer("price").notNull(),
-  requirement: text("requirement"),
-  data: text("data"),
-});
-
-export const userPurchases = pgTable("user_purchases", {
-  id: serial("id").primaryKey(),
-  userId: text("user_id").references(() => users.id).notNull(),
-  itemId: integer("item_id").references(() => shopItems.id).notNull(),
-  purchasedAt: timestamp("purchased_at").defaultNow().notNull(),
-});
-
-export const insertShopItemSchema = createInsertSchema(shopItems).omit({
-  id: true,
-});
-export const insertUserPurchaseSchema = createInsertSchema(userPurchases).omit({
-  id: true,
-  purchasedAt: true,
-});
-
-export const insertAchievementSchema = createInsertSchema(achievements).omit({
-  id: true,
-  unlockedAt: true,
-});
-
-export const insertGameResultSchema = createInsertSchema(gameResults).omit({
-  id: true,
-  createdAt: true,
-});
-
-export const insertTrainingGoalSchema = createInsertSchema(trainingGoals).omit({
-  id: true,
-  createdAt: true,
-  isCompleted: true,
-});
-
+// Types
 export type User = typeof users.$inferSelect;
 export type InsertUser = z.infer<typeof insertUserSchema>;
 export type Trick = typeof tricks.$inferSelect;
@@ -218,28 +189,6 @@ export type GameResult = typeof gameResults.$inferSelect;
 export type InsertGameResult = z.infer<typeof insertGameResultSchema>;
 export type TrainingGoal = typeof trainingGoals.$inferSelect;
 export type InsertTrainingGoal = z.infer<typeof insertTrainingGoalSchema>;
-
-export const insertFriendshipSchema = createInsertSchema(friendships).omit({
-  id: true,
-  createdAt: true,
-  status: true,
-});
-export const insertChallengeSchema = createInsertSchema(challenges).omit({
-  id: true,
-  createdAt: true,
-  senderScore: true,
-  receiverScore: true,
-  status: true,
-});
-export const insertForumPostSchema = createInsertSchema(forumPosts).omit({
-  id: true,
-  createdAt: true,
-});
-export const insertForumCommentSchema = createInsertSchema(forumComments).omit({
-  id: true,
-  createdAt: true,
-});
-
 export type Friendship = typeof friendships.$inferSelect;
 export type InsertFriendship = z.infer<typeof insertFriendshipSchema>;
 export type Challenge = typeof challenges.$inferSelect;

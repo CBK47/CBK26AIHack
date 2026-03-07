@@ -1,6 +1,5 @@
 import { db } from "./db";
-import { tricks, shopItems } from "@shared/schema";
-import { sql } from "drizzle-orm";
+import { tricks, shopItems, sessionTricks, userTricks } from "@shared/schema";
 
 const seedTricksRaw = [
   { name: "Cascade", description: "The basic 3-ball pattern where balls cross in a figure-eight.", tip: "Focus on a consistent peak height at eye level.", siteswap: "3", difficulty: 1, objectsCount: 3, propType: "balls", prereqNames: [] as string[] },
@@ -61,9 +60,9 @@ export async function seedDatabase() {
 
   if (existing.length > 0) {
     console.log("Clearing old trick data and reseeding...");
-    await db.execute(sql`DELETE FROM session_tricks`);
-    await db.execute(sql`DELETE FROM user_tricks`);
-    await db.execute(sql`DELETE FROM tricks`);
+    await db.delete(sessionTricks);
+    await db.delete(userTricks);
+    await db.delete(tricks);
   }
 
   console.log(`Seeding database with ${seedTricksRaw.length} tricks...`);

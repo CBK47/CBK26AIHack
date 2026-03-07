@@ -1,0 +1,414 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>HACKATHON HOSTING — Deploy Your Project in 60 Seconds</title>
+  <style>
+    :root {
+      --bg: #0a0a0f;
+      --surface: #111118;
+      --surface-2: #1a1a25;
+      --border: #252535;
+      --accent: #ff00aa;
+      --accent2: #00d4ff;
+      --warn: #ffaa00;
+      --success: #00ff88;
+      --text: #f0f0f5;
+      --muted: #7a7a8a;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'SF Mono', Monaco, 'Courier New', monospace;
+      line-height: 1.6;
+    }
+    .container { max-width: 1200px; margin: 0 auto; padding: 40px 20px; }
+    
+    /* Announcement Banner */
+    .announcement {
+      background: linear-gradient(90deg, var(--accent), var(--accent2));
+      color: #000;
+      text-align: center;
+      padding: 12px;
+      font-weight: 700;
+      font-size: 14px;
+    }
+    .announcement code {
+      background: rgba(0,0,0,0.2);
+      padding: 2px 8px;
+      border-radius: 4px;
+      font-family: inherit;
+    }
+    
+    /* Header */
+    header {
+      text-align: center;
+      padding: 80px 0 60px;
+    }
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      padding: 8px 16px;
+      border-radius: 20px;
+      font-size: 12px;
+      color: var(--success);
+      margin-bottom: 24px;
+    }
+    .pulse-dot {
+      width: 8px;
+      height: 8px;
+      background: var(--success);
+      border-radius: 50%;
+      animation: pulse 2s infinite;
+    }
+    @keyframes pulse {
+      0%, 100% { opacity: 1; box-shadow: 0 0 0 0 rgba(0,255,136,0.4); }
+      50% { opacity: 0.5; box-shadow: 0 0 0 8px rgba(0,255,136,0); }
+    }
+    h1 {
+      font-size: clamp(36px, 7vw, 72px);
+      font-weight: 700;
+      letter-spacing: -3px;
+      line-height: 1.1;
+      margin-bottom: 20px;
+    }
+    h1 span {
+      background: linear-gradient(135deg, var(--accent), var(--accent2));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .subtitle {
+      color: var(--muted);
+      font-size: 18px;
+      max-width: 600px;
+      margin: 0 auto 32px;
+    }
+    .cta-row {
+      display: flex;
+      gap: 16px;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+    .btn {
+      padding: 16px 32px;
+      border-radius: 12px;
+      font-weight: 700;
+      font-size: 16px;
+      text-decoration: none;
+      transition: all 0.2s;
+      border: none;
+      cursor: pointer;
+    }
+    .btn-primary {
+      background: linear-gradient(135deg, var(--accent), var(--accent2));
+      color: #000;
+    }
+    .btn-primary:hover { transform: translateY(-2px); }
+    .btn-outline {
+      background: transparent;
+      color: var(--text);
+      border: 2px solid var(--border);
+    }
+    .btn-outline:hover { border-color: var(--accent); }
+    
+    /* How it Works */
+    .steps {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 24px;
+      margin: 60px 0;
+      padding: 40px 0;
+      border-top: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+    }
+    .step {
+      text-align: center;
+      padding: 24px;
+    }
+    .step-num {
+      width: 56px;
+      height: 56px;
+      background: var(--surface);
+      border: 2px solid var(--border);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 16px;
+      font-size: 24px;
+      font-weight: 700;
+      color: var(--accent);
+    }
+    .step-title { font-size: 18px; font-weight: 700; margin-bottom: 8px; }
+    .step-desc { color: var(--muted); font-size: 14px; }
+    
+    /* Templates Grid */
+    .templates {
+      margin: 60px 0;
+    }
+    .section-header {
+      text-align: center;
+      margin-bottom: 40px;
+    }
+    .section-header h2 {
+      font-size: 32px;
+      margin-bottom: 12px;
+    }
+    .section-header p { color: var(--muted); }
+    .template-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 20px;
+    }
+    .template-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      overflow: hidden;
+      transition: all 0.3s;
+      cursor: pointer;
+    }
+    .template-card:hover {
+      border-color: var(--accent);
+      transform: translateY(-4px);
+    }
+    .template-preview {
+      height: 160px;
+      background: var(--surface-2);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 48px;
+    }
+    .template-info {
+      padding: 20px;
+    }
+    .template-name { font-weight: 700; font-size: 16px; margin-bottom: 4px; }
+    .template-vibe { color: var(--muted); font-size: 12px; }
+    
+    /* Pricing */
+    .pricing {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 40px;
+      margin: 60px 0;
+      text-align: center;
+    }
+    .price-tag {
+      font-size: 64px;
+      font-weight: 700;
+      background: linear-gradient(135deg, var(--success), var(--accent2));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .price-note { color: var(--muted); margin: 16px 0; }
+    .promo-box {
+      background: linear-gradient(135deg, rgba(255,0,170,0.1), rgba(0,212,255,0.1));
+      border: 1px solid rgba(255,0,170,0.3);
+      border-radius: 12px;
+      padding: 24px;
+      margin-top: 24px;
+    }
+    .promo-code {
+      font-family: inherit;
+      font-size: 24px;
+      font-weight: 700;
+      color: var(--accent);
+      background: rgba(0,0,0,0.3);
+      padding: 8px 16px;
+      border-radius: 8px;
+      display: inline-block;
+      margin: 12px 0;
+    }
+    
+    /* Tipping */
+    .tipping {
+      text-align: center;
+      padding: 40px;
+      border-top: 1px solid var(--border);
+      margin-top: 40px;
+    }
+    .wallet-box {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 20px;
+      margin: 20px auto;
+      max-width: 500px;
+      font-family: inherit;
+      font-size: 14px;
+      word-break: break-all;
+    }
+    
+    footer {
+      text-align: center;
+      padding: 40px;
+      color: var(--muted);
+      border-top: 1px solid var(--border);
+    }
+    
+    @media (max-width: 900px) {
+      .steps { grid-template-columns: 1fr; }
+      .template-grid { grid-template-columns: repeat(2, 1fr); }
+    }
+    @media (max-width: 600px) {
+      .template-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <div class="announcement">
+    🎉 HACKATHON SPECIAL: Use code <code>TestingAI26</code> for 100% FREE deployment!
+  </div>
+  
+  <div class="container">
+    <header>
+      <div class="badge"><span class="pulse-dot"></span> Powered by FREYWILL Swarm</div>
+      <h1>HACKATHON<br><span>HOSTING</span></h1>
+      <p class="subtitle">
+        Don't know how to deploy? Hardware unstable? We've got you.
+        9 stunning templates. Deploy in 60 seconds. x402 A2A payments.
+      </p>
+      <div class="cta-row">
+        <a href="#templates" class="btn btn-primary">Choose Template →</a>
+        <a href="/.well-known/x402" class="btn btn-outline">x402 Discovery</a>
+      </div>
+    </header>
+    
+    <div class="steps">
+      <div class="step">
+        <div class="step-num">1</div>
+        <div class="step-title">Pick Template</div>
+        <div class="step-desc">Choose from 9 Kimi Website Agent presets. Fashion, tech, luxury, minimal.</div>
+      </div>
+      <div class="step">
+        <div class="step-num">2</div>
+        <div class="step-title">Add Content</div>
+        <div class="step-desc">Project name, description, your wallet address. We handle the hosting.</div>
+      </div>
+      <div class="step">
+        <div class="step-num">3</div>
+        <div class="step-title">Go Live</div>
+        <div class="step-desc">Instant URL. 7 days free with TestingAI26 code. Tips welcome!</div>
+      </div>
+    </div>
+    
+    <div class="templates" id="templates">
+      <div class="section-header">
+        <h2>9 Preset Templates</h2>
+        <p>All from Kimi Website Agent. Professional grade. Mobile responsive.</p>
+      </div>
+      <div class="template-grid">
+        <div class="template-card" onclick="selectTemplate('rouge-edge')">
+          <div class="template-preview">👗</div>
+          <div class="template-info">
+            <div class="template-name">Rouge Edge</div>
+            <div class="template-vibe">Fashion / Editorial</div>
+          </div>
+        </div>
+        <div class="template-card" onclick="selectTemplate('bold-grid')">
+          <div class="template-preview">💄</div>
+          <div class="template-info">
+            <div class="template-name">Bold Grid</div>
+            <div class="template-vibe">Beauty / Lifestyle</div>
+          </div>
+        </div>
+        <div class="template-card" onclick="selectTemplate('neon-beat')">
+          <div class="template-preview">🎮</div>
+          <div class="template-info">
+            <div class="template-name">Neon Beat</div>
+            <div class="template-vibe">Music / Gaming / Tech</div>
+          </div>
+        </div>
+        <div class="template-card" onclick="selectTemplate('grand-vine')">
+          <div class="template-preview">🍷</div>
+          <div class="template-info">
+            <div class="template-name">Grand Vine</div>
+            <div class="template-vibe">Luxury Wine / Food</div>
+          </div>
+        </div>
+        <div class="template-card" onclick="selectTemplate('wild-canopy')">
+          <div class="template-preview">🌿</div>
+          <div class="template-info">
+            <div class="template-name">Wild Canopy</div>
+            <div class="template-vibe">Gourmet / Luxury Food</div>
+          </div>
+        </div>
+        <div class="template-card" onclick="selectTemplate('warm-earth')">
+          <div class="template-preview">🏔️</div>
+          <div class="template-info">
+            <div class="template-name">Warm Earth</div>
+            <div class="template-vibe">Wellness / Travel / Nature</div>
+          </div>
+        </div>
+        <div class="template-card" onclick="selectTemplate('avant-hall')">
+          <div class="template-preview">🏛️</div>
+          <div class="template-info">
+            <div class="template-name">Avant Hall</div>
+            <div class="template-vibe">Museum / Cultural / Academic</div>
+          </div>
+        </div>
+        <div class="template-card" onclick="selectTemplate('pure-craft')">
+          <div class="template-preview">🛋️</div>
+          <div class="template-info">
+            <div class="template-name">Pure Craft</div>
+            <div class="template-vibe">Interior / Furniture</div>
+          </div>
+        </div>
+        <div class="template-card" onclick="selectTemplate('dark-lens')">
+          <div class="template-preview">📷</div>
+          <div class="template-info">
+            <div class="template-name">Dark Lens</div>
+            <div class="template-vibe">Photography / Portfolio</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <div class="pricing">
+      <h2>Hackathon Pricing</h2>
+      <div class="price-tag">$0.01</div>
+      <div class="price-note">per day • Cancel anytime • No hidden fees</div>
+      <div class="promo-box">
+        <div>🎁 HACKATHON SPECIAL</div>
+        <div class="promo-code">TestingAI26</div>
+        <div>100% discount • 7 days free • 1000 uses available</div>
+      </div>
+    </div>
+    
+    <div class="tipping">
+      <h3>💚 Tips Welcome!</h3>
+      <p>If this helped your hackathon project, send a tip:</p>
+      <div class="wallet-box">
+        <strong>USDC (Base):</strong><br>
+        0xD4CD3823A32Cd397fb1b4810Cf5B957A61599003
+      </div>
+      <p style="color: var(--muted); font-size: 14px;">
+        Suggested: 0.1 USDC ☕ | 0.5 USDC 🍕 | 1 USDC 🚀
+      </p>
+    </div>
+    
+    <footer>
+      <p>Built with ❤️ by FREYWILL Swarm</p>
+      <p style="margin-top: 8px; font-size: 12px;">
+        Part of Project 4 • CBK26AIHack • x402 Protocol
+      </p>
+    </footer>
+  </div>
+  
+  <script>
+    function selectTemplate(templateId) {
+      alert('Template selected: ' + templateId + '\n\nIn production, this would open a form to:\n1. Enter project name\n2. Add description\n3. Input wallet address\n4. Apply TestingAI26 code\n5. Deploy instantly!');
+    }
+  </script>
+</body>
+</html>
+HTMLEOF
+
+echo "✅ Hackathon hosting landing page created!"

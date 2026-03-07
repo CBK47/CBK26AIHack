@@ -1,0 +1,6 @@
+tunnel: 91b4e0b5-e2ac-4871-aaed-297897f5dd77
+credentials-file: /Users/cbk/.cloudflared/91b4e0b5-e2ac-4871-aaed-297897f5dd77.json
+ingress:
+  - hostname: drop-host.aihack26.xyz
+    service: http://localhost:4005
+  - service: http_status:404

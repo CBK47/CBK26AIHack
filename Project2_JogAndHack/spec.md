@@ -10,7 +10,8 @@
 
 | Port | Service | Range |
 |---|---|---|
-| 5001 | VTT voice-to-text server (`server.py`) | 5xxx (P2 range) |
+| 2001 | VTT voice-to-text server (`server.py`) | 2xxx (P2 range) |
+| 2002 | TTS server (`tts_server.py`) | 2xxx (P2 range) |
 
 Full port registry: `00_SharedResources/port_registry.md`
 
@@ -18,7 +19,7 @@ Full port registry: `00_SharedResources/port_registry.md`
 
 ## Current State
 
-- ✅ Whisper VTT server running locally (port 5001)
+- ✅ Whisper VTT server running locally (assigned port 2001)
 - ✅ Click-to-record with browser microphone
 - ✅ Auto-clipboard + auto-submit (Cmd+V → Return via AppleScript)
 - ✅ Premium waveform visualizer (128 bars, mel-scale, peak-hold)

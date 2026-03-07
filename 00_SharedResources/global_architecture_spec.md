@@ -1,7 +1,7 @@
 # Global Architecture Spec: CBK26AIHack
 
 Status: Active
-Last updated: 2026-03-06
+Last updated: 2026-03-07
 
 This document defines the shared system topology across all projects in this repository.
 
@@ -63,8 +63,9 @@ Port assignments are canonical in `00_SharedResources/port_registry.md`. Summary
 | Range | Owner | Key ports |
 |---|---|---|
 | 3xxx | Project 3 — JugglesJules | 3001 prod, 3002 Vite dev |
-| 4xxx | Project 4 — FREYWILL | 4001 Flask API |
-| 5xxx | Project 2 — Jog & Hack | 5001 VTT server (running) |
+| 4000-4014 | Project 4 — FREYWILL | 4000 Swarm Command, 4001-4007 active services, 4008-4014 reserved |
+| 5000-5019 | Project 5 — Hacker Webhosting | 5000 gateway, 5001-5019 guest slots |
+| 2xxx | Project 2 — Jog & Hack | 2001 VTT server, 2002 TTS server |
 | 8xxx | Hackathon guest hosting | 8001–8005 guest slots |
 | 5000, 7000 | macOS AirPlay | **blocked — do not use** |
 
@@ -89,3 +90,5 @@ Managed manually via `port_registry.md`. No reverse proxy currently — one tunn
 - Project 1 is a Chrome extension — no server port.
 - Project 3 (JugglesJules) requires PostgreSQL (`DATABASE_URL`) and `SESSION_SECRET` env vars to start.
 - Project 4 (FREYWILL) runs on GX10 inference via Ollama at `192.168.0.28:11434`.
+- Project 4 service progress details are tracked in `Project4-Unwise-Probbably/PROJECT_STATUS.md`.
+- Project 5 range (`5000-5019`) should run on Linux host or be remapped if run on macOS due AirPlay conflict on `5000`.

@@ -1,6 +1,6 @@
 # Port Registry — CBK26AIHack
 
-Last updated: 2026-03-07
+Last updated: 2026-03-07 (network audit at ~04:15 UTC)
 
 Single source of truth for all port assignments.
 **Claim a port here before starting a service. Do not guess.**
@@ -26,12 +26,14 @@ Single source of truth for all port assignments.
 
 ---
 
-## Project 2 — Jog & Hack (Voice UI) — 5xxx range
+## Project 2 — Jog & Hack (Voice UI) — 2xxx range
 
 | Port | Service | Start command | Status | Tunnel |
 |---|---|---|---|---|
-| 5001 | VTT voice-to-text server (`server.py`) | `python server.py` | **Running** | None |
-| 5002 | Reserved (P2 expansion) | — | — | — |
+| 2001 | VTT voice-to-text server (`server.py`) | `python server.py` | Assigned | None |
+| 2002 | TTS server (`tts_server.py`) | `python tts_server.py` | Assigned | None |
+
+> Legacy references to `5001/5002` are deprecated; use `2001/2002` for Project 2 going forward.
 
 ---
 
@@ -47,12 +49,28 @@ Single source of truth for all port assignments.
 
 ---
 
-## Project 4 — FREYWILL (AI Marketplace) — 4xxx range
+## Project 4 — FREYWILL (AI Marketplace) — 4000-4014
 
 | Port | Service | Start command | Status | Tunnel |
 |---|---|---|---|---|
-| 4001 | Flask API (core) | `python app.py` | Not started | — |
-| 4002 | Reserved (FREYWILL expansion) | — | — | — |
+| 4000 | Swarm Command dashboard | `python app.py` or service-specific runner | Ready to test | Pending |
+| 4001 | FREYWILL AI | service runner | Active build | Pending |
+| 4002 | Compute Rental | service runner | Active build | Pending |
+| 4003 | Auto-Miner | service runner | Active build | Pending |
+| 4004 | Hackathon Hosting | service runner | Active build | Pending |
+| 4005 | Drop and Host | service runner | In progress | Pending |
+| 4006 | x402 Payments | service runner | Mock mode | Pending |
+| 4007 | Linktree | service runner | Active build | Pending |
+| 4008-4014 | Reserved slots | — | Reserved | — |
+
+## Project 5 — Hacker Webhosting — 5000-5019
+
+| Port | Service | Status | Tunnel |
+|---|---|---|---|
+| 5000 | Gateway/Directory | Planned | Pending |
+| 5001-5019 | Guest slots (19) | Planned | Pending |
+
+Note: macOS uses `5000` for AirPlay. If Project 5 runs on Mac, remap this range or run Project 5 on Linux host.
 
 ---
 
@@ -70,12 +88,29 @@ Slots for other teams' apps during the event.
 
 ---
 
-## GX10 Linux Box (remote — 192.168.0.28 / Tailscale)
+## GX10 Linux Box (remote — 192.168.0.28 / LAN)
 
 | Port | Service | Notes |
 |---|---|---|
-| 11434 | Ollama inference | llama3.2:3b, qwen2.5-coder:32b, deepseek-coder-v2:16b |
-| 5000 | VTT server (GX10 mirror) | Linux instance of P2 voice server |
+| 22 | SSH | LAN-exposed (expected) |
+| 7860 | Image generation Flask API (Werkzeug) | LAN-exposed, `/health` returns model path/status |
+| 24802 | Express service | LAN-exposed, returns Express 404 on `/` and `/health` |
+| 5000 | Legacy VTT server instance | Localhost only (`127.0.0.1`) |
+| 8080 | Open WebUI | Localhost only (`127.0.0.1`) |
+| 11000 | DGX dashboard | Localhost only (`127.0.0.1`) |
+| 11434 | Ollama inference | Localhost/internal bridge only (`127.0.0.1`, `172.20.0.1`) |
+
+### Audit Snapshot (2026-03-07 ~04:15 UTC)
+
+- LAN-open from Mac checks: `22`, `7860`, `24802`.
+- LAN-closed from Mac checks: `5000`, `8080`, `11000`, `11434`, `24803`.
+- `ufw`/`firewalld` not installed on GX10; host firewall policy requires explicit nftables/iptables review with root access.
+
+### Immediate Hardening Notes
+
+1. Verify and justify listeners on `7860` and `24802`.
+2. Bind non-SSH services to localhost unless intentionally public.
+3. Prefer Cloudflare Tunnel for external/demo access instead of direct LAN exposure.
 
 ---
 

@@ -54,5 +54,5 @@ Update task status before doing work:
 | SH-001 | Keep architecture spec synchronized with project topology | High | Codex | in_progress | Update on boundary/topology change |
 | SH-002 | Keep handover and debrief concise and current | High | Codex | in_progress | Update every handoff/session |
 | SH-003 | Maintain GitHub branch/merge integrity and release hygiene | High | Codex | in_progress | Final gate before merge to `main` |
-| SH-004 | Maintain live server/port inventory across environments | High | CBK-PORTWATCH-LNX-NET | todo | Track listening ports, owner process, expected purpose, and public exposure |
+| SH-004 | Maintain live server/port inventory across environments | High | CBK-PORTWATCH-LNX-NET | in_progress | 2026-03-07 audit captured GX10 exposed ports: 22, 7860, 24802; see `port_registry.md` |
 | SH-005 | Run recurring mini security checks on active services | High | CBK-SENTINEL-LNX-SEC | todo | Prioritize exposed apps, auth routes, dependency risk, and config drift |

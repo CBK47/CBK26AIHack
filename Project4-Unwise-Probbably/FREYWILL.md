@@ -4,7 +4,15 @@
 
 | Port | Service | Range |
 |---|---|---|
-| 4001 | Flask API (core) | 4xxx (P4 range) |
+| 4000 | Swarm Command dashboard | 4xxx (P4 range) |
+| 4001 | FREYWILL AI core API | 4xxx (P4 range) |
+| 4002 | Compute Rental | 4xxx (P4 range) |
+| 4003 | Auto-Miner | 4xxx (P4 range) |
+| 4004 | Hackathon Hosting | 4xxx (P4 range) |
+| 4005 | Drop and Host | 4xxx (P4 range) |
+| 4006 | x402 Payments | 4xxx (P4 range) |
+| 4007 | Linktree | 4xxx (P4 range) |
+| 4008-4014 | Reserved slots | 4xxx (P4 range) |
 
 Full port registry: `00_SharedResources/port_registry.md`
 
@@ -57,6 +65,8 @@ First-class support for x402. Agents can auto-discover services via `/.well-know
 | Core API | Building |
 | x402 payments | Mock mode |
 | Landing page | Rebuilding |
+| Shared design system | Done |
+| Swarm Command dashboard (4000) | Done |
 | Live deployment | Cloudflare tunnel (pending) |
 
 ETA to live demo: 2 hours

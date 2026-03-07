@@ -1,0 +1,22 @@
+tunnel: 91b4e0b5-e2ac-4871-aaed-297897f5dd77
+credentials-file: /Users/cbk/.cloudflared/91b4e0b5-e2ac-4871-aaed-297897f5dd77.json
+ingress:
+  - hostname: swarm.aihack26.xyz
+    service: http://localhost:4000
+  - hostname: freywill.aihack26.xyz
+    service: http://localhost:4001
+  - hostname: compute.aihack26.xyz
+    service: http://localhost:4002
+  - hostname: miner.aihack26.xyz
+    service: http://localhost:4003
+  - hostname: host.aihack26.xyz
+    service: http://localhost:4004
+  - hostname: drop-host.aihack26.xyz
+    service: http://localhost:4005
+  - hostname: drop.aihack26.xyz
+    service: http://localhost:4005
+  - hostname: x402.aihack26.xyz
+    service: http://localhost:4006
+  - hostname: linktree.aihack26.xyz
+    service: http://localhost:4007
+  - service: http_status:404

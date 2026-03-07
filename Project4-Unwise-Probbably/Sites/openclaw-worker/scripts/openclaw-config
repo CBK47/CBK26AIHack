@@ -1,0 +1,77 @@
+#!/bin/bash
+# OPENCLAW Configuration Tool
+
+CONFIG_FILE="/opt/openclaw/config/config.json"
+
+show_help() {
+    echo "OPENCLAW Configuration"
+    echo ""
+    echo "Usage:"
+    echo "  sudo openclaw-config --wallet 0xYOUR_ADDRESS    Set wallet"
+    echo "  sudo openclaw-config --status                   Show status"
+    echo "  sudo openclaw-config --logs                     View logs"
+    echo "  sudo openclaw-config --restart                  Restart service"
+    echo ""
+}
+
+set_wallet() {
+    local wallet=$1
+    if [[ ! $wallet =~ ^0x[a-fA-F0-9]{40}$ ]]; then
+        echo "Error: Invalid Ethereum address"
+        exit 1
+    fi
+    
+    # Update config
+    python3 -c "
+import json
+with open('$CONFIG_FILE', 'r') as f:
+    config = json.load(f)
+config['wallet_address'] = '$wallet'
+with open('$CONFIG_FILE', 'w') as f:
+    json.dump(config, f, indent=2)
+"
+    echo "✅ Wallet set to: $wallet"
+    echo "   Restarting service..."
+    systemctl restart openclaw
+}
+
+show_status() {
+    echo "OPENCLAW Status"
+    echo "==============="
+    systemctl status openclaw --no-pager | head -20
+    echo ""
+    
+    if [ -f "/var/log/openclaw/service.log" ]; then
+        echo "Recent earnings:"
+        tail -10 /var/log/openclaw/service.log | grep -E "Share|task|earned" || echo "   No earnings yet..."
+    fi
+}
+
+view_logs() {
+    echo "Press Ctrl+C to exit"
+    tail -f /var/log/openclaw/service.log
+}
+
+restart_service() {
+    systemctl restart openclaw
+    echo "✅ Service restarted"
+}
+
+# Main
+case "$1" in
+    --wallet)
+        set_wallet "$2"
+        ;;
+    --status)
+        show_status
+        ;;
+    --logs)
+        view_logs
+        ;;
+    --restart)
+        restart_service
+        ;;
+    *)
+        show_help
+        ;;
+esac

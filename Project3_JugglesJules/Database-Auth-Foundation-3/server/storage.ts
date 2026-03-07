@@ -1,4 +1,4 @@
-import { eq, and, desc, or, ilike, ne } from "drizzle-orm";
+import { eq, and, desc, or, like } from "drizzle-orm";
 import { db } from "./db";
 import {
   users, tricks, sessions, sessionTricks, userTricks, achievements, gameResults, trainingGoals,
@@ -249,7 +249,7 @@ export class DatabaseStorage implements IStorage {
 
   async searchUsers(query: string, excludeUserId?: string): Promise<User[]> {
     const results = await db.select().from(users)
-      .where(ilike(users.username, `%${query}%`))
+      .where(like(users.username, `%${query}%`))
       .limit(20);
     if (excludeUserId) {
       return results.filter(u => u.id !== excludeUserId);

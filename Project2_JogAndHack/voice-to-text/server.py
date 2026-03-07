@@ -26,11 +26,11 @@ DEFAULTS = {
     "model_path": os.path.join(SCRIPT_DIR, ".models"),
     "device": "cpu",
     "compute_type": "int8",
-    "port": 5000,
+    "port": 2001,
     "ai_loop": False,
     "ollama_url": "http://localhost:11434",
     "ollama_model": "llama3.2:3b",
-    "tts_url": "http://localhost:5002",
+    "tts_url": "http://localhost:2002",
     "tts_voice": "default",
     "ai_system_prompt": "You are a helpful voice assistant. Give concise answers suitable for speaking aloud. Keep responses under 3 sentences unless the user asks for more detail."
 }
@@ -139,6 +139,34 @@ def call_tts(text):
         print(f"[VTT] TTS unavailable (will use browser TTS): {e}")
         return None
 
+
+# --- TTS Shim (macOS 'say') ---
+import subprocess
+
+@app.route("/tts_shim", methods=["POST"])
+def tts_shim():
+    """macOS 'say' command shim."""
+    data = request.get_json()
+    text = (data.get("text") or "").strip()
+    voice = data.get("voice") or CONFIG.get("tts_voice", "Samantha")
+    
+    if not text:
+        return jsonify({"error": "text required"}), 400
+        
+    print(f"[VTT] TTS Shim speaking: {text[:50]}...")
+    try:
+        # We run this in the background to avoid blocking the API response too long, 
+        # but for a shim, sequential is often fine for short AI responses.
+        subprocess.Popen(["say", "-v", voice, text])
+        
+        # Return a tiny 1-second silent WAV to satisfy the client's expectation of audio bytes
+        # or just return 200 OK. Since call_tts expects bytes to base64 encode, 
+        # we'll return a simple valid WAV header + silence.
+        silent_wav = b'RIFF$\x00\x00\x00WAVEfmt \x10\x00\x00\x00\x01\x00\x01\x00D\xac\x00\x00\x88X\x01\x00\x02\x00\x10\x00data\x00\x00\x00\x00'
+        return silent_wav, 200, {'Content-Type': 'audio/wav'}
+    except Exception as e:
+        print(f"[VTT] TTS Shim error: {e}")
+        return jsonify({"error": str(e)}), 500
 
 # --- Model Loading ---
 MODEL = None

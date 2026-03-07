@@ -26,6 +26,7 @@ This top-level README is the workspace index. It explains what each folder is fo
 | `00_SharedResources/agent_roles.md` | Agent role ownership and GitHub control model | Update when role split or control rules change |
 | `00_SharedResources/runtime_registry.md` | Codename registry for model+location+tool combinations | Update when runtimes or locations change |
 | `00_SharedResources/project_methodology.md` | Hackathon execution method (`JFDI-GSD`) and operating rules | Update when execution policy changes |
+| `00_SharedResources/port_registry.md` | Canonical port allocations, exposure status, and tunnel tracking | Update before starting/stopping any service |
 | `00_SharedResources/autonomous_agents_strategy.md` | Strategy notes for running multiple autonomous agents in parallel | Update when automation strategy changes |
 | `00_SharedResources/user_guide.md` | End-user setup/test instructions for Project 1 extension | Update when installation/run steps change |
 

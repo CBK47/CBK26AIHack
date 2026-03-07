@@ -1,0 +1,28 @@
+.DS_Store
+**/.DS_Store
+
+# Dependencies / build artifacts
+**/node_modules/
+**/dist/
+
+# Logs
+*.log
+**/server.log
+
+# Local databases and temp state
+*.db
+*.db-shm
+*.db-wal
+__pycache__/
+**/__pycache__/
+*.pyc
+
+# Local env files
+.env
+.env.*
+
+# Project-specific local media/test artifacts
+Project2_JogAndHack/ReelAudio-3831-30s.mp4
+Project2_JogAndHack/ReelAudio-3831-30s.mp4.txt
+Project2_JogAndHack/ReelAudio-3831.mp3
+Project2_JogAndHack/ReelAudio-3831.mp3.txt

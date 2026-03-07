@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>aihack26.xyz — All Services</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #0a0a0f;
+      --surface: #111118;
+      --border: #252535;
+      --accent: #00d4ff;
+      --accent-2: #ff00aa;
+      --text: #f0f0f5;
+      --muted: #7a7a8a;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Inter', sans-serif;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 60px 20px;
+    }
+    .logo {
+      width: 100px;
+      height: 100px;
+      background: linear-gradient(135deg, var(--accent), var(--accent-2));
+      border-radius: 24px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 48px;
+      margin-bottom: 24px;
+    }
+    h1 {
+      font-size: 32px;
+      font-weight: 700;
+      margin-bottom: 8px;
+    }
+    .tagline {
+      color: var(--muted);
+      margin-bottom: 40px;
+    }
+    .links {
+      width: 100%;
+      max-width: 500px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+    .link-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 20px;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      text-decoration: none;
+      color: var(--text);
+      transition: all 0.2s;
+    }
+    .link-card:hover {
+      border-color: var(--accent);
+      transform: translateX(8px);
+    }
+    .link-icon {
+      width: 48px;
+      height: 48px;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 24px;
+    }
+    .link-info { flex: 1; }
+    .link-title { font-weight: 600; font-size: 16px; }
+    .link-desc { font-size: 13px; color: var(--muted); }
+    .link-fee {
+      background: rgba(0,212,255,0.1);
+      color: var(--accent);
+      padding: 4px 10px;
+      border-radius: 12px;
+      font-size: 11px;
+      font-weight: 600;
+    }
+    .treasury {
+      margin-top: 40px;
+      padding: 20px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      text-align: center;
+      max-width: 500px;
+    }
+    .treasury code {
+      font-family: monospace;
+      font-size: 12px;
+      word-break: break-all;
+    }
+    footer {
+      margin-top: auto;
+      padding-top: 40px;
+      color: var(--muted);
+      font-size: 12px;
+    }
+  </style>
+</head>
+<body>
+  <div class="logo">🚀</div>
+  <h1>aihack26.xyz</h1>
+  <p class="tagline">Project 4: FREYWILL Swarm Ecosystem</p>
+  
+  <div class="links">
+    <a href="/" class="link-card">
+      <div class="link-icon" style="background: linear-gradient(135deg, #00d4ff, #0088ff);">📊</div>
+      <div class="link-info">
+        <div class="link-title">Swarm Command</div>
+        <div class="link-desc">Main dashboard & control center</div>
+      </div>
+      <span class="link-fee">1%</span>
+    </a>
+    
+    <a href="/freywill/" class="link-card">
+      <div class="link-icon" style="background: linear-gradient(135deg, #00ff88, #00cc6a);">🤖</div>
+      <div class="link-info">
+        <div class="link-title">FREYWILL AI</div>
+        <div class="link-desc">AI services marketplace</div>
+      </div>
+      <span class="link-fee">1%</span>
+    </a>
+    
+    <a href="/compute/" class="link-card">
+      <div class="link-icon" style="background: linear-gradient(135deg, #ff00aa, #aa00ff);">🖥️</div>
+      <div class="link-info">
+        <div class="link-title">Compute Rental</div>
+        <div class="link-desc">Rent GB10 GPU cycles</div>
+      </div>
+      <span class="link-fee">1%</span>
+    </a>
+    
+    <a href="/miner/" class="link-card">
+      <div class="link-icon" style="background: linear-gradient(135deg, #ffaa00, #ff5500);">⛏️</div>
+      <div class="link-info">
+        <div class="link-title">Auto-Miner</div>
+        <div class="link-desc">Passive mining when idle</div>
+      </div>
+      <span class="link-fee">1%</span>
+    </a>
+    
+    <a href="/drop/" class="link-card">
+      <div class="link-icon" style="background: linear-gradient(135deg, #00d4ff, #ff00aa);">📁</div>
+      <div class="link-info">
+        <div class="link-title">Drop & Host</div>
+        <div class="link-desc">Upload HTML, get live URL</div>
+      </div>
+      <span class="link-fee">1%</span>
+    </a>
+    
+    <a href="/hackathon/" class="link-card">
+      <div class="link-icon" style="background: linear-gradient(135deg, #ff5500, #ff0055);">🎮</div>
+      <div class="link-info">
+        <div class="link-title">Hackathon Hosting</div>
+        <div class="link-desc">9 preset templates, TestingAI26 code</div>
+      </div>
+      <span class="link-fee">1%</span>
+    </a>
+    
+    <a href="/openclaw/" class="link-card">
+      <div class="link-icon" style="background: linear-gradient(135deg, #ff6b35, #f7931e);">🐾</div>
+      <div class="link-info">
+        <div class="link-title">OpenClaw</div>
+        <div class="link-desc">Earn from idle hardware</div>
+      </div>
+      <span class="link-fee">1%</span>
+    </a>
+    
+    <a href="/x402/" class="link-card">
+      <div class="link-icon" style="background: linear-gradient(135deg, #00ff88, #00d4ff);">💎</div>
+      <div class="link-info">
+        <div class="link-title">x402 Shared Pay</div>
+        <div class="link-desc">Escrow & 1% tax on all transactions</div>
+      </div>
+      <span class="link-fee">1%</span>
+    </a>
+  </div>
+  
+  <div class="treasury">
+    <strong>🌍 Swarm Treasury</strong><br>
+    <small>All 1% fees go here:</small><br>
+    <code>0xD4CD3823A32Cd397fb1b4810Cf5B957A61599003</code><br>
+    <small style="color: var(--muted);">Base Network • USDC</small>
+  </div>
+  
+  <footer>
+    <p>Project 4 • CBK26AIHack • Built by AI agents for AI agents</p>
+  </footer>
+</body>
+</html>

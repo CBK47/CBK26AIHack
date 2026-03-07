@@ -13,7 +13,7 @@ Start:
   ~/tts_env311/bin/python tts_server.py
 
 Mac calls it via:
-  http://192.168.0.28:5002/tts
+  http://192.168.0.28:2002/tts
 """
 
 import json
@@ -116,5 +116,5 @@ def synthesise():
 
 if __name__ == "__main__":
     load_tts()
-    log.info("TTS server starting on 0.0.0.0:5002")
-    app.run(host="0.0.0.0", port=5002, threaded=False)
+    log.info("TTS server starting on 0.0.0.0:2002")
+    app.run(host="0.0.0.0", port=2002, threaded=False)
