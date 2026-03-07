@@ -25,7 +25,7 @@ ALLOWED_EXTENSIONS = {'.html', '.htm', '.css', '.js', '.png', '.jpg', '.jpeg', '
 # Active deployments
 DEPLOYMENTS = {}
 WALLET = "0xD4CD3823A32Cd397fb1b4810Cf5B957A61599003"
-DOMAIN = "drop-host.aihack26.xyz"  # Placeholder until we buy real domain
+DOMAIN = "drop.aihack26.xyz"
 
 os.makedirs(UPLOAD_DIR, exist_ok=True)
 
