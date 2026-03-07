@@ -26,7 +26,13 @@ DEFAULTS = {
     "model_path": os.path.join(SCRIPT_DIR, ".models"),
     "device": "cpu",
     "compute_type": "int8",
-    "port": 5000
+    "port": 5000,
+    "ai_loop": False,
+    "ollama_url": "http://localhost:11434",
+    "ollama_model": "llama3.2:3b",
+    "tts_url": "http://localhost:5002",
+    "tts_voice": "default",
+    "ai_system_prompt": "You are a helpful voice assistant. Give concise answers suitable for speaking aloud. Keep responses under 3 sentences unless the user asks for more detail."
 }
 
 def load_config():
@@ -91,6 +97,48 @@ def log_transcription(audio_duration, word_count, processing_time):
     conn.commit()
     conn.close()
     return time_saved
+
+# --- AI Loop Helpers ---
+import base64
+import urllib.request as _urllib_req
+
+def call_ollama(text):
+    """Send text to local Ollama, return response string."""
+    payload = json.dumps({
+        "model": CONFIG["ollama_model"],
+        "system": CONFIG.get("ai_system_prompt", ""),
+        "prompt": text,
+        "stream": False,
+        "options": {"num_predict": 250}
+    }).encode()
+    req = _urllib_req.Request(
+        f"{CONFIG['ollama_url']}/api/generate",
+        data=payload,
+        headers={"Content-Type": "application/json"}
+    )
+    with _urllib_req.urlopen(req, timeout=30) as resp:
+        data = json.load(resp)
+    return data.get("response", "").strip()
+
+
+def call_tts(text):
+    """Send text to TTS server, return WAV bytes or None if unavailable."""
+    try:
+        payload = json.dumps({
+            "text": text,
+            "voice": CONFIG.get("tts_voice", "default")
+        }).encode()
+        req = _urllib_req.Request(
+            f"{CONFIG['tts_url']}/tts",
+            data=payload,
+            headers={"Content-Type": "application/json"}
+        )
+        with _urllib_req.urlopen(req, timeout=15) as resp:
+            return resp.read()
+    except Exception as e:
+        print(f"[VTT] TTS unavailable (will use browser TTS): {e}")
+        return None
+
 
 # --- Model Loading ---
 MODEL = None
@@ -159,7 +207,8 @@ def update_config():
     if not data:
         return jsonify({"error": "No data provided"}), 400
 
-    allowed = {"model", "model_path", "device", "compute_type", "port", "auto_submit"}
+    allowed = {"model", "model_path", "device", "compute_type", "port", "auto_submit",
+               "ai_loop", "ollama_url", "ollama_model", "tts_url", "tts_voice", "ai_system_prompt"}
     updates = {k: v for k, v in data.items() if k in allowed}
 
     if not updates:
@@ -169,8 +218,9 @@ def update_config():
     with open(CONFIG_FILE, "w") as f:
         json.dump(new_cfg, f, indent=2)
 
+    restart_keys = ("model", "model_path", "device", "compute_type")
+    needs_restart = any(updates.get(k) != CONFIG.get(k) for k in restart_keys if k in updates)
     CONFIG.update(updates)
-    needs_restart = any(k in updates for k in ("model", "model_path", "device", "compute_type"))
 
     print(f"[VTT] Config updated: {updates}")
     return jsonify({
@@ -227,6 +277,31 @@ def list_models():
     ])
 
 
+@app.route("/ai_chat", methods=["POST"])
+def ai_chat():
+    """Send text to Ollama, optionally get TTS audio back."""
+    data = request.get_json()
+    text = (data.get("text") or "").strip()
+    if not text:
+        return jsonify({"error": "text required"}), 400
+    try:
+        t0 = time.time()
+        response_text = call_ollama(text)
+        elapsed = round(time.time() - t0, 2)
+        print(f"[VTT] Ollama responded in {elapsed}s: {response_text[:80]}...")
+
+        result = {"response": response_text, "model": CONFIG["ollama_model"], "elapsed": elapsed}
+
+        audio_bytes = call_tts(response_text)
+        if audio_bytes:
+            result["audio_b64"] = base64.b64encode(audio_bytes).decode()
+
+        return jsonify(result)
+    except Exception as e:
+        print(f"[VTT] AI chat error: {e}", file=sys.stderr)
+        return jsonify({"error": str(e)}), 500
+
+
 @app.route("/transcribe", methods=["POST"])
 def transcribe():
     if "audio" not in request.files:
@@ -274,7 +349,32 @@ def transcribe():
 
         word_count = len(full_text.split())
         time_saved = log_transcription(info.duration, word_count, elapsed)
-        
+
+        response_payload = {
+            "text": full_text,
+            "language": info.language,
+            "language_probability": round(info.language_probability, 2),
+            "duration": round(info.duration, 2),
+            "processing_time": round(elapsed, 2),
+            "segments": segments,
+            "word_count": word_count,
+            "time_saved": round(time_saved, 1)
+        }
+
+        # AI response loop
+        if CONFIG.get("ai_loop") and full_text:
+            try:
+                t_ai = time.time()
+                ai_text = call_ollama(full_text)
+                print(f"[VTT] AI loop: {round(time.time()-t_ai,2)}s — {ai_text[:80]}")
+                response_payload["ai_response"] = ai_text
+                audio_bytes = call_tts(ai_text)
+                if audio_bytes:
+                    response_payload["ai_audio_b64"] = base64.b64encode(audio_bytes).decode()
+            except Exception as e:
+                print(f"[VTT] AI loop error: {e}", file=sys.stderr)
+                response_payload["ai_error"] = str(e)
+
         # Check auto_submit configuration
         if CONFIG.get("auto_submit", False) and full_text:
             print("[VTT] Auto-submit enabled. Pasting and pressing Return...")
@@ -296,16 +396,7 @@ def transcribe():
             except Exception as e:
                 print(f"[VTT] Auto-submit failed: {e}")
 
-        return jsonify({
-            "text": full_text,
-            "language": info.language,
-            "language_probability": round(info.language_probability, 2),
-            "duration": round(info.duration, 2),
-            "processing_time": round(elapsed, 2),
-            "segments": segments,
-            "word_count": word_count,
-            "time_saved": round(time_saved, 1)
-        })
+        return jsonify(response_payload)
 
     except Exception as e:
         print(f"[VTT] Error: {e}", file=sys.stderr)
