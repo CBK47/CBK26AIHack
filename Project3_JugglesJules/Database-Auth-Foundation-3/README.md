@@ -1,6 +1,19 @@
 🤹‍♂️ Just Juggle - Personal Juggling Trainer
 An Astro-based web application designed for hands-free juggling practice. It features metronome-synced catch counting, voice-activated "Drop" logging, and a 3D/Video trick library.
 
+## Ports
+
+| Port | Service | Command |
+|---|---|---|
+| 3001 | Express app (production) | `PORT=3001 npm start` |
+| 3002 | Vite dev server | `PORT=3002 npm run dev` |
+
+Range: 3xxx (P3 — JugglesJules). Full registry: `00_SharedResources/port_registry.md`
+
+Required env vars: `DATABASE_URL`, `SESSION_SECRET`
+
+---
+
 🚀 Quick Start for Hosting
 1. Prerequisites
 Node.js: Version 18 or higher.

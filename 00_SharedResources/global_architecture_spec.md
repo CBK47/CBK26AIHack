@@ -56,8 +56,36 @@ Rule: architecture changes go here first, then project specs, then task updates.
 2. Cross-project changes must be reflected in this file and `task_registry.md`.
 3. Volatile runtime details (ports, one-off commands, temporary host state) belong in handover/debrief, not in architecture spec.
 
-## 5. Current Architectural Notes
+## 5. Network & Port Map
 
-- Project 1 and Project 2 are active and share the same repository.
+Port assignments are canonical in `00_SharedResources/port_registry.md`. Summary:
+
+| Range | Owner | Key ports |
+|---|---|---|
+| 3xxx | Project 3 — JugglesJules | 3001 prod, 3002 Vite dev |
+| 4xxx | Project 4 — FREYWILL | 4001 Flask API |
+| 5xxx | Project 2 — Jog & Hack | 5001 VTT server (running) |
+| 8xxx | Hackathon guest hosting | 8001–8005 guest slots |
+| 5000, 7000 | macOS AirPlay | **blocked — do not use** |
+
+### Tunnel Strategy
+
+Each project or guest slot gets its own `cloudflared` quick-tunnel when demo access is needed.
+Stable named tunnels (requires CF account) for anything needing a persistent URL.
+All active tunnel URLs tracked in `port_registry.md` → Active Tunnels table.
+
+### External Hosting Intent
+
+During the hackathon, the Mac Mini will offer shared hosting (8xxx ports) for other teams.
+Each guest app gets: a port slot + a cloudflare tunnel URL.
+Managed manually via `port_registry.md`. No reverse proxy currently — one tunnel per port.
+
+## 6. Current Architectural Notes
+
+- All four projects active and share one repository.
 - Shared planning and transition docs live under `00_SharedResources/`.
-- Current execution queue is tracked in `00_SharedResources/task_registry.md`.
+- Port assignments canonical in `00_SharedResources/port_registry.md`.
+- Current execution queue tracked in `00_SharedResources/task_registry.md`.
+- Project 1 is a Chrome extension — no server port.
+- Project 3 (JugglesJules) requires PostgreSQL (`DATABASE_URL`) and `SESSION_SECRET` env vars to start.
+- Project 4 (FREYWILL) runs on GX10 inference via Ollama at `192.168.0.28:11434`.

@@ -1,5 +1,15 @@
 # PROJECT 4: FREYWILL - AI Services Marketplace
 
+## Ports
+
+| Port | Service | Range |
+|---|---|---|
+| 4001 | Flask API (core) | 4xxx (P4 range) |
+
+Full port registry: `00_SharedResources/port_registry.md`
+
+---
+
 ## One-Liner
 The "Fiverr for AI Agents" - pay-per-call AI services with zero marginal cost via local 120B inference.
 

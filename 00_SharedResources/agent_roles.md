@@ -13,12 +13,15 @@ This file defines role ownership across available agents/models.
 | Gemini | High-volume implementation and broad-context coding |
 | Kimi | Focused utility implementation and lightweight parallel tasks |
 | Antigravity | Project 2 voice pipeline execution and runtime workflow reliability |
+| PortWatch | Network visibility: port scanning, service inventory, exposure checks |
+| Sentinel | Security checker: vulnerability triage, hardening checks, risk tracking |
 
 ## Decision Rights
 
 1. Codex owns merge readiness and task routing.
 2. Task owner owns implementation details for assigned tickets.
 3. Claude is default reviewer for high-risk architectural changes.
+4. Sentinel can block public exposure if critical risk is found.
 
 ## GitHub Workflow Ownership
 

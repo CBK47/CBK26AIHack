@@ -10,6 +10,23 @@ Purpose: append concise session outcomes. This is not the architecture source of
 - Decisions made:
 - Follow-ups:
 
+## 2026-03-07 (CBK-CLAUDE-MAC-DESK — P3 Security Hardening + Tunnel)
+
+- Session scope: P3-002, P3-003, P3-004 — backend hardening for JugglesJules before demo sharing.
+- What changed:
+  - Created `server/auth.ts`: scrypt hashPassword/verifyPassword (Node crypto, no new deps), requireAuth middleware, session type augmentation.
+  - `server/index.ts`: express-session + memorystore wired in. SESSION_SECRET from env with warning if missing. httpOnly cookie, secure in prod, 7-day maxAge.
+  - `server/routes.ts`: register hashes password; login uses verifyPassword; session set on login/register; POST /api/auth/logout + GET /api/auth/me added. requireAuth applied to all private routes. IDOR fixes: PATCH /api/user/:id checks ownership; PATCH /api/session/:id checks session owner; training-goal PATCH/DELETE verify ownership; forum delete uses session instead of spoofable query param.
+  - `cloudflare-tunnel.sh`: quick-tunnel script, auto-installs cloudflared on Mac/Ubuntu/RHEL.
+- Decisions made:
+  - No new npm deps (scrypt built-in, memorystore already listed).
+  - Existing plaintext-password users in DB will fail login — need re-registration or manual re-hash.
+  - All routes gated behind requireAuth for now; relax leaderboard/tricks reads later if desired.
+- Follow-ups:
+  - Set SESSION_SECRET env var before deploy.
+  - For stable tunnel URL, create a named Cloudflare tunnel with a CF account.
+  - P3-005 full security audit still todo.
+
 ## 2026-03-07 (CBK-CLAUDE-LNX-CLI — P2-003 AI Loop)
 
 - Session scope: implement P2-003 AI response loop on GX10.

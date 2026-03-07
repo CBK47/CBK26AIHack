@@ -116,7 +116,7 @@ export async function registerRoutes(
     res.json(achievements);
   });
 
-  app.post("/api/achievements", async (req, res) => {
+  app.post("/api/achievements", requireAuth, async (req, res) => {
     const achievement = await storage.createAchievement(req.body);
     res.status(201).json(achievement);
   });
@@ -187,7 +187,7 @@ export async function registerRoutes(
     res.json(safeUser);
   });
 
-  app.post("/api/session/process-xp", async (req, res) => {
+  app.post("/api/session/process-xp", requireAuth, async (req, res) => {
     const { userId, trickResults } = req.body;
     if (!userId || !trickResults || !Array.isArray(trickResults)) {
       return res.status(400).json({ message: "userId and trickResults array are required" });
@@ -200,7 +200,7 @@ export async function registerRoutes(
     }
   });
 
-  app.get("/api/reports/weekly/:userId", async (req, res) => {
+  app.get("/api/reports/weekly/:userId", requireAuth, async (req, res) => {
     try {
       const userId = req.params.userId;
       const sessions = await storage.getSessions(userId);
@@ -353,20 +353,20 @@ export async function registerRoutes(
     }
   });
 
-  app.post("/api/game-results", async (req, res) => {
+  app.post("/api/game-results", requireAuth, async (req, res) => {
     const parsed = insertGameResultSchema.safeParse(req.body);
     if (!parsed.success) return res.status(400).json({ message: "Invalid data", errors: parsed.error.flatten() });
     const result = await storage.createGameResult(parsed.data);
     res.status(201).json(result);
   });
 
-  app.get("/api/game-results/:userId", async (req, res) => {
+  app.get("/api/game-results/:userId", requireAuth, async (req, res) => {
     const gameType = req.query.gameType as string | undefined;
     const results = await storage.getGameResults(req.params.userId, gameType);
     res.json(results);
   });
 
-  app.get("/api/game-results/:userId/best", async (req, res) => {
+  app.get("/api/game-results/:userId/best", requireAuth, async (req, res) => {
     const results = await storage.getGameResultsBest(req.params.userId);
     const bestMap: Record<string, number> = {};
     for (const r of results) {
@@ -375,34 +375,38 @@ export async function registerRoutes(
     res.json(bestMap);
   });
 
-  app.post("/api/training-goals", async (req, res) => {
+  app.post("/api/training-goals", requireAuth, async (req, res) => {
     const parsed = insertTrainingGoalSchema.safeParse(req.body);
     if (!parsed.success) return res.status(400).json({ message: "Invalid data", errors: parsed.error.flatten() });
     const goal = await storage.createTrainingGoal(parsed.data);
     res.status(201).json(goal);
   });
 
-  app.get("/api/training-goals/:userId", async (req, res) => {
+  app.get("/api/training-goals/:userId", requireAuth, async (req, res) => {
     const goals = await storage.getTrainingGoals(req.params.userId);
     res.json(goals);
   });
 
-  app.patch("/api/training-goals/:id", async (req, res) => {
+  app.patch("/api/training-goals/:id", requireAuth, async (req, res) => {
     const id = parseInt(req.params.id);
     if (isNaN(id)) return res.status(400).json({ message: "Invalid ID" });
+    const goals = await storage.getTrainingGoals(req.session.userId!);
+    if (!goals.some(g => g.id === id)) return res.status(403).json({ message: "Forbidden" });
     const goal = await storage.updateTrainingGoal(id, req.body);
     if (!goal) return res.status(404).json({ message: "Goal not found" });
     res.json(goal);
   });
 
-  app.delete("/api/training-goals/:id", async (req, res) => {
+  app.delete("/api/training-goals/:id", requireAuth, async (req, res) => {
     const id = parseInt(req.params.id);
     if (isNaN(id)) return res.status(400).json({ message: "Invalid ID" });
+    const goals = await storage.getTrainingGoals(req.session.userId!);
+    if (!goals.some(g => g.id === id)) return res.status(403).json({ message: "Forbidden" });
     await storage.deleteTrainingGoal(id);
     res.status(204).send();
   });
 
-  app.post("/api/training/generate", async (req, res) => {
+  app.post("/api/training/generate", requireAuth, async (req, res) => {
     const { duration, energyLevel, focusPoint, userId } = req.body;
     const allTricks = await storage.getTricks();
     let userTricksData: any[] = [];
@@ -451,7 +455,7 @@ export async function registerRoutes(
     res.json({ trainingSet, duration, energyLevel, focusPoint });
   });
 
-  app.get("/api/users/search", async (req, res) => {
+  app.get("/api/users/search", requireAuth, async (req, res) => {
     const q = req.query.q as string;
     const excludeId = req.query.excludeId as string | undefined;
     if (!q || q.length < 2) return res.json([]);
@@ -466,12 +470,12 @@ export async function registerRoutes(
     })));
   });
 
-  app.get("/api/friends/:userId", async (req, res) => {
+  app.get("/api/friends/:userId", requireAuth, async (req, res) => {
     const friendshipList = await storage.getFriendships(req.params.userId);
     res.json(friendshipList);
   });
 
-  app.post("/api/friends", async (req, res) => {
+  app.post("/api/friends", requireAuth, async (req, res) => {
     const parsed = insertFriendshipSchema.safeParse(req.body);
     if (!parsed.success) return res.status(400).json({ message: "Invalid data", errors: parsed.error.flatten() });
     const existing = await storage.getFriendships(parsed.data.requesterId);
@@ -484,7 +488,7 @@ export async function registerRoutes(
     res.status(201).json(friendship);
   });
 
-  app.patch("/api/friends/:id", async (req, res) => {
+  app.patch("/api/friends/:id", requireAuth, async (req, res) => {
     const id = parseInt(req.params.id);
     if (isNaN(id)) return res.status(400).json({ message: "Invalid ID" });
     const updated = await storage.updateFriendship(id, req.body);
@@ -492,26 +496,26 @@ export async function registerRoutes(
     res.json(updated);
   });
 
-  app.delete("/api/friends/:id", async (req, res) => {
+  app.delete("/api/friends/:id", requireAuth, async (req, res) => {
     const id = parseInt(req.params.id);
     if (isNaN(id)) return res.status(400).json({ message: "Invalid ID" });
     await storage.deleteFriendship(id);
     res.status(204).send();
   });
 
-  app.get("/api/challenges/:userId", async (req, res) => {
+  app.get("/api/challenges/:userId", requireAuth, async (req, res) => {
     const challengeList = await storage.getChallenges(req.params.userId);
     res.json(challengeList);
   });
 
-  app.post("/api/challenges", async (req, res) => {
+  app.post("/api/challenges", requireAuth, async (req, res) => {
     const parsed = insertChallengeSchema.safeParse(req.body);
     if (!parsed.success) return res.status(400).json({ message: "Invalid data", errors: parsed.error.flatten() });
     const challenge = await storage.createChallenge(parsed.data);
     res.status(201).json(challenge);
   });
 
-  app.patch("/api/challenges/:id", async (req, res) => {
+  app.patch("/api/challenges/:id", requireAuth, async (req, res) => {
     const id = parseInt(req.params.id);
     if (isNaN(id)) return res.status(400).json({ message: "Invalid ID" });
     const updated = await storage.updateChallenge(id, req.body);
@@ -519,13 +523,13 @@ export async function registerRoutes(
     res.json(updated);
   });
 
-  app.get("/api/forum/posts", async (req, res) => {
+  app.get("/api/forum/posts", requireAuth, async (req, res) => {
     const category = req.query.category as string | undefined;
     const posts = await storage.getForumPosts(category);
     res.json(posts);
   });
 
-  app.get("/api/forum/posts/:id", async (req, res) => {
+  app.get("/api/forum/posts/:id", requireAuth, async (req, res) => {
     const id = parseInt(req.params.id);
     if (isNaN(id)) return res.status(400).json({ message: "Invalid ID" });
     const post = await storage.getForumPost(id);
@@ -533,51 +537,48 @@ export async function registerRoutes(
     res.json(post);
   });
 
-  app.post("/api/forum/posts", async (req, res) => {
+  app.post("/api/forum/posts", requireAuth, async (req, res) => {
     const parsed = insertForumPostSchema.safeParse(req.body);
     if (!parsed.success) return res.status(400).json({ message: "Invalid data", errors: parsed.error.flatten() });
     const post = await storage.createForumPost(parsed.data);
     res.status(201).json(post);
   });
 
-  app.delete("/api/forum/posts/:id", async (req, res) => {
+  app.delete("/api/forum/posts/:id", requireAuth, async (req, res) => {
     const id = parseInt(req.params.id);
     if (isNaN(id)) return res.status(400).json({ message: "Invalid ID" });
     const post = await storage.getForumPost(id);
     if (!post) return res.status(404).json({ message: "Post not found" });
-    const requesterId = req.query.userId as string || req.body?.userId;
-    if (post.userId !== requesterId) return res.status(403).json({ message: "Not authorized" });
+    if (post.userId !== req.session.userId) return res.status(403).json({ message: "Not authorized" });
     await storage.deleteForumPost(id);
     res.status(204).send();
   });
 
-  app.get("/api/forum/posts/:postId/comments", async (req, res) => {
+  app.get("/api/forum/posts/:postId/comments", requireAuth, async (req, res) => {
     const postId = parseInt(req.params.postId);
     if (isNaN(postId)) return res.status(400).json({ message: "Invalid post ID" });
     const comments = await storage.getForumComments(postId);
     res.json(comments);
   });
 
-  app.post("/api/forum/comments", async (req, res) => {
+  app.post("/api/forum/comments", requireAuth, async (req, res) => {
     const parsed = insertForumCommentSchema.safeParse(req.body);
     if (!parsed.success) return res.status(400).json({ message: "Invalid data", errors: parsed.error.flatten() });
     const comment = await storage.createForumComment(parsed.data);
     res.status(201).json(comment);
   });
 
-  app.delete("/api/forum/comments/:id", async (req, res) => {
+  app.delete("/api/forum/comments/:id", requireAuth, async (req, res) => {
     const id = parseInt(req.params.id);
     if (isNaN(id)) return res.status(400).json({ message: "Invalid ID" });
-    const requesterId = req.query.userId as string;
-    if (!requesterId) return res.status(400).json({ message: "userId required" });
     const comment = await storage.getForumComment(id);
     if (!comment) return res.status(404).json({ message: "Comment not found" });
-    if (comment.userId !== requesterId) return res.status(403).json({ message: "Not authorized" });
+    if (comment.userId !== req.session.userId) return res.status(403).json({ message: "Not authorized" });
     await storage.deleteForumComment(id);
     res.status(204).send();
   });
 
-  app.get("/api/leaderboard/:gameType", async (req, res) => {
+  app.get("/api/leaderboard/:gameType", requireAuth, async (req, res) => {
     const results = await storage.getLeaderboard(req.params.gameType);
     const userIds = [...new Set(results.map(r => r.userId))];
     const userMap: Record<string, any> = {};
@@ -591,17 +592,17 @@ export async function registerRoutes(
     res.json(results.map(r => ({ ...r, user: userMap[r.userId] })));
   });
 
-  app.get("/api/shop/items", async (_req, res) => {
+  app.get("/api/shop/items", requireAuth, async (_req, res) => {
     const items = await storage.getShopItems();
     res.json(items);
   });
 
-  app.get("/api/shop/purchases/:userId", async (req, res) => {
+  app.get("/api/shop/purchases/:userId", requireAuth, async (req, res) => {
     const purchases = await storage.getUserPurchases(req.params.userId);
     res.json(purchases);
   });
 
-  app.post("/api/shop/buy", async (req, res) => {
+  app.post("/api/shop/buy", requireAuth, async (req, res) => {
     const { userId, itemId } = req.body;
     if (!userId || !itemId) return res.status(400).json({ message: "userId and itemId required" });
 

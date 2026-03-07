@@ -6,6 +6,16 @@
 
 ---
 
+## Ports
+
+| Port | Service | Range |
+|---|---|---|
+| 5001 | VTT voice-to-text server (`server.py`) | 5xxx (P2 range) |
+
+Full port registry: `00_SharedResources/port_registry.md`
+
+---
+
 ## Current State
 
 - ✅ Whisper VTT server running locally (port 5001)

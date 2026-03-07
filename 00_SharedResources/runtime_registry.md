@@ -22,6 +22,8 @@ Examples:
 | `CBK-CLAUDE-LNX-CLI2` | Claude CLI | Linux box | Terminal/CLI | Manual individual task helper; human-in-the-loop JFDI execution | Ad-hoc tasks, direct human collaboration, one-off builds |
 | `CBK-GPT-MAC-RESEARCH` | ChatGPT | Mac | Browser/app | Quick research and rapid external lookup | Fast investigation, summary extraction |
 | `CBK-ANTIGRAV-HYBRID-VOICE` | Antigravity (multi-model) | Mac + Linux | Mixed | Project 2 voice-loop specialist | STT/TTS integration, runtime voice pipeline validation |
+| `CBK-PORTWATCH-LNX-NET` | PortWatch | Linux box | Terminal/CLI | Port scanner and service inventory | Enumerate listening ports, map process->service, alert on unknown listeners |
+| `CBK-SENTINEL-LNX-SEC` | Sentinel | Linux box | Terminal/CLI | Security checker role | Fast vuln checks, dependency audit, exposed-surface checks, security drift tracking |
 
 ## Linux Local Model Roles (Ollama / Local Inference)
 

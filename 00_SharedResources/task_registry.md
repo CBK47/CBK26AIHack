@@ -42,9 +42,9 @@ Update task status before doing work:
 | ID | Task | Priority | Owner | Status | Notes |
 |---|---|---|---|---|---|
 | P3-001 | Deep-dive architecture + backend takeover assessment | High | Codex | done | Completed on 2026-03-07; see session notes for findings |
-| P3-002 | Own backend stabilization for hosted environment | High | CBK-CLAUDE-LNX-CLI | todo | Focus: auth hardening, authorization checks, deploy-safe defaults |
-| P3-003 | Set up temporary Cloudflare Tunnel hosting for demo access | High | CBK-CLAUDE-LNX-CLI | todo | Tunnel to app on Linux; HTTPS required for camera/microphone features |
-| P3-004 | Add minimum pre-public security hardening pass | High | Claude | todo | Password hashing, session auth, IDOR protections before wider sharing |
+| P3-002 | Own backend stabilization for hosted environment | High | CBK-CLAUDE-LNX-CLI | done | Session middleware (express-session + memorystore), SESSION_SECRET env guard, requireAuth on all private routes, PATCH /api/user/:id IDOR fixed, training-goal/session/forum ownership checks. Set SESSION_SECRET before deploy. |
+| P3-003 | Set up temporary Cloudflare Tunnel hosting for demo access | High | CBK-CLAUDE-LNX-CLI | done | cloudflare-tunnel.sh in project root. Run alongside `npm start`. Auto-installs cloudflared on Mac/Ubuntu/RHEL. |
+| P3-004 | Add minimum pre-public security hardening pass | High | Claude | done | scrypt password hashing (Node crypto, no new deps). timingSafeEqual comparison. Register hashes; login verifies. Existing plaintext-password accounts need re-registration or manual re-hash. |
 | P3-005 | Plan follow-up full security audit after demo window | Medium | Codex | todo | Deeper dependency + endpoint abuse review |
 
 ## Shared Docs and Ops
@@ -54,3 +54,5 @@ Update task status before doing work:
 | SH-001 | Keep architecture spec synchronized with project topology | High | Codex | in_progress | Update on boundary/topology change |
 | SH-002 | Keep handover and debrief concise and current | High | Codex | in_progress | Update every handoff/session |
 | SH-003 | Maintain GitHub branch/merge integrity and release hygiene | High | Codex | in_progress | Final gate before merge to `main` |
+| SH-004 | Maintain live server/port inventory across environments | High | CBK-PORTWATCH-LNX-NET | todo | Track listening ports, owner process, expected purpose, and public exposure |
+| SH-005 | Run recurring mini security checks on active services | High | CBK-SENTINEL-LNX-SEC | todo | Prioritize exposed apps, auth routes, dependency risk, and config drift |
